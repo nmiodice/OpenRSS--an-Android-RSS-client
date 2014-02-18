@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">RSS reader</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="empty_string">No content</string>
+    
+    <!-- ID strings & generic identifiers -->
+    <string name="scroll_position">SCROLL_POSITION</string>
+    
+    <!-- RSS -->
+    <string name="title_activity_rss">RSS Feed</string>
+    <string name="rss_feed_header">RSS Feed Viewer</string>
+    <string name="rss_button_fetch">Update RSS Feed</string>
+    <string name="rss_connection_failure">Failed to load content</string>
+    <string name="button_getrss">Get RSS!</string>
+    <string name="loading_content">Loading new content&#8230;</string>
+
+</resources>

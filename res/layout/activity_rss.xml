@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".Activity_Rss"
+    style="@style/ActivityBase"
+    >
+    
+    <Button
+	    android:id="@+id/rss_button_feed"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:onClick="updateRSS"
+		android:text="@string/rss_button_fetch"
+		/>
+    
+    <!-- Loading content graphics -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+        android:id="@+id/rss_loading_content"
+		android:layout_below="@id/rss_button_feed"
+		android:orientation="vertical"
+        >
+        <TextView 
+	        android:id="@+id/rss_loading_content_text"
+	        style="@style/Temporary_message"
+	        android:text="@string/loading_content"
+	        />
+	</LinearLayout>
+
+	<ScrollView
+	    android:id="@+id/rss_fragment_scrollview"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginTop="20dp"
+	    android:layout_below="@id/rss_loading_content"
+	    >
+	    
+		<LinearLayout
+		    android:id="@+id/rss_fragment_container"
+		    android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical" />
+		
+	</ScrollView>
+
+</RelativeLayout>

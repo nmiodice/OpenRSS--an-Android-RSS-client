@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rss_root"
+    style="@style/Tile"
+    android:orientation="vertical"
+    >
+    <!-- Clicking the title opens the link in a browser -->
+    <TextView
+        android:id="@+id/rss_title"
+        style="@style/Header"
+        android:textColor="@color/blue"
+        android:clickable="true"
+        android:onClick="openFeed"
+        />
+    
+    <TextView
+        android:id="@+id/rss_published_date"
+        style="@style/Subheader_small"
+        android:textColor="@color/red_opaque"
+        android:textStyle="italic"
+        android:layout_below="@id/rss_title"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        />
+    
+	<TextView
+		android:id="@+id/rss_description"        
+		style="@style/Subheader"
+		android:layout_below="@id/rss_published_date"
+		/> 
+    
+    <TextView
+        android:id="@+id/rss_author"
+        style="@style/Subheader"
+        android:layout_below="@id/rss_description" />
+    
+    <TextView
+        android:id="@+id/rss_url"
+        style="@style/Subheader"
+        android:layout_below="@id/rss_author" />
+    
+</RelativeLayout>
+
