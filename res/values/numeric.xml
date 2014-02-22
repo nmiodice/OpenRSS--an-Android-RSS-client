@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <!-- Ingeger types -->
+	<integer name="animate_duration_short">600</integer>
+    <integer name="animate_duration_base">1000</integer>
+    <integer name="animate_duration_base_x2">1500</integer>
+    <integer name="animate_duration_base_long">2500</integer>
+    <integer name="animate_off_screen_up_Y">-600</integer>
+    <integer name="animate_off_screen_down_Y">1000</integer>
+    
+    <integer name="http_timeout">1000</integer>
+    <integer name="aprox_max_feed_list_length">100</integer>
+</resources>

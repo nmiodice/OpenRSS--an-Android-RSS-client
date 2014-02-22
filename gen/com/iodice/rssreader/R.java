@@ -8,19 +8,24 @@
 package com.iodice.rssreader;
 
 public final class R {
+    public static final class animator {
+        public static final int fade_in=0x7f040000;
+        public static final int fade_out=0x7f040001;
+        public static final int fly_up=0x7f040002;
+    }
     public static final class attr {
     }
     public static final class color {
-        public static final int black=0x7f040003;
-        public static final int black_transparent=0x7f040004;
-        public static final int blue=0x7f040002;
-        public static final int grey_light=0x7f040006;
-        public static final int grey_shadow=0x7f040007;
+        public static final int black=0x7f050003;
+        public static final int black_transparent=0x7f050004;
+        public static final int blue=0x7f050002;
+        public static final int grey_light=0x7f050006;
+        public static final int grey_shadow=0x7f050007;
         /**  raw colors 
          */
-        public static final int red=0x7f040000;
-        public static final int red_opaque=0x7f040001;
-        public static final int white=0x7f040005;
+        public static final int red=0x7f050000;
+        public static final int red_opaque=0x7f050001;
+        public static final int white=0x7f050005;
     }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
@@ -29,55 +34,84 @@ public final class R {
          screen margins) for sw720dp devices (e.g. 10" tablets) in landscape here.
     
          */
-        public static final int activity_horizontal_margin=0x7f050000;
-        public static final int activity_vertical_margin=0x7f050001;
+        public static final int activity_horizontal_margin=0x7f060000;
+        public static final int activity_vertical_margin=0x7f060001;
     }
     public static final class drawable {
         public static final int ic_launcher=0x7f020000;
         public static final int tile=0x7f020001;
     }
     public static final class id {
-        public static final int action_settings=0x7f09000b;
-        public static final int rss_author=0x7f090009;
-        public static final int rss_button_feed=0x7f090000;
-        public static final int rss_description=0x7f090008;
-        public static final int rss_fragment_container=0x7f090004;
-        public static final int rss_fragment_scrollview=0x7f090003;
-        public static final int rss_loading_content=0x7f090001;
-        public static final int rss_loading_content_text=0x7f090002;
-        public static final int rss_published_date=0x7f090007;
-        public static final int rss_root=0x7f090005;
-        public static final int rss_title=0x7f090006;
-        public static final int rss_url=0x7f09000a;
+        public static final int action_settings=0x7f0b000c;
+        public static final int reload_rss_content=0x7f0b000b;
+        public static final int rss_author=0x7f0b0009;
+        public static final int rss_button_feed=0x7f0b0000;
+        public static final int rss_description=0x7f0b0008;
+        public static final int rss_fragment_container=0x7f0b0004;
+        public static final int rss_fragment_scrollview=0x7f0b0003;
+        public static final int rss_loading_content=0x7f0b0001;
+        public static final int rss_loading_content_text=0x7f0b0002;
+        public static final int rss_published_date=0x7f0b0007;
+        public static final int rss_root=0x7f0b0005;
+        public static final int rss_title=0x7f0b0006;
+        public static final int rss_url=0x7f0b000a;
+    }
+    public static final class integer {
+        public static final int animate_duration_base=0x7f070001;
+        public static final int animate_duration_base_long=0x7f070003;
+        public static final int animate_duration_base_x2=0x7f070002;
+        /**  Ingeger types 
+         */
+        public static final int animate_duration_short=0x7f070000;
+        public static final int animate_off_screen_down_Y=0x7f070005;
+        public static final int animate_off_screen_up_Y=0x7f070004;
+        public static final int aprox_max_feed_list_length=0x7f070007;
+        public static final int http_timeout=0x7f070006;
     }
     public static final class layout {
-        public static final int activity_rss=0x7f030000;
-        public static final int fragment_rss=0x7f030001;
+        public static final int activity_main=0x7f030000;
+        public static final int activity_rss=0x7f030001;
+        public static final int fragment_rss=0x7f030002;
     }
     public static final class menu {
-        public static final int main=0x7f080000;
+        public static final int activity_rss_menu=0x7f0a0000;
+        public static final int main=0x7f0a0001;
     }
     public static final class string {
-        public static final int action_settings=0x7f060001;
-        public static final int app_name=0x7f060000;
-        public static final int button_getrss=0x7f060009;
-        public static final int empty_string=0x7f060003;
-        public static final int hello_world=0x7f060002;
-        public static final int loading_content=0x7f06000a;
-        public static final int rss_button_fetch=0x7f060007;
-        public static final int rss_connection_failure=0x7f060008;
-        public static final int rss_feed_header=0x7f060006;
+        public static final int action_reload=0x7f080004;
+        public static final int action_settings=0x7f080001;
+        public static final int app_name=0x7f080000;
+        public static final int author=0x7f080006;
+        public static final int button_getrss=0x7f080010;
+        /**  Connectivity 
+         */
+        public static final int connection_failed=0x7f08000b;
+        public static final int description=0x7f080007;
+        public static final int empty_string=0x7f080003;
+        public static final int hello_world=0x7f080002;
+        public static final int loading_content=0x7f080011;
+        public static final int no_results=0x7f080012;
+        public static final int partial_results=0x7f080013;
+        public static final int publishedDate=0x7f080009;
+        public static final int rss_author_by=0x7f080014;
+        public static final int rss_button_fetch=0x7f08000f;
+        public static final int rss_feed_header=0x7f08000e;
+        /**  Home 
+         */
+        public static final int rss_url_intent=0x7f08000c;
         /**  ID strings & generic identifiers 
          */
-        public static final int scroll_position=0x7f060004;
+        public static final int scroll_position=0x7f080005;
+        public static final int title=0x7f080008;
         /**  RSS 
          */
-        public static final int title_activity_rss=0x7f060005;
+        public static final int title_activity_rss=0x7f08000d;
+        public static final int url=0x7f08000a;
     }
     public static final class style {
         /**  Activity theme 
          */
-        public static final int ActivityBase=0x7f070002;
+        public static final int ActivityBase=0x7f090002;
         /** 
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
@@ -99,26 +133,26 @@ public final class R {
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f070000;
+        public static final int AppBaseTheme=0x7f090000;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f070001;
+        public static final int AppTheme=0x7f090001;
         /**  Header text 
          */
-        public static final int Header=0x7f070005;
+        public static final int Header=0x7f090005;
         /**  Sub-header text 
          */
-        public static final int Subheader=0x7f070006;
-        public static final int Subheader_small=0x7f070007;
+        public static final int Subheader=0x7f090006;
+        public static final int Subheader_small=0x7f090007;
         /**  Temporary messages, such as 'Loading new content' 
          */
-        public static final int Temporary_message=0x7f070008;
+        public static final int Temporary_message=0x7f090008;
         /**  Empty text 
          */
-        public static final int Text=0x7f070004;
+        public static final int Text=0x7f090004;
         /**  Tile 
          */
-        public static final int Tile=0x7f070003;
+        public static final int Tile=0x7f090003;
     }
 }

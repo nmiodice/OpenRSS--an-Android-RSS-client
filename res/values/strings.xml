@@ -5,16 +5,31 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="empty_string">No content</string>
+    <string name="action_reload">Reload</string>
+    
     
     <!-- ID strings & generic identifiers -->
     <string name="scroll_position">SCROLL_POSITION</string>
+    <string name="author">author</string>
+    <string name="description">description</string>
+    <string name="title">title</string>
+    <string name="publishedDate">publishedDate</string>
+    <string name="url">url</string>
+    
+    <!-- Connectivity -->
+    <string name="connection_failed">Connection failed&#8230;</string>
+    
+    <!-- Home -->
+    <string name="rss_url_intent">URL_INTENT</string>
     
     <!-- RSS -->
     <string name="title_activity_rss">RSS Feed</string>
     <string name="rss_feed_header">RSS Feed Viewer</string>
     <string name="rss_button_fetch">Update RSS Feed</string>
-    <string name="rss_connection_failure">Failed to load content</string>
     <string name="button_getrss">Get RSS!</string>
     <string name="loading_content">Loading new content&#8230;</string>
+    <string name="no_results">No articles found. Connection may have failed&#8230;</string>
+    <string name="partial_results">Some feeds failed to load&#8230;</string>
+    <string name="rss_author_by">Article by</string>
 
 </resources>
