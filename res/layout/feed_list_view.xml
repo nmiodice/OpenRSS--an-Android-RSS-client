@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/feed_list_view_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    style="@style/ActivityBase"
+    >
+    
+    <CheckBox
+        android:id="@+id/item_checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+    	android:layout_centerInParent="true"
+        android:paddingLeft="16dp"
+        android:layout_alignParentRight="true"
+        android:checked="false"
+        android:focusable="false"
+        android:clickable="false"
+        android:visibility="gone"
+        />
+    
+    <!-- Text content -->
+	<RelativeLayout
+	    android:id="@+id/feed_list_text_content"
+	    android:layout_width="match_parent"
+    	android:layout_height="match_parent"
+    	android:layout_toLeftOf="@id/item_checkbox"
+    	>
+    	
+	    <TextView
+	        android:id="@+id/feed_name"
+	        style="@style/Header"
+	        android:textColor="@android:color/primary_text_light"
+	        android:layout_marginTop="5dp"
+	        android:layout_marginLeft="10dp"
+	        />
+	    
+	    <TextView
+	        android:id="@+id/feed_url"
+	        style="@style/Subheader_small"
+	        android:textColor="@android:color/secondary_text_light"
+	        android:layout_marginBottom="5dp"
+	        android:layout_marginLeft="20dp"
+	        android:layout_below="@id/feed_name"
+	        />
+	</RelativeLayout>
+
+</RelativeLayout>
+

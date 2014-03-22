@@ -3,9 +3,9 @@
     
     <item
         android:id="@+id/reload_rss_content"
-        android:orderInCategory="100"
-        android:showAsAction="never"
+        android:icon="@drawable/ic_action_refresh"
         android:title="@string/action_reload"
+        android:showAsAction="ifRoom"
         />
 
 </menu>

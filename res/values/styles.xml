@@ -26,12 +26,17 @@
     
     
     <!-- Tile -->
-    <style name="Tile" parent="ActivityBase">
-        <item name="android:background">@drawable/tile</item>
-		<item name="android:layout_marginLeft">10dp</item>
+    <style name="rssTile" parent="ActivityBase">
+        <item name="android:background">@drawable/tile_selector</item>
+		        
+        <item name="android:layout_marginLeft">10dp</item>
 		<item name="android:layout_marginRight">10dp</item>
-		<item name="android:layout_marginTop">5dp</item>
-		<item name="android:layout_marginBottom">5dp</item>        
+		<item name="android:layout_marginTop">4dp</item>
+		<item name="android:layout_marginBottom">4dp</item> 
+		<item name="android:paddingTop">8dp</item>
+		<item name="android:paddingLeft">8dp</item>
+		<item name="android:paddingRight">8dp</item>
+		<item name="android:paddingBottom">12dp</item> <!-- takes into account visual play introduced by drop shadow -->     
     </style>
     
     
@@ -40,15 +45,18 @@
         <item name="android:text">@string/empty_string</item>
     </style>
     
+ 	<style name="UserInput" parent="Header">
+		<item name="android:text">@string/null_string</item>
+	</style>        
+    
     <!-- Header text -->
     <style name="Header" parent="Text">
-        <item name="android:textColor">@color/black</item>
+        <item name="android:textColor">@android:color/primary_text_light</item>
 		<item name="android:fontFamily">sans-serif-light"</item>
         <item name="android:textStyle">normal</item>
-        <item name="android:textSize">26sp</item>
+        <item name="android:textSize">22sp</item>
 		<item name="android:layout_width">match_parent</item>
 		<item name="android:layout_height">wrap_content</item>
-		<item name="android:layout_margin">2dp</item>
 	</style>
 	
     
@@ -57,9 +65,10 @@
         parent="@style/Header"
         >
 		<item name="android:textStyle">normal</item>
-		<item name="android:fontFamily">sans-serif"</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:layout_width">match_parent</item>        
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_width">match_parent</item>   
+        <item name="android:textColor">@android:color/secondary_text_light</item>
+        
     </style>
 
 	<style name="Subheader_small"

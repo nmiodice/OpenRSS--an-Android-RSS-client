@@ -21,25 +21,26 @@
         android:theme="@style/AppTheme" >
         
         <activity
-            android:name="com.iodice.rssreader.Activity_Home"
+            android:name="com.iodice.ui.home.Activity_Home"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            
         </activity>
         
                 
         <activity
-            android:name="com.iodice.rssreader.Activity_Rss"
+            android:name="com.iodice.ui.feed.Activity_Rss"
             android:label="@string/app_name"
-            android:parentActivityName="com.iodice.rssreader.Activity_Home" >
+            android:parentActivityName="com.iodice.ui.home.Activity_Home" >
             
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.iodice.rssreader.Activity_Main" />
+                android:value="com.iodice.ui.Activity_Main" />
         </activity>
         
     </application>

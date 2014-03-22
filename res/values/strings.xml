@@ -6,21 +6,43 @@
     <string name="hello_world">Hello world!</string>
     <string name="empty_string">No content</string>
     <string name="action_reload">Reload</string>
+    <string name="null_string"></string>
     
+    <!-- Shared preference identifiers -->
+    <string name="prefs_first_run">IS_FIRST_RUN</string>
     
     <!-- ID strings & generic identifiers -->
     <string name="scroll_position">SCROLL_POSITION</string>
+    <string name="url_list">URL_LIST</string>
+    <string name="last_data_pull">LAST_DATA_PULL</string>
     <string name="author">author</string>
     <string name="description">description</string>
     <string name="title">title</string>
     <string name="publishedDate">publishedDate</string>
     <string name="url">url</string>
+    <string name="rss_update_async_task">RSS_UPDATE_IS_CANCELED</string>
     
     <!-- Connectivity -->
     <string name="connection_failed">Connection failed&#8230;</string>
     
     <!-- Home -->
     <string name="rss_url_intent">URL_INTENT</string>
+    <string name="no_selections">No feeds selected</string>
+    <string name="action_load_selected">Load selected feeds</string>
+    <string name="action_select_all">Select all</string>
+    <string name="action_deselect_all">Deselect all</string>
+    <string name="action_remove_selected">Remove selected</string>
+    <string name="action_save_group">Save as group</string>
+    
+    
+    
+    <!-- Add new feed -->
+    <string name="action_add">Add new RSS feed</string>
+    <string name="add_feed_url">Link</string>
+    <string name="add_feed_name">Name</string>
+    <string name="add_feed_title">Add a new feed</string>
+    <string name="add_feed_message">Enter RSS feed details</string>
+    <string name="groups">Groups</string>
     
     <!-- RSS -->
     <string name="title_activity_rss">RSS Feed</string>

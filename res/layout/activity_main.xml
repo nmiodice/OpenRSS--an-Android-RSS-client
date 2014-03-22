@@ -5,12 +5,13 @@
     style="@style/ActivityBase"
     >
     
-    <Button
-	    android:id="@+id/rss_button_feed"
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:onClick="loadFeed"
-		android:text="@string/rss_button_fetch"
-		/>
+	<LinearLayout
+		android:id="@+id/feed_list_container"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical" 
+		>
+	</LinearLayout>
 
+    
 </RelativeLayout>
