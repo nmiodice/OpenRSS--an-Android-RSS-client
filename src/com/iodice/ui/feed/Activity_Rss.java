@@ -637,42 +637,52 @@ public class Activity_Rss extends Activity implements ScrollViewListener {
 		}
 		
 		
-	private List<Fragment_Rss> syndFeedToFragmentList(SyndFeed feed, boolean isCached) {
-		Fragment_Rss tmpFrag;
-		List<Fragment_Rss> results = new ArrayList<Fragment_Rss>();
-		
-		assert(feed != null);
-		
-		@SuppressWarnings("unchecked")
-		List<SyndEntry> entries = feed.getEntries();
-		int numEntries = entries.size();
-		
-		for (int i = 0; i < numEntries; i++) {
-			tmpFrag = syndEntryToFrag(entries.get(i), isCached);
-			results.add(tmpFrag);
+		private List<Fragment_Rss> syndFeedToFragmentList(SyndFeed feed, boolean isCached) {
+			Fragment_Rss tmpFrag;
+			List<Fragment_Rss> results = new ArrayList<Fragment_Rss>();
+			
+			assert(feed != null);
+			
+			@SuppressWarnings("unchecked")
+			List<SyndEntry> entries = feed.getEntries();
+			int numEntries = entries.size();
+			
+			for (int i = 0; i < numEntries; i++) {
+				tmpFrag = syndEntryToFrag(entries.get(i), isCached);
+				results.add(tmpFrag);
+			}
+			
+			return results;
 		}
 		
-		return results;
-	}
-	
 		private Fragment_Rss syndEntryToFrag(SyndEntry entry, boolean isCached) {
 			Fragment_Rss frag = new Fragment_Rss();
 			String tmpStr;
-						
-		    tmpStr = Text.removeHTML(entry.getTitle());
-		    frag.setTitle(tmpStr);
 			
-		    tmpStr = Text.removeHTML(entry.getAuthor());
-		    frag.setAuthor(tmpStr);
+			if (entry.getTitle() != null) {
+				tmpStr = Text.removeHTML(entry.getTitle());
+		    	frag.setTitle(tmpStr);
+			}
+			
+			if (entry.getAuthor() != null) {
+				tmpStr = Text.removeHTML(entry.getAuthor());
+				frag.setAuthor(tmpStr);
+			}
 		    
-		    tmpStr = Text.removeHTML(entry.getDescription().getValue());
-		    frag.setDescription(tmpStr);
+			if (entry.getDescription() != null) {
+				tmpStr = Text.removeHTML(entry.getDescription().getValue());
+				frag.setDescription(tmpStr);
+			}
 		    
-		    tmpStr = Text.removeHTML(entry.getPublishedDate().toString());
-		    frag.setPublishedDate(tmpStr);
+		    if (entry.getPublishedDate() != null) {
+		    	tmpStr = Text.removeHTML(entry.getPublishedDate().toString());
+		    	frag.setPublishedDate(tmpStr);
+		    }
 		    
-		    tmpStr = Text.removeHTML(entry.getLink());
-		    frag.setURL(tmpStr);
+		    if (entry.getLink() != null) {
+		    	tmpStr = Text.removeHTML(entry.getLink());
+		    	frag.setURL(tmpStr);
+		    }
 		    
 		    frag.setIsCached(isCached);
 		    
