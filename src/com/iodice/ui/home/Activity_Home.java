@@ -3,23 +3,28 @@ package com.iodice.ui.home;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 
 import com.iodice.database.feedsOrm;
 import com.iodice.rssreader.R;
 import com.iodice.utilities.callback;
 
-public class Activity_Home extends Activity implements callback {
+public class Activity_Home extends Activity implements callback, ActionBar.OnNavigationListener
+
+ {
 	
 	private static final String TAG = "Activity_Home";
 	private static final String NAME_LIST_FRAG_TAG = "NAME_LIST";
@@ -45,11 +50,13 @@ public class Activity_Home extends Activity implements callback {
 		ArrayList<String> tech = new ArrayList<String>();
 		ArrayList<String> news = new ArrayList<String>();
 		ArrayList<String> reddit = new ArrayList<String>();
+		ArrayList<String> sports = new ArrayList<String>();
 		
 		tech.add("Technology");
 		news.add("News");
 		reddit.add("Reddit");
 		reddit.add("Technology");
+		sports.add("Sports");
 		
 		rssFeeds.add(new Feed_Data("Apple", tech, "ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=10/xml"));
 		rssFeeds.add(new Feed_Data("Wired", tech, "http://feeds.wired.com/wired/index"));
@@ -61,7 +68,8 @@ public class Activity_Home extends Activity implements callback {
 		rssFeeds.add(new Feed_Data("Reuters", news, "http://feeds.reuters.com/reuters/topNews"));
 		rssFeeds.add(new Feed_Data("BBC America", news, "http://newsrss.bbc.co.uk/rss/newsonline_world_edition/americas/rss.xml"));
 		rssFeeds.add(new Feed_Data("/r/androiddev", reddit, "http://www.reddit.com/r/androiddev/.rss"));
-		rssFeeds.add(new Feed_Data("yahoo", tech, "http://dir.yahoo.com/rss/dir/getrss.php?comp"));
+		rssFeeds.add(new Feed_Data("Yahoo Skiing", sports, "http://sports.yahoo.com/ski/rss.xml"));
+		rssFeeds.add(new Feed_Data("Y.Combinator", tech, "https://news.ycombinator.com/rss"));
 
 		saveFeeds(rssFeeds);
 	}
@@ -93,7 +101,7 @@ public class Activity_Home extends Activity implements callback {
 		boolean isFirstRun = sharedPref.getBoolean(getString(R.string.prefs_first_run), defaultVal);
 		if (isFirstRun)
 			init();
-		
+		setupCategorySpinner();
 		displayListViewTEMP();
 	}
 		
@@ -176,7 +184,28 @@ public class Activity_Home extends Activity implements callback {
 		listFrag.setUpAdapter();
 		listFrag.redrawListView();
 	}
-	
+
+	// displayed in top right of activity, lists categories by name. upon select, filter list to just those categories
+	private void setupCategorySpinner() {
+		// Set up the action bar to show a dropdown list.
+		final ActionBar actionBar = getActionBar();
+		actionBar.setDisplayShowTitleEnabled(false);
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+
+		// populate list data
+		Cursor c = feedsOrm.selectAllCategories(getApplicationContext());
+		ArrayList<String> items = new ArrayList<String>();
+		c.moveToFirst();
+		
+		while(!c.isAfterLast()) {
+		     items.add(c.getString(c.getColumnIndex(feedsOrm.getCategoryTableCategoryKey())));
+		     c.moveToNext();
+		}
+		
+		ArrayAdapter<String> aAdpt = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, items);
+		//actionBar.set
+		actionBar.setListNavigationCallbacks(aAdpt, this);
+	}
 	
 	private void displayListViewTEMP() {
 		// add fragment to apropriate layout item
@@ -190,5 +219,12 @@ public class Activity_Home extends Activity implements callback {
 			fTrans.add(R.id.feed_list_container, new Feed_List(), Activity_Home.NAME_LIST_FRAG_TAG);
 			fTrans.commit();
 		}
+	}
+
+	@Override
+	// when a spinner item is selected, this method is called
+	public boolean onNavigationItemSelected(int position, long id) {
+		Log.i(TAG, "position " + position + " pressed, id = " + id);
+		return false;
 	}
 }

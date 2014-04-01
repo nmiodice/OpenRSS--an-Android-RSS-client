@@ -169,7 +169,7 @@ public final class R {
     public static final class style {
         /**  Activity theme 
          */
-        public static final int ActivityBase=0x7f090002;
+        public static final int ActivityBase=0x7f090003;
         /** 
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
@@ -193,26 +193,26 @@ public final class R {
          */
         public static final int AppBaseTheme=0x7f090000;
         /**  Application theme. 
- All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f090001;
         /**  Header text 
          */
-        public static final int Header=0x7f090006;
+        public static final int Header=0x7f090007;
         /**  Sub-header text 
          */
-        public static final int Subheader=0x7f090007;
-        public static final int Subheader_small=0x7f090008;
+        public static final int Subheader=0x7f090008;
+        public static final int Subheader_small=0x7f090009;
         /**  Temporary messages, such as 'Loading new content' 
          */
-        public static final int Temporary_message=0x7f090009;
+        public static final int Temporary_message=0x7f09000a;
         /**  Empty text 
          */
-        public static final int Text=0x7f090004;
-        public static final int UserInput=0x7f090005;
+        public static final int Text=0x7f090005;
+        public static final int UserInput=0x7f090006;
+        public static final int home_category_spinner_style=0x7f090002;
         /**  Tile 
  takes into account visual play introduced by drop shadow 
          */
-        public static final int rssTile=0x7f090003;
+        public static final int rssTile=0x7f090004;
     }
 }
