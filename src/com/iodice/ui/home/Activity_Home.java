@@ -195,14 +195,20 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 		// populate list data
 		Cursor c = feedsOrm.selectAllCategories(getApplicationContext());
 		ArrayList<String> items = new ArrayList<String>();
-		c.moveToFirst();
+		items.add(this.getString(R.string.all));
 		
+		
+		c.moveToFirst();
 		while(!c.isAfterLast()) {
 		     items.add(c.getString(c.getColumnIndex(feedsOrm.getCategoryTableCategoryKey())));
 		     c.moveToNext();
 		}
 		
-		ArrayAdapter<String> aAdpt = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1, items);
+		// note: actionBar.getThemedContext() ensures the correct colors based on the action bar theme
+		ArrayAdapter<String> aAdpt = new ArrayAdapter<String>(actionBar.getThemedContext(),
+				android.R.layout.simple_list_item_1, 
+				android.R.id.text1, 
+				items);
 		//actionBar.set
 		actionBar.setListNavigationCallbacks(aAdpt, this);
 	}
