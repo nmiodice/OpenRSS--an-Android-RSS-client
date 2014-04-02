@@ -1,5 +1,6 @@
 package com.iodice.database;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -99,12 +100,58 @@ public class feedsOrm extends ormBase {
 	    return cursor;
     }
     
-    public static Cursor selectAllOrderBy(Context context, String col) {
+    public static Cursor selectAllOrderBy(Context context, String orderBy) {
+		Cursor cursor = feedsOrm.selectAllWhereLinkIs(context, null, orderBy);
+	    return cursor;
+    }
+    
+    public static Cursor selectAllOrderByWhere(Context context, String orderBy, String category) {
 		DatabaseWrapper databaseWrapper = new DatabaseWrapper(context);
 	    SQLiteDatabase database = databaseWrapper.getReadableDatabase();
 
+	    // 1. use an inner join in order to get links that are part of a specific category
+	    String sql = "SELECT " + categoryFeedMap.COLUMN_URL + 
+	    				" FROM " + categoryFeedMap.TABLE_NAME + 
+	    					" INNER JOIN " + categories.TABLE_NAME +
+	    					" ON " + categories.COLUMN_ID + "=" + categoryFeedMap.COLUMN_CATEGORY +
+	    				" WHERE " + categories.COLUMN_CATEGORY + "=?";
+	    
+        Log.i(TAG, "Executing: " + sql);
+	    Cursor cursor = database.rawQuery(sql, new String[] {category});	
+	    Log.i(TAG, "Loaded " + cursor.getCount() + " links with the category " + category + "...");
+	    database.close();
+	    
+	    // 2. build a list of links and return a full table query on those links
+	    ArrayList<String> linkList = new ArrayList<String>();
+	    cursor.moveToFirst();
+		while(!cursor.isAfterLast()) {
+			linkList.add(cursor.getString(cursor.getColumnIndex(feedsOrm.COLUMN_URL)));
+			cursor.moveToNext();
+		}
+	    cursor = selectAllWhereLinkIs(context, linkList, orderBy);
+	    
+	    return cursor;
+    }
+    
+    // a select all query where a list of links can be used as a constraint
+    private static Cursor selectAllWhereLinkIs(Context context, List<String> links, String orderBy) {
+		DatabaseWrapper databaseWrapper = new DatabaseWrapper(context);
+	    SQLiteDatabase database = databaseWrapper.getReadableDatabase();
+	    String whereClause = "";
+	    
+	    // if there are where constraints, build up the were clause dynamically
+	    if (links != null && links.size() != 0) {
+		    int linkListSize = links.size();
+	    	whereClause = " WHERE " + feedsOrm.COLUMN_URL + " IN (";
+		    for (int i = 0; i < linkListSize; i++) {
+		    	whereClause += "'" + links.get(i) + "',";
+		    }
+		    whereClause = whereClause.substring(0, whereClause.length() - 1);
+		    whereClause += ")";
+	    }
+	    
 	    // the rowid selected as _id makes this query compatible with the SimpleCursorAdapter class
-	    String sql = "SELECT rowid _id,* FROM " + feedsOrm.TABLE_NAME + " ORDER BY LOWER(" + col + ")";
+	    String sql = "SELECT rowid _id,* FROM " + feedsOrm.TABLE_NAME + whereClause + " ORDER BY LOWER(" + orderBy + ")";
         Log.i(TAG, "Executing: " + sql);
 
 	    Cursor cursor = database.rawQuery(sql, null);	
@@ -155,7 +202,7 @@ public class feedsOrm extends ormBase {
     /* holds a category and ID */
     private static class categories extends ormBase {
     	private static final String TAG = "categories";
-    	private static final String TABLE_NAME = "feed_categories";
+    	public static final String TABLE_NAME = "feed_categories";
         private static final String COMMA_SEP = ", ";
         
         private static final String COLUMN_ID_TYPE = "INTEGER PRIMARY KEY";
@@ -234,7 +281,7 @@ public class feedsOrm extends ormBase {
      */
     private static class categoryFeedMap extends ormBase {
     	private static final String TAG = "categoryFeedMap";
-    	private static final String TABLE_NAME = "feed_and_categories";
+    	public static final String TABLE_NAME = "feed_and_categories";
         private static final String COMMA_SEP = ", ";
         
         private static final String COLUMN_URL_TYPE = "TEXT";

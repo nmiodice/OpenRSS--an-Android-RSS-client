@@ -29,6 +29,7 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 	private static final String TAG = "Activity_Home";
 	private static final String NAME_LIST_FRAG_TAG = "NAME_LIST";
 	private static final String CATEGORY_LIST_FRAG_TAG = "CATEGORY_LIST";
+	private List<String> spinnerListItems = null;
 	
 	// only run one time, during the applications first run. initiated from onCreate()
 	private void init() {
@@ -211,7 +212,38 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 				items);
 		//actionBar.set
 		actionBar.setListNavigationCallbacks(aAdpt, this);
+		this.spinnerListItems = items;
 	}
+	
+	@Override
+	// when a spinner item is selected, this method is called. returns true if the
+	// event was handled, false otherwise
+	public boolean onNavigationItemSelected(int position, long id) {
+		FragmentManager fMan = getFragmentManager();
+		Feed_List currentList = (Feed_List) fMan.findFragmentByTag(Activity_Home.NAME_LIST_FRAG_TAG);
+
+		if (this.spinnerListItems == null) {
+			Log.e(TAG, "spinner items are null! This should never happen");
+			return false;
+		} else if (position < 0 || position >= this.spinnerListItems.size()) {
+			Log.e(TAG, "item position in onNavigationItemSelected is out of range");
+			return false;
+		} else if (currentList == null) {
+			Log.e(TAG, "currently active list is null. This should never happen");
+			return false;
+		}
+		String category = this.spinnerListItems.get(position);
+		
+		// "all" is not a real category, so account for it
+		if (category == this.getText(R.string.all))
+			category = "*";
+		
+		Log.i(TAG, this.spinnerListItems.get(position) + "");
+		currentList.loadCategoryData(category);
+		
+		return true; 
+	}
+	
 	
 	private void displayListViewTEMP() {
 		// add fragment to apropriate layout item
@@ -221,16 +253,13 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 		// fragContainer is null until something is added to it
 		if (fMan.findFragmentByTag(Activity_Home.NAME_LIST_FRAG_TAG) == null) {
 			Log.i(TAG, "Adding fragment to feed_list_container");
+			
+			Feed_List list = new Feed_List();
 			fTrans = fMan.beginTransaction();
-			fTrans.add(R.id.feed_list_container, new Feed_List(), Activity_Home.NAME_LIST_FRAG_TAG);
+			fTrans.add(R.id.feed_list_container, list, Activity_Home.NAME_LIST_FRAG_TAG);
 			fTrans.commit();
 		}
 	}
 
-	@Override
-	// when a spinner item is selected, this method is called
-	public boolean onNavigationItemSelected(int position, long id) {
-		Log.i(TAG, "position " + position + " pressed, id = " + id);
-		return false;
-	}
+
 }
