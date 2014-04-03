@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.iodice.database.feedsOrm;
 import com.iodice.rssreader.R;
 import com.iodice.ui.feed.Activity_Rss;
+import com.iodice.utilities.callback;
 
 
 @SuppressLint("UseValueOf")
@@ -165,6 +166,9 @@ public class Feed_List extends List_Base {
         		feedsOrm.deleteFeedWithLink(link, v.getContext());
         	}
         }
+        // step 2. Call the callback function to refresh the currently selected group
+		callback callbackInterface = (callback) getActivity();
+		callbackInterface.respondToEvent(1, null);
     }
     
     
@@ -257,7 +261,7 @@ public class Feed_List extends List_Base {
 		            		return false;
 		            	deleteSelected();
 		                mode.finish();
-		            	redrawListView();
+		            	//redrawListView();
 		            	return true; 
 		            	
 		            default:

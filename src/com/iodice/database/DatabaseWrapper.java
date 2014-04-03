@@ -10,7 +10,7 @@ public class DatabaseWrapper extends SQLiteOpenHelper {
     private static final String TAG = "DatabaseWrapper";
 
     private static final String DATABASE_NAME = "RSSReader.db";
-    private static final int DATABASE_VERSION = 19;
+    private static final int DATABASE_VERSION = 20;
 
     public DatabaseWrapper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

@@ -17,10 +17,10 @@ public class feedsOrm extends ormBase {
 	private static final String TABLE_NAME = "feeds";
     private static final String COMMA_SEP = ", ";
     
-    private static final String COLUMN_NAME_TYPE = "TEXT PRIMARY KEY";
+    private static final String COLUMN_NAME_TYPE = "TEXT PRIMARY KEY NOT NULL";
     public static final String COLUMN_NAME = "name";
     
-    private static final String COLUMN_URL_TYPE = "TEXT";
+    private static final String COLUMN_URL_TYPE = "TEXT NOT NULL";
     public static final String COLUMN_URL = "url";
 
     /* 'group' not used because it is an sqLite reserved word */
@@ -77,10 +77,22 @@ public class feedsOrm extends ormBase {
     	}
     }
     
+    
     private static ContentValues rssToContentValues(Feed_Data feed) {
         ContentValues values = new ContentValues();
-        values.put(feedsOrm.COLUMN_URL, feed.getURL());
-        values.put(feedsOrm.COLUMN_NAME, feed.getName());
+        
+        // putNull in the case of "" values because these properties obey "NOT NULL"
+        // data types
+        if (feed.getURL().equals(""))
+        	values.putNull(feedsOrm.COLUMN_URL);
+        else
+        	values.put(feedsOrm.COLUMN_URL, feed.getURL());
+        
+        if (feed.getName() == null)
+        	values.putNull(feedsOrm.COLUMN_NAME);
+        else
+        	values.put(feedsOrm.COLUMN_NAME, feed.getName());
+        
         return values;
     }
     

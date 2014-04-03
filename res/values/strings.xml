@@ -44,6 +44,7 @@
     <string name="add_feed_title">Add a new feed</string>
     <string name="add_feed_message">Enter RSS feed details</string>
     <string name="groups">Groups</string>
+    <string name="add_feed_fail_message">Could not save RSS feed. Did you supply a name and link?</string>
     
     <!-- RSS -->
     <string name="title_activity_rss">RSS Feed</string>

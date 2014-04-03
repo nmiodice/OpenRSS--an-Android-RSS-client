@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.iodice.database.feedsOrm;
 import com.iodice.rssreader.R;
@@ -84,7 +85,16 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 				feedsOrm.insertFeed(rssFeeds.get(i), db);
 				cnt++;
 			} catch (Exception e) {
-				System.out.println("Error saving feed. SQLiteDatabase error: " + e.getMessage());
+				if (e.getMessage().contains("code 19")) {
+					Context context = getApplicationContext();
+					CharSequence text = getText(R.string.add_feed_fail_message);
+					int duration = Toast.LENGTH_SHORT;
+
+					Toast toast = Toast.makeText(context, text, duration);
+					toast.show();
+				} else {
+					Log.e(TAG, "Error saving feed. SQLiteDatabase error: " + e.getMessage());
+				}
 			}
 		}
 		db.close();
@@ -148,6 +158,8 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 	// adds data to the database and updates the relevant views. Callbacks are:
 	// 	0. The object passed back is a reference to a Feed_Data object that needs to be
 	//		saved into the DB. 
+	//
+	//	1. Repopulate list with currently selected category
 	public void respondToEvent(int n, Object obj) {
 		switch(n) {
 		case 0:
@@ -155,6 +167,10 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 			Feed_Data newFeed = (Feed_Data) obj;
 			feedList.add(newFeed);
 			saveFeeds(feedList);
+			repopulateActiveList();
+			return;
+		
+		case 1:
 			repopulateActiveList();
 			return;
 			
@@ -170,20 +186,25 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 	// viewed fragment (if there is one) will re-draw with new data
 	private void repopulateActiveList() {
 		FragmentManager fMan = getFragmentManager();
-		List_Base listFrag = null;
+		Feed_List listFrag = null;
 		
 		// Step 1. Identify if any fragments we care about are loaded in the fragment manager
 		if (fMan.findFragmentByTag(Activity_Home.NAME_LIST_FRAG_TAG) != null)
-			listFrag = (List_Base) fMan.findFragmentByTag(Activity_Home.NAME_LIST_FRAG_TAG);
-		else if (fMan.findFragmentByTag(Activity_Home.CATEGORY_LIST_FRAG_TAG) != null)
-			listFrag = (List_Base) fMan.findFragmentByTag(Activity_Home.CATEGORY_LIST_FRAG_TAG);
+			listFrag = (Feed_List) fMan.findFragmentByTag(Activity_Home.NAME_LIST_FRAG_TAG);
+
 		
 		if (listFrag == null)
 			return;
 		
 		// Step 2. Reset the fragments adapter and redraw it
-		listFrag.setUpAdapter();
-		listFrag.redrawListView();
+		final ActionBar actionBar = getActionBar();
+		int position = actionBar.getSelectedNavigationIndex();
+		String category = this.spinnerListItems.get(position);
+		// "all" is not a real category, so account for it
+		if (category == this.getText(R.string.all))
+			category = "*";
+		
+		listFrag.loadCategoryData(category);		
 	}
 
 	// displayed in top right of activity, lists categories by name. upon select, filter list to just those categories
