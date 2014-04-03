@@ -15,7 +15,12 @@
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="android:spinnerDropDownItemStyle">@style/home_category_spinner_style</item>
     </style>
+    
+    <style name="home_category_spinner_style" parent="@android:style/Widget.Holo.DropDownItem.Spinner">
+    	<item name="android:textAppearance">@android:color/primary_text_dark</item>
+	</style>
     
     <!-- Activity theme -->
     <style name="ActivityBase" parent = "AppTheme">

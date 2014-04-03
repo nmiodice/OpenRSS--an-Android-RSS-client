@@ -36,27 +36,6 @@ public class AddNewFeedView {
 
 	// http://developer.android.com/guide/topics/ui/controls/spinner.html
 	private static View setupCategoryContent(View v, Context context) {
-		/*
-		Spinner spinner = (Spinner) v.findViewById(R.id.add_feed_categories);
-		
-		// Create an ArrayAdapter using the string array and a default spinner layout
-		Cursor c = feedsOrm.selectAllCategories(context);
-
-		SimpleCursorAdapter adapter = new SimpleCursorAdapter(v.getContext(), 
-		      android.R.layout.simple_spinner_item,
-		      c,
-		      new String[] {feedsOrm.getCategoryTableCategoryKey()},
-		      new int[] {android.R.id.text1},
-		      0);
-		
-		// Specify the layout to use when the list of choices appears
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		
-		// Apply the adapter to the spinner
-		spinner.setAdapter(adapter);
-		
-		return v; 
-		*/
 		
 		MultiSpinner spinner = (MultiSpinner) v.findViewById(R.id.add_feed_categories);
 		
@@ -108,6 +87,8 @@ public class AddNewFeedView {
 				EditText txt;
 				MultiSpinner spinner;
 				
+				Sys.disableKeyboard(context);
+				
 				txt = (EditText) v.findViewById(R.id.add_feed_name);
 				newFeed.setName(txt.getText().toString());
 				
@@ -128,7 +109,6 @@ public class AddNewFeedView {
 				
 				// this needs to be defined by the context class via the callback interface!
 				callbackInterface.respondToEvent(0,  newFeed);
-				Sys.disableKeyboard(context);
 			}
 		});
 

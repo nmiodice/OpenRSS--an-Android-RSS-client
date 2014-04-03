@@ -3,8 +3,6 @@ package com.iodice.ui.home;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.iodice.rssreader.R;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
@@ -22,7 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.iodice.database.feedsOrm;
+import com.iodice.rssreader.R;
 import com.iodice.ui.feed.Activity_Rss;
+import com.iodice.utilities.callback;
 
 
 @SuppressLint("UseValueOf")
@@ -166,6 +166,9 @@ public class Feed_List extends List_Base {
         		feedsOrm.deleteFeedWithLink(link, v.getContext());
         	}
         }
+        // step 2. Call the callback function to refresh the currently selected group
+		callback callbackInterface = (callback) getActivity();
+		callbackInterface.respondToEvent(1, null);
     }
     
     
@@ -189,6 +192,18 @@ public class Feed_List extends List_Base {
 		// create the adapter using the cursor pointing to the desired data 
 		// as well as the layout information
 		setAdapter(cursor, columns, to, R.layout.feed_list_view);
+    }
+    
+    // refresh current data with a new selection based on category
+    public void loadCategoryData(String category) {
+    	if (category == null)
+    		return;
+    	Cursor c;
+    	if (category == "*")
+    		c = feedsOrm.selectAllOrderBy(getActivity().getApplicationContext(), feedsOrm.COLUMN_NAME);
+    	else
+    		c = feedsOrm.selectAllOrderByWhere(getActivity().getApplicationContext(), feedsOrm.COLUMN_NAME, category);
+    	this.replaceCurrentData(c);
     }
 
     @Override
@@ -246,7 +261,7 @@ public class Feed_List extends List_Base {
 		            		return false;
 		            	deleteSelected();
 		                mode.finish();
-		            	redrawListView();
+		            	//redrawListView();
 		            	return true; 
 		            	
 		            default:

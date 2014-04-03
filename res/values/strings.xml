@@ -33,6 +33,7 @@
     <string name="action_deselect_all">Deselect all</string>
     <string name="action_remove_selected">Remove selected</string>
     <string name="action_save_group">Save as group</string>
+    <string name="all">All</string>
     
     
     
@@ -43,6 +44,7 @@
     <string name="add_feed_title">Add a new feed</string>
     <string name="add_feed_message">Enter RSS feed details</string>
     <string name="groups">Groups</string>
+    <string name="add_feed_fail_message">Could not save RSS feed. Did you supply a name and link?</string>
     
     <!-- RSS -->
     <string name="title_activity_rss">RSS Feed</string>

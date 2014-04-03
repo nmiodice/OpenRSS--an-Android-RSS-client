@@ -66,22 +66,55 @@ abstract class List_Base extends ListFragment {
 	// redraw a list, presumably because the underlying data set has changed and views need to be
 	// updtated
 	public void redrawListView() {
-		setUpAdapter();
+		// the call to replaceCurrentData is made with the *current set of data* so that the
+		// net result is that the list is redrawn. 
+		MySimpleCursorAdapter adapt = (MySimpleCursorAdapter)this.getListAdapter();
+		Cursor c = adapt.getCursor();
+		replaceCurrentData(c);
+	}
+	
+	public void replaceCurrentData(Cursor c) {
+		MySimpleCursorAdapter adapt = (MySimpleCursorAdapter)this.getListAdapter();
+		int layout = adapt.getLayout();
+		String[] columns = adapt.getColumns();
+		int[] layoutMapping = adapt.getLayoutMapping();
 		
-		// the below code fails to update views if data has been deleted, and therefore its use should be avoided!
-		// Is it that a SimpleCursorAdapter is mainly used for static data???
-		
-		// MySimpleCursorAdapter adapter = (MySimpleCursorAdapter) this.getListAdapter();
-		// adapter.notifyDataSetChanged();
+		this.setAdapter(c, columns, layoutMapping, layout);
+		adapt = (MySimpleCursorAdapter) this.getListAdapter();
+		adapt.notifyDataSetChanged();	
 	}
 
 	// a SimpleCursorAdapter that allows for customization whenever a row layout needs to be re-drawn. 
 	// Customization done through the onListElementRedraw() abstract method
 	private class MySimpleCursorAdapter extends SimpleCursorAdapter {
+		
+		int layout;
+		String[] columns;
+		int[] layoutMapping;
+		Cursor cursor;
 
 		public MySimpleCursorAdapter(Context context, int layout, Cursor c,
 				String[] from, int[] to) {
 			super(context, layout, c, from, to, 0);
+			this.layout = layout;
+			this.columns = from;
+			this.layoutMapping = to;
+			this.cursor = c;
+		}
+		
+		public int getLayout() {
+			return this.layout;
+		}
+		
+		public String[] getColumns() {
+			return this.columns;
+		}
+		
+		public int[] getLayoutMapping() {
+			return this.layoutMapping;
+		}
+		public Cursor getCursor() {
+			return this.cursor;
 		}
 		
 		@Override

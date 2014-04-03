@@ -617,16 +617,19 @@ public class Activity_Rss extends Activity implements ScrollViewListener {
 				XmlReader xmlRdr = new XmlReader(urlObj);
 				input = new SyndFeedInput();
 				SyndFeed syndFeed = input.build(xmlRdr);
-				
+				Log.i(TAG, "1");
 				// step 3. convert results into appropriate list form. pass false to indicate
 				// that the feeds are not cached results
 				results = syndFeedToFragmentList(syndFeed, false);
-				System.out.println("Successfully read data from " + url);
+				Log.i(TAG, "2");
+				Log.i(TAG,"Successfully read data from " + url);
 				
 			} catch (Exception e) {
+				//Log.e(TAG,e.getMessage());
+				e.printStackTrace();
+				Log.e(TAG,"Failed to acquire web data for " + this.url + "... Trying to retrieve from cache");
 				
 				if (queryCacheInFailCase) {
-					System.out.println("Failed to acquire web data for " + this.url + "... Trying to retrieve from cache");
 					results = queryCache(url);
 				} else
 					// in a total failure case, we can just return an empty list

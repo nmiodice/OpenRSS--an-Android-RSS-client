@@ -117,7 +117,7 @@ public final class R {
     public static final class string {
         /**  Add new feed 
          */
-        public static final int action_add=0x7f080018;
+        public static final int action_add=0x7f080019;
         public static final int action_deselect_all=0x7f080015;
         public static final int action_load_selected=0x7f080013;
         public static final int action_reload=0x7f080004;
@@ -125,33 +125,35 @@ public final class R {
         public static final int action_save_group=0x7f080017;
         public static final int action_select_all=0x7f080014;
         public static final int action_settings=0x7f080001;
-        public static final int add_feed_message=0x7f08001c;
-        public static final int add_feed_name=0x7f08001a;
-        public static final int add_feed_title=0x7f08001b;
-        public static final int add_feed_url=0x7f080019;
+        public static final int add_feed_fail_message=0x7f08001f;
+        public static final int add_feed_message=0x7f08001d;
+        public static final int add_feed_name=0x7f08001b;
+        public static final int add_feed_title=0x7f08001c;
+        public static final int add_feed_url=0x7f08001a;
+        public static final int all=0x7f080018;
         public static final int app_name=0x7f080000;
         public static final int author=0x7f08000a;
-        public static final int button_getrss=0x7f080021;
+        public static final int button_getrss=0x7f080023;
         /**  Connectivity 
          */
         public static final int connection_failed=0x7f080010;
         public static final int description=0x7f08000b;
         public static final int empty_string=0x7f080003;
-        public static final int groups=0x7f08001d;
+        public static final int groups=0x7f08001e;
         public static final int hello_world=0x7f080002;
         public static final int last_data_pull=0x7f080009;
-        public static final int loading_content=0x7f080022;
-        public static final int no_results=0x7f080023;
+        public static final int loading_content=0x7f080024;
+        public static final int no_results=0x7f080025;
         public static final int no_selections=0x7f080012;
         public static final int null_string=0x7f080005;
-        public static final int partial_results=0x7f080024;
+        public static final int partial_results=0x7f080026;
         /**  Shared preference identifiers 
          */
         public static final int prefs_first_run=0x7f080006;
         public static final int publishedDate=0x7f08000d;
-        public static final int rss_author_by=0x7f080025;
-        public static final int rss_button_fetch=0x7f080020;
-        public static final int rss_feed_header=0x7f08001f;
+        public static final int rss_author_by=0x7f080027;
+        public static final int rss_button_fetch=0x7f080022;
+        public static final int rss_feed_header=0x7f080021;
         public static final int rss_update_async_task=0x7f08000f;
         /**  Home 
          */
@@ -162,14 +164,14 @@ public final class R {
         public static final int title=0x7f08000c;
         /**  RSS 
          */
-        public static final int title_activity_rss=0x7f08001e;
+        public static final int title_activity_rss=0x7f080020;
         public static final int url=0x7f08000e;
         public static final int url_list=0x7f080008;
     }
     public static final class style {
         /**  Activity theme 
          */
-        public static final int ActivityBase=0x7f090002;
+        public static final int ActivityBase=0x7f090003;
         /** 
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
@@ -193,26 +195,26 @@ public final class R {
          */
         public static final int AppBaseTheme=0x7f090000;
         /**  Application theme. 
- All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f090001;
         /**  Header text 
          */
-        public static final int Header=0x7f090006;
+        public static final int Header=0x7f090007;
         /**  Sub-header text 
          */
-        public static final int Subheader=0x7f090007;
-        public static final int Subheader_small=0x7f090008;
+        public static final int Subheader=0x7f090008;
+        public static final int Subheader_small=0x7f090009;
         /**  Temporary messages, such as 'Loading new content' 
          */
-        public static final int Temporary_message=0x7f090009;
+        public static final int Temporary_message=0x7f09000a;
         /**  Empty text 
          */
-        public static final int Text=0x7f090004;
-        public static final int UserInput=0x7f090005;
+        public static final int Text=0x7f090005;
+        public static final int UserInput=0x7f090006;
+        public static final int home_category_spinner_style=0x7f090002;
         /**  Tile 
  takes into account visual play introduced by drop shadow 
          */
-        public static final int rssTile=0x7f090003;
+        public static final int rssTile=0x7f090004;
     }
 }
