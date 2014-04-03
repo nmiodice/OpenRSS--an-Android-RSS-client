@@ -81,6 +81,7 @@ public class AddNewFeedView {
 		// upon OK, setup the new feed item and send the data to the defined callback. Also, 
 		// shut off the keyboard!
 		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+			@Override
 			public void onClick(DialogInterface dialog, int whichButton) {
 				
 				Feed_Data newFeed = new Feed_Data();
@@ -113,6 +114,7 @@ public class AddNewFeedView {
 		});
 
 		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			@Override
 			public void onClick(DialogInterface dialog, int whichButton) {
 				Sys.disableKeyboard(context);
 			}

@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.iodice.database.feedsOrm;
+import com.iodice.database.ormBase;
 import com.iodice.rssreader.R;
 import com.iodice.utilities.callback;
 
@@ -28,8 +29,7 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
  {
 	
 	private static final String TAG = "Activity_Home";
-	private static final String NAME_LIST_FRAG_TAG = "NAME_LIST";
-	private static final String CATEGORY_LIST_FRAG_TAG = "CATEGORY_LIST";
+	private static final String FEED_LIST = "FEED_LIST";
 	private List<String> spinnerListItems = null;
 	
 	// only run one time, during the applications first run. initiated from onCreate()
@@ -78,7 +78,7 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 	
 	private void saveFeeds(List<Feed_Data> rssFeeds) {
 		int length = rssFeeds.size();
-		SQLiteDatabase db = feedsOrm.getWritableDatabase(getApplicationContext());
+		SQLiteDatabase db = ormBase.getWritableDatabase(getApplicationContext());
 		int cnt = 0;
 		for (int i = 0; i < length; i++) {
 			try {
@@ -189,8 +189,8 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 		Feed_List listFrag = null;
 		
 		// Step 1. Identify if any fragments we care about are loaded in the fragment manager
-		if (fMan.findFragmentByTag(Activity_Home.NAME_LIST_FRAG_TAG) != null)
-			listFrag = (Feed_List) fMan.findFragmentByTag(Activity_Home.NAME_LIST_FRAG_TAG);
+		if (fMan.findFragmentByTag(Activity_Home.FEED_LIST) != null)
+			listFrag = (Feed_List) fMan.findFragmentByTag(Activity_Home.FEED_LIST);
 
 		
 		if (listFrag == null)
@@ -241,7 +241,7 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 	// event was handled, false otherwise
 	public boolean onNavigationItemSelected(int position, long id) {
 		FragmentManager fMan = getFragmentManager();
-		Feed_List currentList = (Feed_List) fMan.findFragmentByTag(Activity_Home.NAME_LIST_FRAG_TAG);
+		Feed_List currentList = (Feed_List) fMan.findFragmentByTag(Activity_Home.FEED_LIST);
 
 		if (this.spinnerListItems == null) {
 			Log.e(TAG, "spinner items are null! This should never happen");
@@ -272,12 +272,12 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 		FragmentManager fMan = getFragmentManager();
 				
 		// fragContainer is null until something is added to it
-		if (fMan.findFragmentByTag(Activity_Home.NAME_LIST_FRAG_TAG) == null) {
+		if (fMan.findFragmentByTag(Activity_Home.FEED_LIST) == null) {
 			Log.i(TAG, "Adding fragment to feed_list_container");
 			
 			Feed_List list = new Feed_List();
 			fTrans = fMan.beginTransaction();
-			fTrans.add(R.id.feed_list_container, list, Activity_Home.NAME_LIST_FRAG_TAG);
+			fTrans.add(R.id.feed_list_container, list, Activity_Home.FEED_LIST);
 			fTrans.commit();
 		}
 	}

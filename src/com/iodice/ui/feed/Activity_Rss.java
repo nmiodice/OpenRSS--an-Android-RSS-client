@@ -43,6 +43,7 @@ import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.Syn
 import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndFeed;
 import com.google.code.rome.android.repackaged.com.sun.syndication.io.SyndFeedInput;
 import com.google.code.rome.android.repackaged.com.sun.syndication.io.XmlReader;
+import com.iodice.database.ormBase;
 import com.iodice.database.rssOrm;
 import com.iodice.rssreader.R;
 import com.iodice.utilities.ObservableScrollView;
@@ -719,7 +720,7 @@ public class Activity_Rss extends Activity implements ScrollViewListener {
 			int numEntries = this.fragments.size();
 			
 			// refresh DB with cache
-			SQLiteDatabase db = rssOrm.getWritableDatabase(this.context);
+			SQLiteDatabase db = ormBase.getWritableDatabase(this.context);
 			for (int i = 0; i < numEntries; i++) {
 				frag = fragments.get(i);
 				assert (frag != null);

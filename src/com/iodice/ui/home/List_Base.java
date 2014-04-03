@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -26,7 +27,8 @@ abstract class List_Base extends ListFragment {
     abstract public MultiChoiceModeListener getChoiceListener();
     abstract public View onListElementRedraw(int position, View convertView, ViewGroup parent);
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    @Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
     	// want to retain instance variables when the fragment needs to be redrawn
     	this.setRetainInstance(true);
@@ -34,6 +36,7 @@ abstract class List_Base extends ListFragment {
     }
     
     
+	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		Log.i(TAG, "Item " + position + "clicked");
 		onSingleItemClick(v);
@@ -47,7 +50,7 @@ abstract class List_Base extends ListFragment {
 		this.setUpAdapter();
 		
 		ListView listView = getListView();
-		listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+		listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
 		listView.setMultiChoiceModeListener(getChoiceListener());
 	}
 	
@@ -113,6 +116,7 @@ abstract class List_Base extends ListFragment {
 		public int[] getLayoutMapping() {
 			return this.layoutMapping;
 		}
+		@Override
 		public Cursor getCursor() {
 			return this.cursor;
 		}
