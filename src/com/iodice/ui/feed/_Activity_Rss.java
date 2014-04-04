@@ -19,18 +19,24 @@ import android.app.FragmentTransaction;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndEntry;
@@ -40,43 +46,57 @@ import com.google.code.rome.android.repackaged.com.sun.syndication.io.XmlReader;
 import com.iodice.database.ormBase;
 import com.iodice.database.rssOrm;
 import com.iodice.rssreader.R;
-import com.iodice.ui.home.Activity_Home;
-import com.iodice.ui.home.Feed_List;
+import com.iodice.utilities.ObservableScrollView;
+import com.iodice.utilities.ScrollViewListener;
 import com.iodice.utilities.Sys;
 import com.iodice.utilities.Text;
 
 
 
-public class Activity_Rss extends Activity {
+public class _Activity_Rss extends Activity implements ScrollViewListener {
 	
 	private static final String TAG = "Activity_Rss";
-	private static final String LIST = "LIST";
 	private List<String> latestFeedUrlList;
+	private List<Fragment_Rss> lastDataPull;
+	private final int RSS_FRAGMENT_ADD_INTERVAL = 20;
+	private long nextScrollViewUpdate = System.currentTimeMillis();
 	private rssUpdateTask rssUpdate;	
 	
 	@Override
+	@SuppressWarnings("unchecked")
 	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    	ViewGroup loadingMessage;
+    	
+		// show the Up button in the action bar.
+    	super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_rss);
-		displayListView();
+		
+		loadingMessage = (ViewGroup) findViewById(R.id.rss_loading_content);
+		loadingMessage.setVisibility(View.GONE);
+		
+		// sets up scroll listener for list of fragments
+		ObservableScrollView fragScrollView = (ObservableScrollView) findViewById(R.id.rss_fragment_scrollview);
+		fragScrollView.setScrollViewListener(this);
+		
+		// get list of feed URLs
+		Intent intent = getIntent();
+		List<String> newFeedUrlList = intent.getStringArrayListExtra(getResources().getString(R.string.rss_url_intent));
+		
+		// check for savedInstanceState == null avoids reloading on something like a screen rotation
+		if (savedInstanceState == null && newFeedUrlList != null && newFeedUrlList.size() > 0) {
+			latestFeedUrlList = newFeedUrlList;
+			rssUpdate = new rssUpdateTask();
+			rssUpdate.execute(newFeedUrlList);
+		}
+			
 	}
 	
-	private void displayListView() {
-		// add fragment to apropriate layout item
-		FragmentTransaction fTrans;
-		FragmentManager fMan = getFragmentManager();
-				
-		// fragContainer is null until something is added to it
-		if (fMan.findFragmentByTag(Activity_Rss.LIST) == null) {
-			Log.i(TAG, "Adding fragment to feed_list_container");
-			
-			Fragment_List list = new Fragment_List();
-			fTrans = fMan.beginTransaction();
-			fTrans.add(R.id.rss_fragment_container, list, Activity_Rss.LIST);
-			fTrans.commit();
-		}
-	}
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.activity_rss_menu, menu);
+        return true;
+    }
 	
 	// updates RSS feed & rescrolls to the top of the ScrollView containing it
 	public void updateRSS() {
@@ -110,6 +130,19 @@ public class Activity_Rss extends Activity {
 	}
 
 	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+
+	    // Handle item selection
+	    switch (item.getItemId()) {
+	        case R.id.reload_rss_content:
+	            this.updateRSS();
+	            return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	}
+	
 	public void openLinkInBrowser(View v) {
 		Intent browserIntent;
 		String feedURL = (String) v.getTag();
@@ -129,8 +162,96 @@ public class Activity_Rss extends Activity {
 			}
 		}
 	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		final ObservableScrollView sv;
+		final String key_scroll = getResources().getText(R.string.scroll_position).toString();
+		final String key_urls = getResources().getText(R.string.url_list).toString();
+		final String key_lastData = getResources().getText(R.string.last_data_pull).toString();
+		final String key_rss_update_async_task = getResources().getText(R.string.rss_update_async_task).toString();
+
+	    Log.w(TAG, "Saving activity state");
+
+		
+		super.onSaveInstanceState(outState);
+
+		// save scrollview position -- useful during orientation switch
+		sv = (ObservableScrollView) findViewById(R.id.rss_fragment_scrollview);
+		assert(sv != null);
+		outState.putIntArray(key_scroll,
+				new int[]{ sv.getScrollX(), sv.getScrollY()});
+		
+		// save current list of URLs: this is used to refresh content and also load in cached results on a screen
+		// rotate or whenever an action dies
+		outState.putStringArrayList(key_urls, (ArrayList<String>) this.latestFeedUrlList);
+		outState.putParcelableArrayList(key_lastData, (ArrayList<? extends Parcelable>) this.lastDataPull);
+		
+		// if a background asynctask was cancelled, we need to know that. save it here. This avoids problems
+		// when an async task was launched, canceled, and then the activity needs to be re-crated (for example,
+		// when the orientation changes
+		outState.putBoolean(key_rss_update_async_task, rssUpdate.isCancelled());
+	}
+	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		final ObservableScrollView sv;
+		final int[] position;
+		final String key_scroll = getResources().getText(R.string.scroll_position).toString();
+		final String key_urls = getResources().getText(R.string.url_list).toString();
+		final String key_lastData = getResources().getText(R.string.last_data_pull).toString();
+		final String key_rss_update_async_task = getResources().getText(R.string.rss_update_async_task).toString();
+
+		Log.i(TAG, "Restoring activity state");
+		
+	    super.onRestoreInstanceState(savedInstanceState);
+	    position = savedInstanceState.getIntArray(key_scroll);
+	    
+	    sv = (ObservableScrollView) findViewById(R.id.rss_fragment_scrollview);
+    	assert(sv != null);
+    
+	    // if we saved a value, load it (prevents improper loading on first load)
+	    if(position != null) {
+	    	sv.post(new Runnable() {
+	            @Override
+				public void run() {
+	                sv.scrollTo(position[0], position[1]);
+	            }
+	        });
+	    }
+	    
+	    // updates url list and then refreshes cache
+	    this.latestFeedUrlList = savedInstanceState.getStringArrayList(key_urls);
+	    this.lastDataPull = savedInstanceState.getParcelableArrayList(key_lastData);
+	    
+		// if a background asynctask was cancelled, we need to know that. This avoids problems
+		// when an async task was launched, canceled, and then the activity needs to be re-crated (for example,
+		// when the orientation changes
+	    if (this.rssUpdate == null)
+	    	this.rssUpdate = new rssUpdateTask();
+	    if (savedInstanceState.getBoolean(key_rss_update_async_task))
+	    	this.rssUpdate.cancel(false);
+	}
 	
 
+	// loads more data if the end of the scrollview is approaching
+	@Override
+	public void onScrollChanged(ObservableScrollView scrollView, int x, int y,
+			int oldx, int oldy) {
+		View view = scrollView.getChildAt(scrollView.getChildCount() - 1);
+		
+	    int diff = (view.getBottom() - (scrollView.getHeight() + scrollView.getScrollY()));
+	    
+	    if (diff < 3000) {
+	    	try {
+	    		// use try catch to avoid "frgment added more than one time" incase multiple refreshes
+	    		// are done in a row. 
+	    		addFragmentsToScrollList(lastDataPull, RSS_FRAGMENT_ADD_INTERVAL);
+	    	} catch (Exception e) {
+	    	    Log.w(TAG, "onScrolLChange likely called too quickly in succession. Error adding fragment");
+	    	}
+	    }
+					
+	}
 	
 	@Override
 	protected void onPause() {
@@ -141,8 +262,6 @@ public class Activity_Rss extends Activity {
 		/*if (this.rssUpdate.getStatus() == AsyncTask.Status.PENDING || 
 				this.rssUpdate.getStatus() == AsyncTask.Status.RUNNING) {
 		*/
-		if (this.rssUpdate == null)
-			return;
 		Log.i(TAG, "async task status = " + this.rssUpdate.getStatus());
 		if (this.rssUpdate.getStatus() == AsyncTask.Status.RUNNING) {
 			this.rssUpdate.cancel(false);
@@ -157,7 +276,6 @@ public class Activity_Rss extends Activity {
 		if (this.rssUpdate == null) {
 			// this should not happen, and will result in a segmentation fault
 			Log.e(TAG, "onResume called but rssUpdate is null");
-			return;
 		}
 		if (this.rssUpdate.isCancelled()) {
 			// if there was an update when the activity was stopped, the onPostExecute method of the task never ran
@@ -179,7 +297,38 @@ public class Activity_Rss extends Activity {
 		}
 	}
 	
+	private void addFragmentsToScrollList(List<Fragment_Rss> resultList, int count) {
+		FragmentTransaction fTrans;
+		FragmentManager fMan;
+		LinearLayout fragLayout = (LinearLayout) findViewById(R.id.rss_fragment_container);
+		int numChildren = fragLayout.getChildCount();
+		Fragment_Rss frag;
+		
+		if (resultList == null)
+			return;
+		
+		if (System.currentTimeMillis() < this.nextScrollViewUpdate)
+			return;
+		long start = System.currentTimeMillis();
+		this.nextScrollViewUpdate = start + 1*750; // 1 second(s) = 1 * 1000 ms/sec
+		
+		Log.i(TAG, "Loading more RSS content");
+		// begin fragment transaction to add fragment items to the UI
+		fMan = getFragmentManager();
+		fTrans = fMan.beginTransaction();
+		
+		// loop through the resultset and add each fragment to the UI		
+		for (int i = numChildren; i < count + numChildren; i++) {
+			if (i >= resultList.size()) {
+				break;
+			}
+			
+			frag = resultList.get(i);
+			fTrans.add(R.id.rss_fragment_container, frag);
+		}
 
+		fTrans.commit();
+	}
 	
 	// helper method to lock screen orientation. Should call unlockScreenOrientation
 	// shortly after making this to avoid a UI lock in one orientation.
@@ -350,7 +499,53 @@ public class Activity_Rss extends Activity {
 		// update UI with new content and shut off the loading view
 		@Override
 		protected void onPostExecute(List<Fragment_Rss> resultList) {
+			int listSize = resultList.size();
+			final ScrollView sv;
+			final LinearLayout fLayout;
+			final View loadingMessage;
+			FragmentManager fMan;
+			
+			Log.i(TAG, "onPostExecute() running");
 
+			
+			// if the activity is no longer visible, back out now to avoid a crash
+			if(rssUpdate.isCancelled()) {
+				Log.w(TAG, "This task was cancelled. Backing out early in onPostExecute method");
+				return;
+			}
+			lastDataPull = resultList;
+		
+			loadingMessage = findViewById(R.id.rss_loading_content);
+			assert(loadingMessage != null);
+			loadingMessage.setVisibility(View.GONE);
+			
+			fLayout = (LinearLayout) findViewById(R.id.rss_fragment_container);
+			sv = (ScrollView) findViewById(R.id.rss_fragment_scrollview);
+			assert(sv != null);
+			assert(fLayout != null);
+
+			// pop from the back stack if there is already content loaded. This prevents reloading
+			// the same rss feed twice from duplicating their associated fragments on the screen.
+			fMan = getFragmentManager();
+			
+			if (fMan.getBackStackEntryCount() > 0)
+				fMan.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+				
+			if (listSize == 0) {
+				Toast.makeText(getApplicationContext(), getResources().getText(R.string.no_results).toString(),  Toast.LENGTH_LONG).show();
+				return;
+			}
+			
+			// erase whatever in the fragment's parent layout
+			fLayout.removeAllViews();
+			addFragmentsToScrollList(resultList, RSS_FRAGMENT_ADD_INTERVAL);
+			// reset scroll
+			sv.scrollTo(0, 0);
+			
+			// now that the fragments are added, start bringing the ScrollView into view
+			sv.setVisibility(View.VISIBLE);
+			Animation anim_3 = AnimationUtils.loadAnimation(getApplicationContext(), R.animator.fade_in);
+			sv.startAnimation(anim_3);
 			
 			// finally, unlock the orientation
 			unlockScreenOrientation();

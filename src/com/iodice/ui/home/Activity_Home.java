@@ -113,7 +113,7 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 		if (isFirstRun)
 			init();
 		setupCategorySpinner();
-		displayListViewTEMP();
+		displayListView();
 	}
 		
     @Override
@@ -271,7 +271,7 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 	}
 	
 	
-	private void displayListViewTEMP() {
+	private void displayListView() {
 		// add fragment to apropriate layout item
 		FragmentTransaction fTrans;
 		FragmentManager fMan = getFragmentManager();
