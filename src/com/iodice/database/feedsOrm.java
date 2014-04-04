@@ -3,6 +3,7 @@ package com.iodice.database;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -12,6 +13,7 @@ import android.util.Log;
 
 import com.iodice.ui.home.Feed_Data;
 
+@SuppressLint("DefaultLocale")
 public class feedsOrm extends ormBase {
 	private static final String TAG = "feedsOrm";
 	private static final String TABLE_NAME = "feeds";

@@ -236,7 +236,7 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 				android.R.layout.simple_list_item_1, 
 				android.R.id.text1, 
 				items);
-		//actionBar.set
+
 		actionBar.setListNavigationCallbacks(aAdpt, this);
 		this.spinnerListItems = items;
 	}

@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.iodice.database.feedsOrm;
 import com.iodice.rssreader.R;
+import com.iodice.ui.List_Base;
 import com.iodice.ui.feed.Activity_Rss;
 import com.iodice.utilities.callback;
 

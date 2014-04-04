@@ -1,4 +1,4 @@
-package com.iodice.ui.home;
+package com.iodice.ui;
 
 import java.util.ArrayList;
 
@@ -15,11 +15,11 @@ import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
-abstract class List_Base extends ListFragment {
+public abstract class List_Base extends ListFragment {
 	private final String TAG = "List_Base";
 
 	protected ArrayList<Integer> selectedListItems = new ArrayList<Integer>();
-	boolean isInActionMode = false;
+	protected boolean isInActionMode = false;
 	
     abstract public void onSingleItemClick(View view);
     abstract public void onMultipleItemClick();
