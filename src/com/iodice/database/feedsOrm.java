@@ -133,6 +133,9 @@ public class feedsOrm extends ormBase {
 	    Log.i(TAG, "Loaded " + cursor.getCount() + " links with the category " + category + "...");
 	    database.close();
 	    
+	    if (cursor.getCount() == 0)
+	    	return null;
+	    
 	    // 2. build a list of links and return a full table query on those links
 	    ArrayList<String> linkList = new ArrayList<String>();
 	    cursor.moveToFirst();
@@ -325,8 +328,7 @@ public class feedsOrm extends ormBase {
 	        Log.i(categoryFeedMap.TAG, "Inserted category ID/feed URL pair (id " + id + "): " + categoryID + ", " + url);
 	    }
 	    
-	    
-	    // TODO: finish
+	   
 	    // 1. select the categoryIDs associated with the specified link
 	    // 2. delete all cateogry/link pairs with the specified link
 	    // 3. for each categoryID from (1), if there are no more categoryID/link pairs with that categoryID, delete

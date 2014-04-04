@@ -203,6 +203,17 @@ public class Feed_List extends List_Base {
     		c = feedsOrm.selectAllOrderBy(getActivity().getApplicationContext(), feedsOrm.COLUMN_NAME);
     	else
     		c = feedsOrm.selectAllOrderByWhere(getActivity().getApplicationContext(), feedsOrm.COLUMN_NAME, category);
+    	
+    	/* c == null when there are no feeds with that category. Alert the UI to redraw its category selector 
+    	 * and redraw what it wants upon an empty set 
+    	 */
+    	if (c == null) {
+    		callback callbackInterface = (callback) getActivity();
+    		callbackInterface.respondToEvent(2, null);
+    		return;
+    	}
+    		
+    		
     	this.replaceCurrentData(c);
     }
 

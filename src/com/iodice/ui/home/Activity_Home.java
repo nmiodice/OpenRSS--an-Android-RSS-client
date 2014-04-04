@@ -160,6 +160,7 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 	//		saved into the DB. 
 	//
 	//	1. Repopulate list with currently selected category
+	//	2. Repopulate the category selector and redraw the list with 'all' showing
 	public void respondToEvent(int n, Object obj) {
 		switch(n) {
 		case 0:
@@ -172,6 +173,10 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 		
 		case 1:
 			repopulateActiveList();
+			return;
+			
+		case 2:
+			setupCategorySpinner();
 			return;
 			
 		default:
