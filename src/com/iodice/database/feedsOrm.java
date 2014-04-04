@@ -325,12 +325,50 @@ public class feedsOrm extends ormBase {
 	        Log.i(categoryFeedMap.TAG, "Inserted category ID/feed URL pair (id " + id + "): " + categoryID + ", " + url);
 	    }
 	    
+	    
+	    // TODO: finish
+	    // 1. select the categoryIDs associated with the specified link
+	    // 2. delete all cateogry/link pairs with the specified link
+	    // 3. for each categoryID from (1), if there are no more categoryID/link pairs with that categoryID, delete
+	    //		the category with that ID.
 	    public static void deletePairsAssociatedWithUrl(String url, SQLiteDatabase database) {
+	    	
+	    	// 1. select the categoryIDs associated with the specified link
+		    String sql = "SELECT " + categoryFeedMap.COLUMN_CATEGORY + 
+		    				" FROM " + categoryFeedMap.TABLE_NAME +
+		    				" WHERE " + categoryFeedMap.COLUMN_URL + "=?";
+		    Log.i(TAG, "Executing: " + sql);
+		    Cursor cursor = database.rawQuery(sql, new String[] {url});
+		    
+		    // build up list of categoryIDs
+		    cursor.moveToFirst();
+		    ArrayList<Integer> catIDList = new ArrayList<Integer>();
+			while(!cursor.isAfterLast()) {
+				catIDList.add(cursor.getInt(cursor.getColumnIndex(categoryFeedMap.COLUMN_CATEGORY)));
+				cursor.moveToNext();
+			}
+		    
+		    // 2. delete all cateogry/link pairs with the specified link
 	    	int numDeleted = database.delete(categoryFeedMap.TABLE_NAME, 
 	    			categoryFeedMap.COLUMN_URL + " =?", 
 	    			new String[] {url});
-	    	
 	    	Log.i(categoryFeedMap.TAG, "Deleted " + numDeleted + " category/url pair(s)");
+	    	
+	    	// 3. check to see if we need to delete any category definitions
+	    	int numCats = catIDList.size();
+	    	for (int i = 0; i < numCats; i++) {
+	    		cursor.close();
+		    	sql = "SELECT * FROM " + categoryFeedMap.TABLE_NAME + 
+		    			" WHERE " + categoryFeedMap.COLUMN_CATEGORY + "=?";
+	    		cursor = database.rawQuery(sql, new String[] {catIDList.get(i).toString()});
+	    		// only delete the category if no more feeds are classified under that category
+	    		if (cursor.getCount() != 0)
+	    			continue;
+	    		database.delete(categories.TABLE_NAME, 
+	    							categories.COLUMN_ID + "=?", 
+	    							new String[] {catIDList.get(i).toString()});
+		    	Log.i(categoryFeedMap.TAG, "No more feeds under category with ID " + catIDList.get(i) + ". Category deleted");
+	    	}
 	    }
     }
 
