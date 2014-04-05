@@ -13,14 +13,16 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-import com.iodice.database.feedsOrm;
-import com.iodice.database.ormBase;
+import com.iodice.database.FeedOrm;
+import com.iodice.database.OrmBase;
+import com.iodice.network.FeedUpdateService;
 import com.iodice.rssreader.R;
 import com.iodice.utilities.callback;
 
@@ -47,7 +49,7 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 	
 	private void initDefaultFeeds() {
 		Log.i(TAG, "Initializing default RSS feeds in database");
-		List<Feed_Data> rssFeeds = new ArrayList<Feed_Data>();
+		List<FeedData> rssFeeds = new ArrayList<FeedData>();
 		
 		ArrayList<String> tech = new ArrayList<String>();
 		ArrayList<String> news = new ArrayList<String>();
@@ -60,29 +62,29 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 		reddit.add("Technology");
 		sports.add("Sports");
 		
-		rssFeeds.add(new Feed_Data("Apple", tech, "ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=10/xml"));
-		rssFeeds.add(new Feed_Data("Wired", tech, "http://feeds.wired.com/wired/index"));
-		rssFeeds.add(new Feed_Data("BBC world", news, "http://feeds.bbci.co.uk/news/world/rss.xml"));
-		rssFeeds.add(new Feed_Data("CNN", news, "http://rss.cnn.com/rss/cnn_topstories.rss"));
-		rssFeeds.add(new Feed_Data("New York Times", news, "http://feeds.nytimes.com/nyt/rss/HomePage"));
-		rssFeeds.add(new Feed_Data("USA Today", news, "http://rssfeeds.usatoday.com/usatoday-NewsTopStories"));
-		rssFeeds.add(new Feed_Data("NPR", news, "http://www.npr.org/rss/rss.php?id=1001"));
-		rssFeeds.add(new Feed_Data("Reuters", news, "http://feeds.reuters.com/reuters/topNews"));
-		rssFeeds.add(new Feed_Data("BBC America", news, "http://newsrss.bbc.co.uk/rss/newsonline_world_edition/americas/rss.xml"));
-		rssFeeds.add(new Feed_Data("/r/androiddev", reddit, "http://www.reddit.com/r/androiddev/.rss"));
-		rssFeeds.add(new Feed_Data("Yahoo Skiing", sports, "http://sports.yahoo.com/ski/rss.xml"));
-		rssFeeds.add(new Feed_Data("Y.Combinator", tech, "https://news.ycombinator.com/rss"));
+		rssFeeds.add(new FeedData("Apple", tech, "ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=10/xml"));
+		rssFeeds.add(new FeedData("Wired", tech, "http://feeds.wired.com/wired/index"));
+		rssFeeds.add(new FeedData("BBC world", news, "http://feeds.bbci.co.uk/news/world/rss.xml"));
+		rssFeeds.add(new FeedData("CNN", news, "http://rss.cnn.com/rss/cnn_topstories.rss"));
+		rssFeeds.add(new FeedData("New York Times", news, "http://feeds.nytimes.com/nyt/rss/HomePage"));
+		rssFeeds.add(new FeedData("USA Today", news, "http://rssfeeds.usatoday.com/usatoday-NewsTopStories"));
+		rssFeeds.add(new FeedData("NPR", news, "http://www.npr.org/rss/rss.php?id=1001"));
+		rssFeeds.add(new FeedData("Reuters", news, "http://feeds.reuters.com/reuters/topNews"));
+		rssFeeds.add(new FeedData("BBC America", news, "http://newsrss.bbc.co.uk/rss/newsonline_world_edition/americas/rss.xml"));
+		rssFeeds.add(new FeedData("/r/androiddev", reddit, "http://www.reddit.com/r/androiddev/.rss"));
+		rssFeeds.add(new FeedData("Yahoo Skiing", sports, "http://sports.yahoo.com/ski/rss.xml"));
+		rssFeeds.add(new FeedData("Y.Combinator", tech, "https://news.ycombinator.com/rss"));
 
 		saveFeeds(rssFeeds);
 	}
 	
-	private void saveFeeds(List<Feed_Data> rssFeeds) {
+	private void saveFeeds(List<FeedData> rssFeeds) {
 		int length = rssFeeds.size();
-		SQLiteDatabase db = ormBase.getWritableDatabase(getApplicationContext());
+		SQLiteDatabase db = OrmBase.getWritableDatabase(getApplicationContext());
 		int cnt = 0;
 		for (int i = 0; i < length; i++) {
 			try {
-				feedsOrm.insertFeed(rssFeeds.get(i), db);
+				FeedOrm.insertFeed(rssFeeds.get(i), db);
 				cnt++;
 			} catch (Exception e) {
 				if (e.getMessage().contains("code 19")) {
@@ -99,6 +101,13 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 		}
 		db.close();
 		Log.i(TAG, "Initialized " + cnt + " feeds in database");
+		
+        // reset shared preference that tells the system whether or not all saved feeds have an active cache
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		SharedPreferences.Editor editor = prefs.edit();
+		editor.putBoolean(getString(R.string.prefs_article_table_not_yet_updated), false);
+		editor.commit();
+		Log.i(TAG, "Reset 'article table cache' shared preference");
 	}
 	
 	@Override
@@ -114,7 +123,11 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 			init();
 		setupCategorySpinner();
 		displayListView();
+		
+		// finally, start article update service
+		FeedUpdateService.startUpdatingAllFeeds(getApplicationContext());
 	}
+	
 		
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -164,8 +177,8 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 	public void respondToEvent(int n, Object obj) {
 		switch(n) {
 		case 0:
-			ArrayList<Feed_Data> feedList = new ArrayList<Feed_Data>();
-			Feed_Data newFeed = (Feed_Data) obj;
+			ArrayList<FeedData> feedList = new ArrayList<FeedData>();
+			FeedData newFeed = (FeedData) obj;
 			feedList.add(newFeed);
 			saveFeeds(feedList);
 			repopulateActiveList();
@@ -191,11 +204,11 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 	// viewed fragment (if there is one) will re-draw with new data
 	private void repopulateActiveList() {
 		FragmentManager fMan = getFragmentManager();
-		Feed_List listFrag = null;
+		FeedList listFrag = null;
 		
 		// Step 1. Identify if any fragments we care about are loaded in the fragment manager
 		if (fMan.findFragmentByTag(Activity_Home.FEED_LIST) != null)
-			listFrag = (Feed_List) fMan.findFragmentByTag(Activity_Home.FEED_LIST);
+			listFrag = (FeedList) fMan.findFragmentByTag(Activity_Home.FEED_LIST);
 
 		
 		if (listFrag == null)
@@ -220,14 +233,14 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
 		// populate list data
-		Cursor c = feedsOrm.selectAllCategories(getApplicationContext());
+		Cursor c = FeedOrm.selectAllCategories(getApplicationContext());
 		ArrayList<String> items = new ArrayList<String>();
 		items.add(this.getString(R.string.all));
 		
 		
 		c.moveToFirst();
 		while(!c.isAfterLast()) {
-		     items.add(c.getString(c.getColumnIndex(feedsOrm.getCategoryTableCategoryKey())));
+		     items.add(c.getString(c.getColumnIndex(FeedOrm.getCategoryTableCategoryKey())));
 		     c.moveToNext();
 		}
 		
@@ -246,7 +259,7 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 	// event was handled, false otherwise
 	public boolean onNavigationItemSelected(int position, long id) {
 		FragmentManager fMan = getFragmentManager();
-		Feed_List currentList = (Feed_List) fMan.findFragmentByTag(Activity_Home.FEED_LIST);
+		FeedList currentList = (FeedList) fMan.findFragmentByTag(Activity_Home.FEED_LIST);
 
 		if (this.spinnerListItems == null) {
 			Log.e(TAG, "spinner items are null! This should never happen");
@@ -263,10 +276,7 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 		// "all" is not a real category, so account for it
 		if (category == this.getText(R.string.all))
 			category = "*";
-		
-		Log.i(TAG, this.spinnerListItems.get(position) + "");
-		currentList.loadCategoryData(category);
-		
+		currentList.loadCategoryData(category);		
 		return true; 
 	}
 	
@@ -280,7 +290,7 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 		if (fMan.findFragmentByTag(Activity_Home.FEED_LIST) == null) {
 			Log.i(TAG, "Adding fragment to feed_list_container");
 			
-			Feed_List list = new Feed_List();
+			FeedList list = new FeedList();
 			fTrans = fMan.beginTransaction();
 			fTrans.add(R.id.feed_list_container, list, Activity_Home.FEED_LIST);
 			fTrans.commit();

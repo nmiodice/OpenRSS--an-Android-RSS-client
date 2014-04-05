@@ -10,6 +10,7 @@
     
     <!-- Shared preference identifiers -->
     <string name="prefs_first_run">IS_FIRST_RUN</string>
+    <string name="prefs_article_table_not_yet_updated">IS_ARTICLE_TABLE_POPULATED</string>
     
     <!-- ID strings & generic identifiers -->
     <string name="scroll_position">SCROLL_POSITION</string>

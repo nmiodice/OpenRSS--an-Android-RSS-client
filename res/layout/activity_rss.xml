@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".Activity_Rss"
+    tools:context=".ArticleActivity"
     style="@style/ActivityBase"
     >
     
@@ -12,6 +12,7 @@
 	    android:layout_marginTop="100dp"
         android:id="@+id/rss_loading_content"
 		android:orientation="vertical"
+		android:visibility="gone"
         >
         <TextView 
 	        android:id="@+id/rss_loading_content_text"
@@ -20,20 +21,11 @@
 	        />
 	</LinearLayout>
 
-	<com.iodice.utilities.ObservableScrollView
-	    android:id="@+id/rss_fragment_scrollview"
+	<LinearLayout
+	    android:id="@+id/rss_fragment_container"
 	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_below="@id/rss_loading_content"
-	    >
-	    
-		<LinearLayout
-		    android:id="@+id/rss_fragment_container"
-		    android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:orientation="vertical" 
-			/>
-		
-	</com.iodice.utilities.ObservableScrollView>
+		android:layout_height="match_parent"
+		android:orientation="vertical" 
+		/>
 
 </RelativeLayout>

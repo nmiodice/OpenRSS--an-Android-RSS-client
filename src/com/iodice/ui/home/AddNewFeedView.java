@@ -11,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
-import com.iodice.database.feedsOrm;
+import com.iodice.database.FeedOrm;
 import com.iodice.rssreader.R;
 import com.iodice.utilities.MultiSpinner;
 import com.iodice.utilities.Sys;
@@ -39,11 +39,11 @@ public class AddNewFeedView {
 		
 		MultiSpinner spinner = (MultiSpinner) v.findViewById(R.id.add_feed_categories);
 		
-		Cursor c = feedsOrm.selectAllCategories(context);
+		Cursor c = FeedOrm.selectAllCategories(context);
 		ArrayList<String> items = new ArrayList<String>();
 		c.moveToFirst();
 		while(!c.isAfterLast()) {
-		     items.add(c.getString(c.getColumnIndex(feedsOrm.getCategoryTableCategoryKey())));
+		     items.add(c.getString(c.getColumnIndex(FeedOrm.getCategoryTableCategoryKey())));
 		     c.moveToNext();
 		}
 		
@@ -84,7 +84,7 @@ public class AddNewFeedView {
 			@Override
 			public void onClick(DialogInterface dialog, int whichButton) {
 				
-				Feed_Data newFeed = new Feed_Data();
+				FeedData newFeed = new FeedData();
 				EditText txt;
 				MultiSpinner spinner;
 				

@@ -33,7 +33,7 @@
         
                 
         <activity
-            android:name="com.iodice.ui.feed.Activity_Rss"
+            android:name="com.iodice.ui.feed.ArticleActivity"
             android:label="@string/app_name"
             android:parentActivityName="com.iodice.ui.home.Activity_Home" >
             
@@ -42,6 +42,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.iodice.ui.Activity_Main" />
         </activity>
+        
+        <service 
+            android:enabled="true"
+            android:name="com.iodice.network.FeedUpdateService"
+            android:exported="false" />
+        
         
     </application>
 
