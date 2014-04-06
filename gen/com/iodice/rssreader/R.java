@@ -66,27 +66,27 @@ public final class R {
         public static final int action_save_group=0x7f0b001a;
         public static final int action_select_all=0x7f0b0018;
         public static final int action_settings=0x7f0b0016;
-        public static final int add_feed_categories=0x7f0b0006;
-        public static final int add_feed_name=0x7f0b0004;
-        public static final int add_feed_url=0x7f0b0005;
-        public static final int feed_list_container=0x7f0b0000;
-        public static final int feed_list_text_content=0x7f0b0009;
-        public static final int feed_list_view_root=0x7f0b0007;
-        public static final int feed_name=0x7f0b000a;
-        public static final int feed_url=0x7f0b000b;
-        public static final int item_checkbox=0x7f0b0008;
+        public static final int add_feed_categories=0x7f0b0002;
+        public static final int add_feed_name=0x7f0b0000;
+        public static final int add_feed_url=0x7f0b0001;
+        public static final int feed_list_container=0x7f0b000e;
+        public static final int feed_list_text_content=0x7f0b0010;
+        public static final int feed_list_view_root=0x7f0b000f;
+        public static final int feed_name=0x7f0b0011;
+        public static final int feed_url=0x7f0b0012;
+        public static final int item_checkbox=0x7f0b0007;
         public static final int list_view=0x7f0b0013;
         public static final int reload_rss_content=0x7f0b0014;
-        public static final int rss_author=0x7f0b0011;
-        public static final int rss_base_url=0x7f0b000e;
-        public static final int rss_description=0x7f0b0010;
-        public static final int rss_fragment_container=0x7f0b0003;
-        public static final int rss_loading_content=0x7f0b0001;
-        public static final int rss_loading_content_text=0x7f0b0002;
-        public static final int rss_published_date=0x7f0b000f;
-        public static final int rss_root=0x7f0b000c;
-        public static final int rss_title=0x7f0b000d;
-        public static final int rss_url=0x7f0b0012;
+        public static final int rss_author=0x7f0b000c;
+        public static final int rss_base_url=0x7f0b0009;
+        public static final int rss_description=0x7f0b000b;
+        public static final int rss_fragment_container=0x7f0b0005;
+        public static final int rss_loading_content=0x7f0b0003;
+        public static final int rss_loading_content_text=0x7f0b0004;
+        public static final int rss_published_date=0x7f0b000a;
+        public static final int rss_root=0x7f0b0006;
+        public static final int rss_title=0x7f0b0008;
+        public static final int rss_url=0x7f0b000d;
     }
     public static final class integer {
         public static final int animate_duration_base=0x7f070001;
@@ -101,11 +101,11 @@ public final class R {
         public static final int http_timeout=0x7f070006;
     }
     public static final class layout {
-        public static final int activity_main=0x7f030000;
-        public static final int activity_rss=0x7f030001;
-        public static final int add_feed=0x7f030002;
-        public static final int feed_list_view=0x7f030003;
-        public static final int fragment_rss=0x7f030004;
+        public static final int add_new_feed=0x7f030000;
+        public static final int article_activity=0x7f030001;
+        public static final int article_list_row=0x7f030002;
+        public static final int feed_activity=0x7f030003;
+        public static final int feed_list_row=0x7f030004;
         public static final int list_view=0x7f030005;
     }
     public static final class menu {
@@ -142,6 +142,7 @@ public final class R {
         public static final int hello_world=0x7f080002;
         public static final int last_data_pull=0x7f08000a;
         public static final int loading_content=0x7f080025;
+        public static final int no_browser=0x7f080029;
         public static final int no_results=0x7f080026;
         public static final int no_selections=0x7f080013;
         public static final int null_string=0x7f080005;

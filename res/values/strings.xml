@@ -56,5 +56,6 @@
     <string name="no_results">No articles found. Connection may have failed&#8230;</string>
     <string name="partial_results">Some feeds failed to load&#8230;</string>
     <string name="rss_author_by">Article by</string>
+    <string name="no_browser">No application can handle this request&#8230; Please install a webbrowser</string>
 
 </resources>

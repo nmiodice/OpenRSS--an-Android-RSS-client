@@ -113,7 +113,7 @@ public class Activity_Home extends Activity implements callback, ActionBar.OnNav
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.feed_activity);
 		
 		// check to see if first startup logic is needed
 		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);

@@ -5,17 +5,13 @@ import java.util.List;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Surface;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.iodice.rssreader.R;
 
@@ -30,7 +26,7 @@ public class ArticleActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_rss);
+		setContentView(R.layout.article_activity);
 		
 		// get list of feed URLs
 		Intent intent = getIntent();
@@ -56,7 +52,7 @@ public class ArticleActivity extends Activity {
 		}
 	}
 
-
+/*
 	public void openLinkInBrowser(View v) {
 		Intent browserIntent;
 		String feedURL = (String) v.getTag();
@@ -75,7 +71,7 @@ public class ArticleActivity extends Activity {
 				e.printStackTrace();
 			}
 		}
-
+*/
 	// helper method to lock screen orientation. Should call unlockScreenOrientation
 	// shortly after making this to avoid a UI lock in one orientation.
 	public void lockScreenOrientation() {

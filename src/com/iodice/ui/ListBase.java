@@ -7,13 +7,20 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.MultiChoiceModeListener;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+
+import com.iodice.rssreader.R;
 
 public abstract class ListBase extends ListFragment {
 	private final String TAG = "List_Base";
@@ -24,8 +31,8 @@ public abstract class ListBase extends ListFragment {
     abstract public void onSingleItemClick(View view);
     abstract public void onMultipleItemClick();
     abstract public void setUpAdapter();
-    abstract public MultiChoiceModeListener getChoiceListener();
-    abstract public View onListElementRedraw(int position, View convertView, ViewGroup parent);
+    abstract public boolean respondToContextualActionBarMenuItemClick(ActionMode mode, MenuItem item);
+    abstract public int getContextualMenuViewId();
 
     @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,6 +46,10 @@ public abstract class ListBase extends ListFragment {
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		Log.i(TAG, "Item " + position + "clicked");
+		if (this.isInActionMode) {
+			Log.e(TAG, "onListItemClick called in action mode! This shouldnt happen!!");
+			return;
+		}
 		onSingleItemClick(v);
 	}
  
@@ -66,6 +77,64 @@ public abstract class ListBase extends ListFragment {
 				    to));
 	}
 	
+	/* if all are selected, deselect all */
+    public void selectAll() {
+        ListView v = getListView();
+        int vCnt = v.getCount();
+        
+        if (this.selectedListItems.size() == vCnt) {
+        	deselectAll();
+        	return;
+        }
+        // clear first in order to avoid repeating items in the list
+        this.selectedListItems.clear();
+        for (int i = 0; i < vCnt; i++)
+        	this.selectedListItems.add(i);
+        redrawListView();
+    }
+
+    public void deselectAll() {
+        selectedListItems.clear();
+        redrawListView();
+    }
+    
+    public void selectCheckBox(int position) {
+    	ListView v = getListView();
+        CheckBox bx; 
+
+		// select list item. Need to account for the the position reported being the actual list position, and
+        // getChildAt(position) returning the position relative to the list items visible on the screen. 
+    	bx = (CheckBox) v.getChildAt(position - v.getFirstVisiblePosition()).findViewById(R.id.item_checkbox);
+        
+        if (selectedListItems.contains(position) == false) {
+        	selectedListItems.add(position);
+            bx.setChecked(true);
+        } else {
+        	selectedListItems.remove(new Integer(position));
+        	bx.setChecked(false);
+        }
+    }
+
+    // this logic is applied to each list row whenever the list needs to be re-drawn. It tracks whether or not
+    // a row should have its checkboxes visible and/or checked
+    public View onListElementRedraw(int position, View v, ViewGroup parent) {
+    	CheckBox bx = (CheckBox) v.findViewById(R.id.item_checkbox);
+
+    	Log.i(TAG, "redrawing element " + position);
+
+		if (isInActionMode) {
+	    	bx.setVisibility(View.VISIBLE);
+	    	if (selectedListItems.contains(position)) {
+	    		bx.setChecked(true);
+	    	} else {
+	    		// The view may have been converted. If so, the checkbox needs to be
+	    		// manually unchecked
+	    		bx.setChecked(false);
+	    	}
+	    }
+		return v;
+    }
+	
 	// redraw a list, presumably because the underlying data set has changed and views need to be
 	// updtated
 	public void redrawListView() {
@@ -86,6 +155,87 @@ public abstract class ListBase extends ListFragment {
 		adapt = (MySimpleCursorAdapter) this.getListAdapter();
 		adapt.notifyDataSetChanged();	
 	}
+	
+	// sets up contextual action bar actions
+	private MultiChoiceModeListener getChoiceListener() {
+		return new MultiChoiceModeListener() {
+			
+		    @Override
+	        // Inflate the menu for the CAB
+		    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+		    	
+		    	Log.i(TAG, "Creating contextual action bar");
+		        int contextualMenuView = getContextualMenuViewId();
+
+		    	MenuInflater inflater = mode.getMenuInflater();
+		    	inflater.inflate(contextualMenuView, menu);
+
+		    	ListView v = getListView();
+		        int vCnt = v.getCount();
+		        View child;
+		        CheckBox bx;
+		        
+		        isInActionMode = true;
+		        
+		        for (int i = 0; i < vCnt; i++) {
+		        	child = v.getChildAt(i);
+		        	if (child == null)
+		        		continue;
+		        	bx = (CheckBox) child.findViewById(R.id.item_checkbox);
+		        	Log.i(TAG, "tst");
+		        	bx.setVisibility(View.VISIBLE);
+		        	bx.setChecked(false);
+		        }
+		        
+		        return true;
+		    }
+		
+		    @Override
+	        // Respond to clicks on the actions in the CAB
+		    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+		    	return respondToContextualActionBarMenuItemClick(mode, item);
+		    }
+			
+			@Override
+	        // Here you can do something when items are selected/de-selected,
+	        // such as update the title in the CAB
+		    public void onItemCheckedStateChanged(ActionMode mode, int position,
+		                                          long id, boolean checked) {
+				selectCheckBox(position);
+			}
+		    @Override
+	        // Here you can make any necessary updates to the activity when
+	        // the CAB is removed. By default, selected items are deselected/unchecked.
+		    public void onDestroyActionMode(ActionMode mode) {
+		        ListView v = getListView();
+		        int vCnt = v.getChildCount();
+		        CheckBox bx; 
+
+		        // also deselect the checkboxes because they dont correspond to the CAB's notion
+		        // of what is selected
+		        for (int i = 0; i < vCnt; i++) {
+		        	bx = (CheckBox) v.getChildAt(i).findViewById(R.id.item_checkbox);
+		        	bx.setChecked(false);
+		        	bx.setVisibility(View.GONE);
+		        }
+		        
+		        // clear out selected items
+		        selectedListItems.clear();
+		        isInActionMode = false;
+		    }
+		    @Override
+	        // Here you can perform updates to the CAB due to
+	        // an invalidate() request
+		    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+		    	return false;
+		    }
+		
+		};
+	}
+	
+	
+	
+	
 
 	// a SimpleCursorAdapter that allows for customization whenever a row layout needs to be re-drawn. 
 	// Customization done through the onListElementRedraw() abstract method

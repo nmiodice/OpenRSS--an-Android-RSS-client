@@ -54,7 +54,7 @@ public class AddNewFeedView {
 	
 	private static View getCustomContentView(Context context) {
 		LayoutInflater inflater = LayoutInflater.from(context);
-		View v = inflater.inflate(R.layout.add_feed, null);
+		View v = inflater.inflate(R.layout.add_new_feed, null);
 		v = setupCategoryContent(v, context);
 		return v;
 	}
