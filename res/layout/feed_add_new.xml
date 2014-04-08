@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    
+    <EditText
+        android:id="@+id/add_feed_name"
+        style="@style/UserInput"
+        android:hint="@string/add_feed_name"
+        android:layout_margin="8dp" 
+        />
+    
+    <EditText
+        android:id="@+id/add_feed_url"
+        style="@style/UserInput"
+        android:hint="@string/add_feed_url"
+        android:layout_margin="8dp"
+        />
+
+	<EditText
+        android:id="@+id/add_feed_new_category"
+        style="@style/UserInput"
+        android:hint="@string/add_feed_new_category"
+        android:layout_margin="8dp"
+        />
+
+    <com.iodice.utilities.MultiSpinner
+	    android:id="@+id/add_feed_categories"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content" 
+	    />
+	    
+
+
+    
+</LinearLayout>

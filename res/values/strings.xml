@@ -22,17 +22,17 @@
     <string name="publishedDate">publishedDate</string>
     <string name="url">url</string>
     <string name="rss_update_async_task">RSS_UPDATE_IS_CANCELED</string>
+    <string name="no_selections">Nothing selected</string>
     
     <!-- Connectivity -->
     <string name="connection_failed">Connection failed&#8230;</string>
     
     <!-- Home -->
     <string name="rss_url_intent">URL_INTENT</string>
-    <string name="no_selections">No feeds selected</string>
-    <string name="action_load_selected">Load selected feeds</string>
+    <string name="action_load_selected">Load</string>
     <string name="action_select_all">Select all</string>
     <string name="action_deselect_all">Deselect all</string>
-    <string name="action_remove_selected">Remove selected</string>
+    <string name="action_remove_selected">Remove</string>
     <string name="action_save_group">Save as group</string>
     <string name="all">All</string>
     
@@ -43,9 +43,10 @@
     <string name="add_feed_url">Link</string>
     <string name="add_feed_name">Name</string>
     <string name="add_feed_title">Add a new feed</string>
-    <string name="add_feed_message">Enter RSS feed details</string>
-    <string name="groups">Groups</string>
+    <string name="add_feed_message">Enter feed details</string>
+    <string name="groups">More groups</string>
     <string name="add_feed_fail_message">Could not save RSS feed. Did you supply a name and link?</string>
+    <string name="add_feed_new_category">New group</string>
     
     <!-- RSS -->
     <string name="title_activity_rss">RSS Feed</string>
@@ -57,5 +58,8 @@
     <string name="partial_results">Some feeds failed to load&#8230;</string>
     <string name="rss_author_by">Article by</string>
     <string name="no_browser">No application can handle this request&#8230; Please install a webbrowser</string>
-
+    <string name="action_share_selected">Share</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="article_share_subject">Articles sent from my mobile RSS reader</string>
+    
 </resources>

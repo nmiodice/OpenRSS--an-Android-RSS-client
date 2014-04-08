@@ -11,7 +11,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
-import com.iodice.ui.home.FeedData;
 
 @SuppressLint("DefaultLocale")
 public class FeedOrm extends OrmBase {
@@ -280,7 +279,9 @@ public class FeedOrm extends OrmBase {
 	    public static Cursor selectAll(Context context) {
 	    	DatabaseWrapper databaseWrapper = new DatabaseWrapper(context);
 		    SQLiteDatabase database = databaseWrapper.getReadableDatabase();
-		    String sql = "SELECT rowid _id," + categories.COLUMN_CATEGORY + " FROM " + categories.TABLE_NAME;  
+		    String sql = "SELECT rowid _id," + categories.COLUMN_CATEGORY + 
+		    				" FROM " + categories.TABLE_NAME +
+		    				" ORDER BY " + categories.COLUMN_CATEGORY;  
 	        
 		    Log.i(TAG, "Executing: " + sql);
 

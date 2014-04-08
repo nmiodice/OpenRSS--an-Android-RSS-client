@@ -2,6 +2,8 @@ package com.iodice.database;
 
 import java.util.List;
 
+import com.iodice.utilities.Text;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -31,7 +33,7 @@ public class ArticleOrm extends OrmBase {
     private static final String COLUMN_TITLE_TYPE = "TEXT";
     public static final String COLUMN_TITLE = "title";
     
-    private static final String COLUMN_PUBLISHED_DATE_TYPE = "TEXT";
+    private static final String COLUMN_PUBLISHED_DATE_TYPE = "DATETIME";
     public static final String COLUMN_PUBLISHED_DATE = "publishedDate";
     
     private static final String COLUMN_IS_CACHED_TYPE = "BOOLEAN";
@@ -68,7 +70,7 @@ public class ArticleOrm extends OrmBase {
         values.put(ArticleOrm.COLUMN_AUTHOR, article.getAuthor());
         values.put(ArticleOrm.COLUMN_DESCRIPTION, article.getDescription());
         values.put(ArticleOrm.COLUMN_TITLE, article.getTitle());
-        values.put(ArticleOrm.COLUMN_PUBLISHED_DATE, article.getPublishedDate());
+        values.put(ArticleOrm.COLUMN_PUBLISHED_DATE, Text.datetimeToSQLDateString(article.getPublishedDate()));
         values.put(ArticleOrm.COLUMN_IS_CACHED, article.getIsCached());        
         return values;
     }
@@ -89,6 +91,9 @@ public class ArticleOrm extends OrmBase {
 	    	else
 	    		sql += ")";
 	    }
+	    // always order by date
+	    sql += " ORDER BY DATETIME(" + ArticleOrm.COLUMN_PUBLISHED_DATE + ") DESC";
+	    
 	    Log.i(TAG,  "Executing SQL: " + sql);
 	    Cursor cursor = database.rawQuery(sql, null);
 	    return cursor;

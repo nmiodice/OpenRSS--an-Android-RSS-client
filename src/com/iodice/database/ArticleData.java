@@ -4,6 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -16,13 +17,20 @@ public class ArticleData {
 	private String author = new String();
 	private String description = new String();
 	private String title = new String();
-	private String publishedDate = new String();
-	private Date publishedDateObject = new Date();
+	private Date publishedDate = null;
 	private String url = new String();
 	private String ParentUrl = new String();
 	@SuppressWarnings("unused")
 	private String baseURL = new String();
 	private boolean isCached = false;
+	
+	public ArticleData() {
+		Calendar cal = Calendar.getInstance();
+	    cal.setTime(new Date()); // sets calendar time/date
+	    
+	    cal.add(Calendar.HOUR_OF_DAY, -1); 
+	    this.publishedDate = cal.getTime();
+	}
 	
     public void setAuthor(String s) {
     	assert(s != null);
@@ -51,22 +59,17 @@ public class ArticleData {
     
     public void setPublishedDate(String s) {
     	assert(s != null);
-    	this.publishedDate = s;
     	try {
-			publishedDateObject = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH).parse(s);
+			publishedDate = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH).parse(s);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			Log.e(TAG, e.getMessage());
 			e.printStackTrace();
 		}
     }
-    public String getPublishedDate() {
+    public Date getPublishedDate() {
     	return this.publishedDate;
     }
     
-    public Date getPublishedDateObject() {
-    	return this.publishedDateObject;
-    }
     public void setURL(String s) {
     	assert(s != null);
     	this.url = s;

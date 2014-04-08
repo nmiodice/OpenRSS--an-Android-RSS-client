@@ -1,5 +1,24 @@
 package com.iodice.ui;
 
+/**
+ * This class provides a simple abstraction of a listview that include support for a 
+ * contextual actionbar with multiselection. Most of the legwork is done in this class
+ * leaving only critical and customizable functions to override. This allows for visual
+ * flexibility with consistent backend behavior.
+ * 
+ * Important notes:
+ * 	1. When providing a row layout, it is important to know that the ListView class
+ * 		requests the parent view's child layout. Therefore, any important style must
+ * 		not be applied to the top level view, rather it needs to be applied to 
+ * 		a child layout
+ * 
+ * 	2. The current implementation relies on a checkbox included in the layout. See the
+ * 		code for details on the name. This may be changed in favor of onSelect() and
+ * 		onDeselect() functions that allow the user to control this, possibly with a 
+ * 		different selection behavior
+ */
+
+
 import java.util.ArrayList;
 
 import android.app.ListFragment;
@@ -29,10 +48,10 @@ public abstract class ListBase extends ListFragment {
 	protected boolean isInActionMode = false;
 	
     abstract public void onSingleItemClick(View view);
-    abstract public void onMultipleItemClick();
+    abstract public void cabOnMultipleItemClick();
     abstract public void setUpAdapter();
-    abstract public boolean respondToContextualActionBarMenuItemClick(ActionMode mode, MenuItem item);
-    abstract public int getContextualMenuViewId();
+    abstract public boolean cabRespondToMenuItemClick(ActionMode mode, MenuItem item);
+    abstract public int cabGetMenuLayoutId();
 
     @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -110,7 +129,7 @@ public abstract class ListBase extends ListFragment {
         	selectedListItems.add(position);
             bx.setChecked(true);
         } else {
-        	selectedListItems.remove(new Integer(position));
+        	selectedListItems.remove(Integer.valueOf(position));
         	bx.setChecked(false);
         }
     }
@@ -131,6 +150,9 @@ public abstract class ListBase extends ListFragment {
 	    		// manually unchecked
 	    		bx.setChecked(false);
 	    	}
+	    } else {
+	    	bx.setChecked(false);
+	    	bx.setVisibility(View.GONE);
 	    }
 		return v;
     }
@@ -165,7 +187,7 @@ public abstract class ListBase extends ListFragment {
 		    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
 		    	
 		    	Log.i(TAG, "Creating contextual action bar");
-		        int contextualMenuView = getContextualMenuViewId();
+		        int contextualMenuView = cabGetMenuLayoutId();
 
 		    	MenuInflater inflater = mode.getMenuInflater();
 		    	inflater.inflate(contextualMenuView, menu);
@@ -193,7 +215,7 @@ public abstract class ListBase extends ListFragment {
 		    @Override
 	        // Respond to clicks on the actions in the CAB
 		    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-		    	return respondToContextualActionBarMenuItemClick(mode, item);
+		    	return cabRespondToMenuItemClick(mode, item);
 		    }
 			
 			@Override
