@@ -10,7 +10,7 @@ public class DatabaseWrapper extends SQLiteOpenHelper {
     private static final String TAG = "DatabaseWrapper";
 
     private static final String DATABASE_NAME = "RSSReader.db";
-    private static final int DATABASE_VERSION = 20;
+    private static final int DATABASE_VERSION = 21;
 
     public DatabaseWrapper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -22,14 +22,14 @@ public class DatabaseWrapper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         Log.i(TAG, "Creating database [" + DATABASE_NAME + " v." + DATABASE_VERSION + "]...");
-        sqLiteDatabase.execSQL(rssOrm.SQL_CREATE_TABLE);
-        sqLiteDatabase.execSQL(rssOrm.SQL_CREATE_PARENT_URL_INDEX);
+        sqLiteDatabase.execSQL(ArticleOrm.SQL_CREATE_TABLE);
+        sqLiteDatabase.execSQL(ArticleOrm.SQL_CREATE_PARENT_URL_INDEX);
         
-        sqLiteDatabase.execSQL(feedsOrm.SQL_CREATE_TABLE);
-        sqLiteDatabase.execSQL(feedsOrm.SQL_CREATE_GROUP_INDEX); 
+        sqLiteDatabase.execSQL(FeedOrm.SQL_CREATE_TABLE);
+        sqLiteDatabase.execSQL(FeedOrm.SQL_CREATE_GROUP_INDEX); 
         
-        sqLiteDatabase.execSQL(feedsOrm.getCategoryTableCreateStatement());
-        sqLiteDatabase.execSQL(feedsOrm.getCategoryFeedMapTableCreateStatement());
+        sqLiteDatabase.execSQL(FeedOrm.getCategoryTableCreateStatement());
+        sqLiteDatabase.execSQL(FeedOrm.getCategoryFeedMapTableCreateStatement());
         
     }
 
@@ -39,10 +39,10 @@ public class DatabaseWrapper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
         Log.i(TAG, "Upgrading database ["+DATABASE_NAME+" v." + oldVersion+"] to ["+DATABASE_NAME+" v." + newVersion+"]...");
-        sqLiteDatabase.execSQL(rssOrm.SQL_DROP_TABLE);
-        sqLiteDatabase.execSQL(feedsOrm.SQL_DROP_TABLE);
-        sqLiteDatabase.execSQL(feedsOrm.getCategoryTableDropStatement());
-        sqLiteDatabase.execSQL(feedsOrm.getCategoryFeedMapTableDropStatement());
+        sqLiteDatabase.execSQL(ArticleOrm.SQL_DROP_TABLE);
+        sqLiteDatabase.execSQL(FeedOrm.SQL_DROP_TABLE);
+        sqLiteDatabase.execSQL(FeedOrm.getCategoryTableDropStatement());
+        sqLiteDatabase.execSQL(FeedOrm.getCategoryFeedMapTableDropStatement());
         
         onCreate(sqLiteDatabase);
     }

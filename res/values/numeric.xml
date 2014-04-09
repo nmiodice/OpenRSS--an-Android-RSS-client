@@ -11,4 +11,7 @@
     
     <integer name="http_timeout">1000</integer>
     <integer name="aprox_max_feed_list_length">100</integer>
+    
+    <!-- articles -->
+    <integer name="article_description_max_length">200</integer>
 </resources>

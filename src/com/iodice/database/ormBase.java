@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-public class ormBase {
+public class OrmBase {
     public static SQLiteDatabase getWritableDatabase(Context context) {
     	DatabaseWrapper databaseWrapper = new DatabaseWrapper(context);
     	SQLiteDatabase database = databaseWrapper.getWritableDatabase();

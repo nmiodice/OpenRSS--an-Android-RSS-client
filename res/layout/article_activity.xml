@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ArticleActivity"
+    style="@style/ActivityBase"
+    >
+    
+    <!-- Loading content graphics -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_marginTop="100dp"
+        android:id="@+id/rss_loading_content"
+		android:orientation="vertical"
+		android:visibility="gone"
+        >
+        <TextView 
+	        android:id="@+id/rss_loading_content_text"
+	        style="@style/Temporary_message"
+	        android:text="@string/loading_content"
+	        />
+	</LinearLayout>
+
+	<LinearLayout
+	    android:id="@+id/rss_fragment_container"
+	    android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical" 
+		/>
+
+</RelativeLayout>
