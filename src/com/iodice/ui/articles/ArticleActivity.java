@@ -5,6 +5,7 @@ import java.util.List;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -51,6 +52,7 @@ public class ArticleActivity extends Activity implements Callback {
     public void onStop() {
     	if (receiver != null)
     		this.unregisterReceiver(receiver);
+    	
     	super.onStop();
     }
     
@@ -72,9 +74,15 @@ public class ArticleActivity extends Activity implements Callback {
             case R.id.action_refresh:
         		FragmentManager fMan = getFragmentManager();
         		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivity.LIST);
-        		if (articleList != null)
+        		if (articleList != null) {
+        			/*
+					ProgressDialog mDialog = new ProgressDialog(this);
+                    mDialog.setMessage("Loading...");
+                    mDialog.setCancelable(false);
+                    mDialog.show();
+                     */
         			this.queryWebForNewListData(articleList.getArticleURLList());
-        		else
+        		} else
         			this.queryWebForNewListData(null);
                 return true;
             default:
@@ -137,6 +145,7 @@ public class ArticleActivity extends Activity implements Callback {
 			articleList.redrawListView();
 		}
         this.unregisterReceiver(receiver);
+        this.receiver = null;
 	}
 	
 	@Override

@@ -75,8 +75,7 @@ public class ArticleUpdateService extends IntentService {
 			if (links == null)
 				links = queryDatabaseForFeedLinks();
 			
-			List<ArticleData> articles = queryWebForArticles(links);
-			commitArticlesToDatabase(articles);
+			queryWebForArticles(links);
 			broadcastFinishedStatus(intent);
 		} catch (Exception e) {}
 	}
@@ -131,27 +130,15 @@ public class ArticleUpdateService extends IntentService {
 		db.close();
 	}
 	
-	private List<ArticleData> queryWebForArticles(List<String> links) {
-		/* holds each web requests list of articles from that requests URL */
-		List<List<ArticleData>> listOfArticleDataLists = threadedArticleRequest(links);
-		/* holds the final list of data aggregated across feeds */
-		ArrayList<ArticleData> articles = new ArrayList<ArticleData>();
-		int numLists = listOfArticleDataLists.size();
-		
-		for (int i = 0; i < numLists; i++)
-			articles.addAll(listOfArticleDataLists.get(i));
-		
-		
-		return articles;
+	private void queryWebForArticles(List<String> links) {
+		threadedArticleRequest(links);
+
 	}
 	
 	
-	/* executes a web request for each URL and returns the result of all threads responses in a list. Each
-	 * list element contains a list of articles from a specific URL
+	/* executes a web request for each URL and saves the content to the database
 	 */
-	private List<List<ArticleData>> threadedArticleRequest(List<String> links) {
-		/* holds each web requests list of articles from that requests URL */
-		ArrayList<List<ArticleData>> listOfArticleDataLists = new ArrayList<List<ArticleData>>();
+	private void threadedArticleRequest(List<String> links) {
 		/* a worker thread that queries a URL for articles */
 		Callable<List<ArticleData>> worker;
 		int numLinks;
@@ -169,21 +156,19 @@ public class ArticleUpdateService extends IntentService {
 		// shut it down LEMON!
         executor.shutdown();
         
-        // aggregate thread return lists and splice them together
-        listOfArticleDataLists = new ArrayList<List<ArticleData>>();
+        // as the data comes in save the article data to the database. TODO: This
+        // could be improved if the database requests became threaded
         List<ArticleData> threadResult;
         try {
 	        for (int i = 0; i < numLinks; i++) {
 	        	threadResult = pool.take().get();
 	        	if (threadResult != null)
-	        		listOfArticleDataLists.add(threadResult);
+	        		this.commitArticlesToDatabase(threadResult);
 	        }
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (ExecutionException e) {
 			e.printStackTrace();
 		}
-        
-        return listOfArticleDataLists;
-	}
+    }
 }
