@@ -48,6 +48,12 @@ public class ArticleActivity extends Activity implements Callback {
         return true;
     }
     
+    public void onStop() {
+    	if (receiver != null)
+    		this.unregisterReceiver(receiver);
+    	super.onStop();
+    }
+    
 	public void queryWebForNewListData(List<String> urlList) {
 		// sets up the intent filter to catch the refresh initiated by the caller
         IntentFilter filter = new IntentFilter(ArticleUpdateReceiver.ACTION_REFRESH_DATA);
@@ -130,6 +136,7 @@ public class ArticleActivity extends Activity implements Callback {
 			articleList.setUpAdapter();
 			articleList.redrawListView();
 		}
+        this.unregisterReceiver(receiver);
 	}
 	
 	@Override

@@ -33,6 +33,7 @@ public class ArticleList extends ListBase {
 	}
 		
 	@Override
+	// load article in browser, if avaliable
 	public void onSingleItemClick(View view) {
 		Intent browserIntent;
 		TextView txtview = (TextView) view.findViewById(R.id.rss_url);
@@ -53,6 +54,7 @@ public class ArticleList extends ListBase {
 	}
 
 	@Override
+	// share selected article content
 	public void cabOnMultipleItemClick() {
 		Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
 		sharingIntent.setType("text/plain");
@@ -90,7 +92,7 @@ public class ArticleList extends ListBase {
     		sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, this.getText(R.string.article_share_subject));
     		sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
         }		
-		startActivity(Intent.createChooser(sharingIntent, "Share via"));
+		startActivity(Intent.createChooser(sharingIntent, getString(R.string.share)));
 	}
 
 	@Override

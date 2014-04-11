@@ -25,6 +25,7 @@
     <string name="url">url</string>
     <string name="rss_update_async_task">RSS_UPDATE_IS_CANCELED</string>
     <string name="no_selections">Nothing selected</string>
+    <string name="share">Share</string>
     
     <!-- Connectivity -->
     <string name="connection_failed">Connection failed&#8230;</string>
