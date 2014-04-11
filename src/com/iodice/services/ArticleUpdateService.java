@@ -12,39 +12,36 @@ import java.util.concurrent.Executors;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.iodice.database.ArticleData;
-import com.iodice.database.FeedOrm;
 import com.iodice.database.ArticleOrm;
+import com.iodice.database.FeedOrm;
 import com.iodice.network.RssFeedWebQuery;
-import com.iodice.rssreader.R;
+import com.iodice.ui.articles.ArticleUpdateReceiver;
 
-public class RssFeedUpdateService extends IntentService {
+public class ArticleUpdateService extends IntentService {
 	
 	private final static String TAG = "Feed_Update_Service";
+	private final static String URL_LIST = "URL_LIST";
 
 	/* a public callin that will handle setting up the general use case for this service, updating all
-	 * RSS links in the database indefinitely
+	 * RSS links in the database indefinitely. A second parameter, which can optionally be null, corresponds
+	 * to a function number handled by the Callback interface. If this value is not null, a broadcast
+	 * intent will be made and it will include the callbackFunctionNumber, which can be called'
+	 * by the BroadcastReceiver as defined by the user
 	 */
-	public static void startUpdatingAllFeeds(Context context) {
-		ArrayList<String> links = new ArrayList<String>();
-		Intent intent = new Intent(context, RssFeedUpdateService.class);
-		String key = context.getResources().getString(R.string.rss_url_intent);
-	    
-		// query for all URLs
-		Cursor cursor = FeedOrm.selectAll(context);
-	    cursor.moveToFirst();
-		while(!cursor.isAfterLast()) {
-			links.add(cursor.getString(cursor.getColumnIndex(FeedOrm.COLUMN_URL)));
-			cursor.moveToNext();
-		}
-	    intent.putStringArrayListExtra(key, links);
+	public static void startUpdatingAllFeeds(Context context, List<String> urlList, Integer callbackFunctionNumber) {
+		Intent intent = new Intent(context, ArticleUpdateService.class);
+		if (intent != null)
+			intent.putExtra(ArticleUpdateReceiver.HANDLE_ARTICLE_REFRESH, callbackFunctionNumber);
+
+		if (urlList != null)
+			intent.putStringArrayListExtra(ArticleUpdateService.URL_LIST, (ArrayList<String>)urlList);
+		
 		context.getApplicationContext().startService(intent);
 	}
 	
@@ -52,7 +49,7 @@ public class RssFeedUpdateService extends IntentService {
 	 * A constructor is required, and must call the super IntentService(String)
 	 * constructor with a name for the worker thread.
 	 */
-	public RssFeedUpdateService() {
+	public ArticleUpdateService() {
 		super("Feed_Update_Service");
 	}
 	
@@ -61,37 +58,53 @@ public class RssFeedUpdateService extends IntentService {
 	 * the intent that started the service. When this method returns, IntentService
 	 * stops the service, as appropriate.
 	 * 
-	 * This service queries for new RSS articles on a cycle
+	 * This service queries for new RSS articles on a cycle. The intent can hold optional
+	 * data:
+	 * 	Identifer = ArticleUpdateReceiver.HANDLE_ARTICLE_REFRESH --> A callback function number,
+	 * 		presumabley for use as a Callback interface function identifier. If not present,
+	 * 		it is not included in the broadcast intent
+	 * 
+	 * 	Identifier = ArticleUpdateService.URL_LIST --> a list of URLs to query new data for. If
+	 * 		it is not included, all URLs in the database are queried for
 	 */
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		List<String> links = intent.getStringArrayListExtra(getResources().getString(R.string.rss_url_intent));;
-		Log.i(TAG,"service started, onhandleevent");
-		do {
-			List<ArticleData> articles = this.queryWebLinks(links);
+		try {
+			List<String> links = intent.getStringArrayListExtra(ArticleUpdateService.URL_LIST);
+			
+			if (links == null)
+				links = queryDatabaseForFeedLinks();
+			
+			List<ArticleData> articles = queryWebForArticles(links);
 			commitArticlesToDatabase(articles);
-			setDatabaseHasCachePreference();
-
-			// 60 min pause. TODO: change this to something more meaningful, based off a user preference
-			try {
-				Thread.sleep(1*1000*60*60);
-			} catch (InterruptedException e) {
-			}
-		} while (true);
+			broadcastFinishedStatus(intent);
+		} catch (Exception e) {}
 	}
-	// update shared setting to indicate that the table is populated
-	private void setDatabaseHasCachePreference() {
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-		boolean defaultVal = true;
-		boolean isDatabaseNeverUpdated = prefs.getBoolean(getString(R.string.prefs_article_table_not_yet_updated), defaultVal);
+	
+	private void broadcastFinishedStatus(Intent callingIntent) {
+		Intent broadcastIntent = new Intent();
+		broadcastIntent.setAction(ArticleUpdateReceiver.ACTION_REFRESH_DATA);
+		broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
 		
-		if (isDatabaseNeverUpdated ==  true) {
-			Log.i(TAG, "Articles table cached with all current feeds");
-			// update that the db has been populated has been run
-			SharedPreferences.Editor editor = prefs.edit();
-			editor.putBoolean(getString(R.string.prefs_article_table_not_yet_updated), false);
-			editor.commit();
+		int callbackFunctionNumber = callingIntent.getIntExtra(ArticleUpdateReceiver.HANDLE_ARTICLE_REFRESH, -1);
+		if (callbackFunctionNumber != -1) {
+			broadcastIntent.putExtra(ArticleUpdateReceiver.HANDLE_ARTICLE_REFRESH, callbackFunctionNumber);
 		}
+		
+		sendBroadcast(broadcastIntent);
+	}
+	
+	private List<String> queryDatabaseForFeedLinks() {
+		ArrayList<String> links = new ArrayList<String>();
+	    
+		// query for all URLs
+		Cursor cursor = FeedOrm.selectAll(getApplicationContext());
+	    cursor.moveToFirst();
+		while(!cursor.isAfterLast()) {
+			links.add(cursor.getString(cursor.getColumnIndex(FeedOrm.COLUMN_URL)));
+			cursor.moveToNext();
+		}
+		return links;
 	}
 	  
 	private void commitArticlesToDatabase(List<ArticleData> articles) {
@@ -118,7 +131,7 @@ public class RssFeedUpdateService extends IntentService {
 		db.close();
 	}
 	
-	private List<ArticleData> queryWebLinks(List<String> links) {
+	private List<ArticleData> queryWebForArticles(List<String> links) {
 		/* holds each web requests list of articles from that requests URL */
 		List<List<ArticleData>> listOfArticleDataLists = threadedArticleRequest(links);
 		/* holds the final list of data aggregated across feeds */

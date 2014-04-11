@@ -8,23 +8,16 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
 import com.iodice.database.FeedData;
 import com.iodice.database.FeedOrm;
-import com.iodice.database.OrmBase;
 import com.iodice.rssreader.R;
-import com.iodice.services.RssFeedUpdateService;
 import com.iodice.utilities.Callback;
 
 public class FeedActivity extends Activity implements Callback, ActionBar.OnNavigationListener
@@ -35,98 +28,13 @@ public class FeedActivity extends Activity implements Callback, ActionBar.OnNavi
 	private static final String FEED_LIST = "FEED_LIST";
 	private List<String> spinnerListItems = null;
 	
-	// only run one time, during the applications first run. initiated from onCreate()
-	private void init() {
-		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-
-		Log.i(TAG, "First run detected. Initializing data");
-		initDefaultFeeds();
-
-		// update that the app has been run
-		SharedPreferences.Editor editor = sharedPref.edit();
-		editor.putBoolean(getString(R.string.prefs_first_run), false);
-		editor.commit();
-	}
-	
-	private void initDefaultFeeds() {
-		Log.i(TAG, "Initializing default RSS feeds in database");
-		List<FeedData> rssFeeds = new ArrayList<FeedData>();
-		
-		ArrayList<String> tech = new ArrayList<String>();
-		ArrayList<String> news = new ArrayList<String>();
-		ArrayList<String> reddit = new ArrayList<String>();
-		ArrayList<String> sports = new ArrayList<String>();
-		
-		tech.add("Technology");
-		news.add("News");
-		reddit.add("Reddit");
-		reddit.add("Technology");
-		sports.add("Sports");
-		
-		rssFeeds.add(new FeedData("Apple", tech, "ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=10/xml"));
-		rssFeeds.add(new FeedData("Wired", tech, "http://feeds.wired.com/wired/index"));
-		rssFeeds.add(new FeedData("BBC world", news, "http://feeds.bbci.co.uk/news/world/rss.xml"));
-		rssFeeds.add(new FeedData("CNN", news, "http://rss.cnn.com/rss/cnn_topstories.rss"));
-		rssFeeds.add(new FeedData("New York Times", news, "http://feeds.nytimes.com/nyt/rss/HomePage"));
-		rssFeeds.add(new FeedData("USA Today", news, "http://rssfeeds.usatoday.com/usatoday-NewsTopStories"));
-		rssFeeds.add(new FeedData("NPR", news, "http://www.npr.org/rss/rss.php?id=1001"));
-		rssFeeds.add(new FeedData("Reuters", news, "http://feeds.reuters.com/reuters/topNews"));
-		rssFeeds.add(new FeedData("BBC America", news, "http://newsrss.bbc.co.uk/rss/newsonline_world_edition/americas/rss.xml"));
-		rssFeeds.add(new FeedData("/r/androiddev", reddit, "http://www.reddit.com/r/androiddev/.rss"));
-		rssFeeds.add(new FeedData("Yahoo Skiing", sports, "http://sports.yahoo.com/ski/rss.xml"));
-		rssFeeds.add(new FeedData("Y.Combinator", tech, "https://news.ycombinator.com/rss"));
-
-		saveFeeds(rssFeeds);
-	}
-	
-	private void saveFeeds(List<FeedData> rssFeeds) {
-		int length = rssFeeds.size();
-		SQLiteDatabase db = OrmBase.getWritableDatabase(getApplicationContext());
-		int cnt = 0;
-		for (int i = 0; i < length; i++) {
-			try {
-				FeedOrm.insertFeed(rssFeeds.get(i), db);
-				cnt++;
-			} catch (Exception e) {
-				if (e.getMessage().contains("code 19")) {
-					Context context = getApplicationContext();
-					CharSequence text = getText(R.string.add_feed_fail_message);
-					int duration = Toast.LENGTH_SHORT;
-
-					Toast toast = Toast.makeText(context, text, duration);
-					toast.show();
-				} else {
-					Log.e(TAG, "Error saving feed. SQLiteDatabase error: " + e.getMessage());
-				}
-			}
-		}
-		db.close();
-		Log.i(TAG, "Initialized " + cnt + " feeds in database");
-		
-        // reset shared preference that tells the system whether or not all saved feeds have an active cache
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		SharedPreferences.Editor editor = prefs.edit();
-		editor.putBoolean(getString(R.string.prefs_article_table_not_yet_updated), false);
-		editor.commit();
-		Log.i(TAG, "Reset 'article table cache' shared preference");
-	}
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.feed_activity);
 		
-		// check to see if first startup logic is needed
-		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-		boolean defaultVal = true;
-		boolean isFirstRun = sharedPref.getBoolean(getString(R.string.prefs_first_run), defaultVal);
-		if (isFirstRun)
-			init();
 		setupCategorySpinner();
 		displayListView();
-		
-		// finally, start article update service
-		RssFeedUpdateService.startUpdatingAllFeeds(getApplicationContext());
 	}
 	
 		
@@ -181,7 +89,7 @@ public class FeedActivity extends Activity implements Callback, ActionBar.OnNavi
 			ArrayList<FeedData> feedList = new ArrayList<FeedData>();
 			FeedData newFeed = (FeedData) obj;
 			feedList.add(newFeed);
-			saveFeeds(feedList);
+			FeedOrm.saveFeeds(feedList, this);
 			repopulateActiveList();
 			return;
 		

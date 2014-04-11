@@ -10,6 +10,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.iodice.rssreader.R;
 
 
 @SuppressLint("DefaultLocale")
@@ -42,6 +45,30 @@ public class FeedOrm extends OrmBase {
     
     public static final String SQL_CREATE_GROUP_INDEX = 
     		"CREATE INDEX " + INDEX_GROUP + " ON " + TABLE_NAME + "(" + COLUMN_GROUP + ")";
+    
+	public static void saveFeeds(List<FeedData> rssFeeds, Context context) {
+		int length = rssFeeds.size();
+		SQLiteDatabase db = OrmBase.getWritableDatabase(context);
+		int cnt = 0;
+		for (int i = 0; i < length; i++) {
+			try {
+				FeedOrm.insertFeed(rssFeeds.get(i), db);
+				cnt++;
+			} catch (Exception e) {
+				if (e.getMessage().contains("code 19")) {
+					CharSequence text = context.getText(R.string.add_feed_fail_message);
+					int duration = Toast.LENGTH_SHORT;
+
+					Toast toast = Toast.makeText(context, text, duration);
+					toast.show();
+				} else {
+					Log.e(TAG, "Error saving feed. SQLiteDatabase error: " + e.getMessage());
+				}
+			}
+		}
+		db.close();
+		Log.i(TAG, "Initialized " + cnt + " feeds in database");
+	}
 
     public static void insertFeed(FeedData feed, SQLiteDatabase database) throws SQLiteException {
         ContentValues values = rssToContentValues(feed);

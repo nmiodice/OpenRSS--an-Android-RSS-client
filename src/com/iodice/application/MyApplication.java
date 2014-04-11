@@ -1,0 +1,136 @@
+/* *
+ * sets up initial data and starts a background thread whose only job is to call the
+ * article update service periodically, allowing for freshly cached results
+ */
+
+package com.iodice.application;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+import android.app.AlarmManager;
+import android.app.Application;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.util.Log;
+
+import com.iodice.database.FeedData;
+import com.iodice.database.FeedOrm;
+import com.iodice.rssreader.R;
+import com.iodice.services.ArticleUpdateService;
+
+public class MyApplication extends Application {
+	private static String TAG = "ApplicationSuperclass";
+	
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		initializeApplication(getApplicationContext());
+	}
+	
+	private void initializeApplication(Context context) {
+		SharedPreferences prefs = context.getSharedPreferences(
+										getString(R.string.prefs), 
+										Context.MODE_PRIVATE);
+		// should only default to true on the first run
+		boolean firstRun = prefs.getBoolean(getString(R.string.prefs_first_run), true);
+		
+		if (firstRun == true) {
+			initDefaultFeeds(context);
+			
+			// update first preference to false
+			SharedPreferences.Editor editor = prefs.edit();
+			editor.putBoolean(getString(R.string.prefs_first_run), false);
+			editor.commit();
+		}
+		startArticleUpdateService(context);
+	}
+	
+	private void startArticleUpdateService(Context context) {
+		
+		// get default update frequency
+		SharedPreferences prefs = context.getSharedPreferences(
+				getString(R.string.prefs), 
+				Context.MODE_PRIVATE);
+		int defaultWait = getResources().getInteger(R.integer.prefs_default_update_interval);
+		int secToWait = prefs.getInt(
+							getString(R.string.prefs_update_interval), 
+							defaultWait); 
+		
+		// setup timer to run update schedule
+		Calendar cal = Calendar.getInstance();
+		Intent intent = new Intent(this, ArticleUpdateService.class);
+		PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
+
+		AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+		// Start every 30 seconds
+		alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), secToWait*1000, pintent);
+		
+		
+		Log.i(TAG, "started article update service");
+		//new BackgroundArticleUpdateCaller().start();
+	}
+	
+	private void initDefaultFeeds(Context context) {
+		Log.i(TAG, "Initializing default RSS feeds in database");
+		List<FeedData> rssFeeds = new ArrayList<FeedData>();
+		
+		ArrayList<String> tech = new ArrayList<String>();
+		ArrayList<String> news = new ArrayList<String>();
+		ArrayList<String> reddit = new ArrayList<String>();
+		ArrayList<String> sports = new ArrayList<String>();
+		
+		tech.add("Technology");
+		news.add("News");
+		reddit.add("Reddit");
+		reddit.add("Technology");
+		sports.add("Sports");
+		
+		rssFeeds.add(new FeedData("Apple", tech, "ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=10/xml"));
+		rssFeeds.add(new FeedData("Wired", tech, "http://feeds.wired.com/wired/index"));
+		rssFeeds.add(new FeedData("BBC world", news, "http://feeds.bbci.co.uk/news/world/rss.xml"));
+		rssFeeds.add(new FeedData("CNN", news, "http://rss.cnn.com/rss/cnn_topstories.rss"));
+		rssFeeds.add(new FeedData("New York Times", news, "http://feeds.nytimes.com/nyt/rss/HomePage"));
+		rssFeeds.add(new FeedData("USA Today", news, "http://rssfeeds.usatoday.com/usatoday-NewsTopStories"));
+		rssFeeds.add(new FeedData("NPR", news, "http://www.npr.org/rss/rss.php?id=1001"));
+		rssFeeds.add(new FeedData("Reuters", news, "http://feeds.reuters.com/reuters/topNews"));
+		rssFeeds.add(new FeedData("BBC America", news, "http://newsrss.bbc.co.uk/rss/newsonline_world_edition/americas/rss.xml"));
+		rssFeeds.add(new FeedData("/r/androiddev", reddit, "http://www.reddit.com/r/androiddev/.rss"));
+		rssFeeds.add(new FeedData("Yahoo Skiing", sports, "http://sports.yahoo.com/ski/rss.xml"));
+		rssFeeds.add(new FeedData("Y.Combinator", tech, "https://news.ycombinator.com/rss"));
+
+		FeedOrm.saveFeeds(rssFeeds, context);
+	}
+	/* depreciated. In favor of this, use an alarm to trigger the event because running it in
+	 * a thread has a high chance of the OS killing it
+	// updates articles according to the user's preferences 
+	private class BackgroundArticleUpdateCaller extends Thread {
+		
+		// returns number of seconds between web request updates
+		private int getUpdateInterval(Context context) {
+			SharedPreferences prefs = context.getSharedPreferences(
+					getString(R.string.prefs), 
+					Context.MODE_PRIVATE);
+			int defaultWait = getResources().getInteger(R.integer.prefs_default_update_interval);
+			int secToWait = prefs.getInt(
+								getString(R.string.prefs_update_interval), 
+								defaultWait); 
+			return secToWait;
+		}
+		public void run() {
+			int secToWait;
+			do {
+				ArticleUpdateService.startUpdatingAllFeeds(getApplicationContext());
+				secToWait = this.getUpdateInterval(getApplicationContext());
+				try {
+					Thread.sleep(1000 * secToWait);
+				} catch (InterruptedException e) {
+					Log.e(TAG, "Interrupt not handled");
+				}
+			} while (true);
+		}
+	}
+	*/
+}

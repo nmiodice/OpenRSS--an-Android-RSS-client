@@ -7,10 +7,12 @@
     <string name="empty_string">No content</string>
     <string name="action_reload">Reload</string>
     <string name="null_string"></string>
+        
     
     <!-- Shared preference identifiers -->
-    <string name="prefs_first_run">IS_FIRST_RUN</string>
-    <string name="prefs_article_table_not_yet_updated">IS_ARTICLE_TABLE_POPULATED</string>
+	<string name="prefs">User preferences</string>
+    <string name="prefs_first_run">First time running application</string>
+    <string name="prefs_update_interval">Background article update interval</string>
     
     <!-- ID strings & generic identifiers -->
     <string name="scroll_position">SCROLL_POSITION</string>

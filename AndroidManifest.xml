@@ -15,6 +15,7 @@
     
     <!-- Application -->
     <application
+        android:name="com.iodice.application.MyApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -45,7 +46,7 @@
         
         <service 
             android:enabled="true"
-            android:name="com.iodice.services.RssFeedUpdateService"
+            android:name="com.iodice.services.ArticleUpdateService"
             android:exported="false" />
         
         

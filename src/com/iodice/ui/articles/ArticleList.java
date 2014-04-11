@@ -31,7 +31,7 @@ public class ArticleList extends ListBase {
 		getListView().setDivider(null);
 		getListView().setDividerHeight(0);
 	}
-	
+		
 	@Override
 	public void onSingleItemClick(View view) {
 		Intent browserIntent;
@@ -68,7 +68,7 @@ public class ArticleList extends ListBase {
     		return;
     	// format the subject = title
         } else if (size == 1) {
-        	c = (Cursor)v.getItemAtPosition(0);
+        	c = (Cursor)v.getItemAtPosition(selectedListItems.get(0));
      		shareBody = c.getString(c.getColumnIndex(ArticleOrm.COLUMN_DESCRIPTION));
      		shareBody += "\n" + c.getString(c.getColumnIndex(ArticleOrm.COLUMN_URL));
      		
@@ -207,5 +207,8 @@ public class ArticleList extends ListBase {
 	public int cabGetMenuLayoutId() {
 		return R.menu.articles_cab;
 	}
-
+	
+	public final List<String> getArticleURLList() {
+		return this.articleURLList;
+	}
 }

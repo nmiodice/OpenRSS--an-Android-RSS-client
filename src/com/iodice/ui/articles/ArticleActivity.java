@@ -7,6 +7,7 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,13 +17,16 @@ import android.view.Surface;
 import android.view.WindowManager;
 
 import com.iodice.rssreader.R;
+import com.iodice.services.ArticleUpdateService;
+import com.iodice.utilities.Callback;
 
 
 
-public class ArticleActivity extends Activity {
+public class ArticleActivity extends Activity implements Callback {
 	
 	private static final String TAG = "Activity_Rss";
 	private static final String LIST = "LIST";
+	ArticleUpdateReceiver receiver; 
 
 	
 	@Override
@@ -34,7 +38,7 @@ public class ArticleActivity extends Activity {
 		Intent intent = getIntent();
 		List<String> urlList = intent.getStringArrayListExtra(getResources().getString(R.string.rss_url_intent));
 		
-		displayListView(urlList);
+		displayArticleList(urlList);
 	}
 	
     @Override
@@ -44,19 +48,35 @@ public class ArticleActivity extends Activity {
         return true;
     }
     
+	public void queryWebForNewListData(List<String> urlList) {
+		// sets up the intent filter to catch the refresh initiated by the caller
+        IntentFilter filter = new IntentFilter(ArticleUpdateReceiver.ACTION_REFRESH_DATA);
+        filter.addCategory(Intent.CATEGORY_DEFAULT);
+        receiver = new ArticleUpdateReceiver();
+        this.registerReceiver(receiver, filter);
+        
+        // calls the service with relevant parameter information
+        ArticleUpdateService.startUpdatingAllFeeds(this, urlList, 0);
+	}
+    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_refresh:
-            	Log.e(TAG, "IMPLEMENT!");
+        		FragmentManager fMan = getFragmentManager();
+        		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivity.LIST);
+        		if (articleList != null)
+        			this.queryWebForNewListData(articleList.getArticleURLList());
+        		else
+        			this.queryWebForNewListData(null);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 	
-	private void displayListView(List<String> urlList) {
+	private void displayArticleList(List<String> urlList) {
 		// add fragment to apropriate layout item
 		FragmentTransaction fTrans;
 		FragmentManager fMan = getFragmentManager();
@@ -73,26 +93,6 @@ public class ArticleActivity extends Activity {
 		}
 	}
 
-/*
-	public void openLinkInBrowser(View v) {
-		Intent browserIntent;
-		String feedURL = (String) v.getTag();
-
-		Log.i(TAG, "Opening feed: " + feedURL);
-		
-		try {
-			browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(feedURL));
-			startActivity(browserIntent);
-			} catch (ActivityNotFoundException e) {
-			  Toast.makeText(getApplicationContext(), "No application can handle this request,"
-			    + " Please install a webbrowser",  Toast.LENGTH_LONG).show();
-			  e.printStackTrace();
-			} catch (Exception e) {
-				e.getMessage();
-				e.printStackTrace();
-			}
-		}
-*/
 	// helper method to lock screen orientation. Should call unlockScreenOrientation
 	// shortly after making this to avoid a UI lock in one orientation.
 	public void lockScreenOrientation() {
@@ -119,5 +119,31 @@ public class ArticleActivity extends Activity {
 	public void unlockScreenOrientation() {
 	    setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 	    Log.i(TAG, "Screen orientation unlocked");
+	}
+	
+	private void redrawActiveArticleListWithCachedData() {
+		FragmentManager fMan = getFragmentManager();
+		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivity.LIST);
+		
+		// fragContainer is null until something is added to it
+		if (articleList != null) {
+			articleList.setUpAdapter();
+			articleList.redrawListView();
+		}
+	}
+	
+	@Override
+	/* n = 0: 
+	 * 	Asks the article list to update. Principle caller is 
+	 *  ArticleUpdateReceiver.onReceive()
+	 */
+	public void handleCallbackEvent(int n, Object obj) {
+		switch (n) {
+			case 0:
+				this.redrawActiveArticleListWithCachedData();
+				return;
+			default:
+				assert(true == false);
+		}
 	}
 } // end rssActivity
