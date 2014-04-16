@@ -19,6 +19,7 @@ import com.iodice.application.MyApplication;
 import com.iodice.database.FeedData;
 import com.iodice.database.FeedOrm;
 import com.iodice.rssreader.R;
+import com.iodice.services.ArticleUpdateService;
 import com.iodice.utilities.Callback;
 
 public class FeedActivity extends Activity implements Callback, ActionBar.OnNavigationListener {
@@ -109,7 +110,14 @@ public class FeedActivity extends Activity implements Callback, ActionBar.OnNavi
 			FeedData newFeed = (FeedData) obj;
 			feedList.add(newFeed);
 			FeedOrm.saveFeeds(feedList, this);
-			repopulateActiveList();
+			
+			// trigger web request for the URL in hopes that it loads before the user
+			// requests that data!
+			ArrayList<String> urlList = new ArrayList<String>();
+			urlList.add(newFeed.getURL());
+			ArticleUpdateService.startUpdatingAllFeeds(this, urlList, null);
+			
+			this.handleCallbackEvent(FeedActivity.CALLBACK_REPOPULATE_DATA_AND_REFRESH_CATEGORY_SELECTOR, null);
 			return;
 		
 		case FeedActivity.CALLBACK_REPOPULATE_DATA_AND_REFRESH_CATEGORY_SELECTOR:

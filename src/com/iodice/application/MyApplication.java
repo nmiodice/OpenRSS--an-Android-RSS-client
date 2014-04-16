@@ -101,6 +101,7 @@ public class MyApplication extends Application {
 		rssFeeds.add(new FeedData("/r/androiddev", reddit, "http://www.reddit.com/r/androiddev/.rss"));
 		rssFeeds.add(new FeedData("Yahoo Skiing", sports, "http://sports.yahoo.com/ski/rss.xml"));
 		rssFeeds.add(new FeedData("Y.Combinator", tech, "https://news.ycombinator.com/rss"));
+		rssFeeds.add(new FeedData("ESPN", sports, "http://sports.espn.go.com/espn/rss/news"));
 
 		FeedOrm.saveFeeds(rssFeeds, context);
 	}

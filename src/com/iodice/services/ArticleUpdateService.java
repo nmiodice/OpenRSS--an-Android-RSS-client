@@ -50,7 +50,7 @@ public class ArticleUpdateService extends IntentService {
 	 * constructor with a name for the worker thread.
 	 */
 	public ArticleUpdateService() {
-		super("Feed_Update_Service");
+		super("ArticleUpdateService");
 	}
 	
 	/**
