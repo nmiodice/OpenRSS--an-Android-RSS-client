@@ -26,11 +26,15 @@
     <string name="rss_update_async_task">RSS_UPDATE_IS_CANCELED</string>
     <string name="no_selections">Nothing selected</string>
     <string name="share">Share</string>
+    <string name="ok">OK</string>
+    <string name="yes">Yes</string>
+    <string name="cancel">Cancel</string>
     
     <!-- Connectivity -->
     <string name="connection_failed">Connection failed&#8230;</string>
+    <string name="web_query_failed">Failed to load data for feed: </string>
     
-    <!-- Home -->
+    <!-- Feed Activity -->
     <string name="rss_url_intent">URL_INTENT</string>
     <string name="action_load_selected">Load</string>
     <string name="action_select_all">Select all</string>
@@ -38,6 +42,7 @@
     <string name="action_remove_selected">Remove</string>
     <string name="action_save_group">Save as group</string>
     <string name="all">All</string>
+    <string name="action_test_re_initialize">reload init data TMP!</string>
     
     
     
@@ -50,6 +55,14 @@
     <string name="groups">More groups</string>
     <string name="add_feed_fail_message">Could not save RSS feed. Did you supply a name and link?</string>
     <string name="add_feed_new_category">New group</string>
+    
+    <!-- Add new feed grouping -->
+    <string name="add_new_category">Groups</string>
+    <string name="add_feed_grouping_title">Add feeds to group</string>
+    <string name="add_feed_grouping_message">Select groups and/or enter new groups</string>
+    
+    <!-- Delete feeds -->
+    <string name="delete_title">This cannot be undone. Continue?</string>
     
     <!-- RSS -->
     <string name="title_activity_rss">RSS Feed</string>

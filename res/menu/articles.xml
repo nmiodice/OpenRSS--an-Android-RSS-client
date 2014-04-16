@@ -7,5 +7,5 @@
         android:title="@string/action_reload"
         android:showAsAction="ifRoom"
         />
-
+    
 </menu>

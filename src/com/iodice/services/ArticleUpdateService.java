@@ -172,3 +172,25 @@ public class ArticleUpdateService extends IntentService {
 		}
     }
 }
+
+
+/*
+private void showLoadFailedMessage() {
+	if (this.context != null) {
+		Handler handler = new Handler();
+		handler.post(new Runnable() {
+		    public void run() {
+				CharSequence text = context.getText(R.string.web_query_failed) + url;
+				Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
+				toast.show();
+		    }
+		 });
+		
+		 
+
+	} else {
+		Log.e(TAG, "Context is null, but should not be. Failed to show failure to query web message.");
+	}
+
+}
+*/

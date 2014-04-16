@@ -5,7 +5,6 @@ import java.util.List;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -28,6 +27,10 @@ public class ArticleActivity extends Activity implements Callback {
 	private static final String TAG = "Activity_Rss";
 	private static final String LIST = "LIST";
 	ArticleUpdateReceiver receiver; 
+	
+	/* supported callback method identifiers */
+	public static final int CALLBACK_REDRAW_WITH_CACHED_DATA = 0;
+	public static final int CALLBACK_UPDATE_WITH_WEB_QUERY = 1;
 
 	
 	@Override
@@ -66,25 +69,25 @@ public class ArticleActivity extends Activity implements Callback {
         // calls the service with relevant parameter information
         ArticleUpdateService.startUpdatingAllFeeds(this, urlList, 0);
 	}
+	
+	private void updateCurrentListWithWebQuery() {
+		FragmentManager fMan = getFragmentManager();
+		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivity.LIST);
+		if (articleList != null) {
+			articleList.setLoadState(true);
+			this.queryWebForNewListData(articleList.getArticleURLList());
+		} else
+			this.queryWebForNewListData(null);
+	}
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_refresh:
-        		FragmentManager fMan = getFragmentManager();
-        		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivity.LIST);
-        		if (articleList != null) {
-        			/*
-					ProgressDialog mDialog = new ProgressDialog(this);
-                    mDialog.setMessage("Loading...");
-                    mDialog.setCancelable(false);
-                    mDialog.show();
-                     */
-        			this.queryWebForNewListData(articleList.getArticleURLList());
-        		} else
-        			this.queryWebForNewListData(null);
+            	this.updateCurrentListWithWebQuery();
                 return true;
+            	
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -96,9 +99,7 @@ public class ArticleActivity extends Activity implements Callback {
 		FragmentManager fMan = getFragmentManager();
 				
 		// fragContainer is null until something is added to it
-		if (fMan.findFragmentByTag(ArticleActivity.LIST) == null) {
-			Log.i(TAG, "Adding fragment to feed_list_container");
-			
+		if (fMan.findFragmentByTag(ArticleActivity.LIST) == null) {			
 			ArticleList list = new ArticleList();
 			list.setFeeds(urlList);
 			fTrans = fMan.beginTransaction();
@@ -141,8 +142,12 @@ public class ArticleActivity extends Activity implements Callback {
 		
 		// fragContainer is null until something is added to it
 		if (articleList != null) {
+			articleList.setLoadState(false);
+
 			articleList.setUpAdapter();
 			articleList.redrawListView();
+			// load state may have been set to true if the list was requested to update
+			// its data from the web
 		}
         this.unregisterReceiver(receiver);
         this.receiver = null;
@@ -155,11 +160,14 @@ public class ArticleActivity extends Activity implements Callback {
 	 */
 	public void handleCallbackEvent(int n, Object obj) {
 		switch (n) {
-			case 0:
+			case ArticleActivity.CALLBACK_REDRAW_WITH_CACHED_DATA:
 				this.redrawActiveArticleListWithCachedData();
 				return;
+			case ArticleActivity.CALLBACK_UPDATE_WITH_WEB_QUERY:
+				this.updateCurrentListWithWebQuery();
+				return;
 			default:
-				assert(true == false);
+				throw new UnsupportedOperationException();
 		}
 	}
 } // end rssActivity

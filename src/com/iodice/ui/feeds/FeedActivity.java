@@ -15,18 +15,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 
+import com.iodice.application.MyApplication;
 import com.iodice.database.FeedData;
 import com.iodice.database.FeedOrm;
 import com.iodice.rssreader.R;
 import com.iodice.utilities.Callback;
 
-public class FeedActivity extends Activity implements Callback, ActionBar.OnNavigationListener
-
- {
+public class FeedActivity extends Activity implements Callback, ActionBar.OnNavigationListener {
 	
 	private static final String TAG = "Activity_Home";
 	private static final String FEED_LIST = "FEED_LIST";
 	private List<String> spinnerListItems = null;
+
+	/* supported callback method identifiers */
+	public static final int CALLBACK_ADD_NEW_FEED = 0;
+	public static final int CALLBACK_REPOPULATE_DATA_AND_REFRESH_CATEGORY_SELECTOR = 1;
+	public static final int CALLBACK_REFRESH_CATEGORY_SELECTOR = 2;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +38,7 @@ public class FeedActivity extends Activity implements Callback, ActionBar.OnNavi
 		setContentView(R.layout.feed_activity);
 		
 		setupCategorySpinner();
-		displayListView();
+		displayFeedList();
 	}
 	
 		
@@ -52,6 +56,18 @@ public class FeedActivity extends Activity implements Callback, ActionBar.OnNavi
             case R.id.action_add_feed:
                 addFeed();
                 return true;
+                
+            // TODO: remove when finished testing. THIS IS A PIECE OF TEST CODE
+            case R.id.action_test_re_initialize:
+            	FragmentManager fMan = getFragmentManager();
+            	FeedList feedList = (FeedList) fMan.findFragmentByTag(FeedActivity.FEED_LIST);
+        		if (feedList != null) {
+                	((MyApplication)getApplication()).initDefaultFeeds(getApplicationContext());
+                	feedList.setUpAdapter();
+                	feedList.redrawListView();
+                	handleCallbackEvent(FeedActivity.CALLBACK_REFRESH_CATEGORY_SELECTOR, null);
+        		}
+        		return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -69,23 +85,26 @@ public class FeedActivity extends Activity implements Callback, ActionBar.OnNavi
 	
 	// this brings up an input menu where the user can add new feed information. The response
 	// is handled by 'respondToEvent.'
-	private void addFeed() {
-		Log.i(TAG, "Adding feed");
-		
+	private void addFeed() {		
 		AlertDialog.Builder alert = AddNewFeedDialog.getAddDialog(this);
 		alert.show();
 	}
 	
 	@Override
 	// adds data to the database and updates the relevant views. Callbacks are:
-	// 	0. The object passed back is a reference to a Feed_Data object that needs to be
-	//		saved into the DB. 
+	// 	CALLBACK_ADD_NEW_FEED:
+	//		The object passed back is a reference to a Feed_Data 
+	//		object that needs to be saved into the DB. 
 	//
-	//	1. Repopulate list with currently selected category
-	//	2. Repopulate the category selector and redraw the list with 'all' showing
+	//	CALLBACK_REPOPULATE_DATA_AND_REFRESH_CATEGORY_SELECTOR:
+	//		Repopulate list with currently selected category & refresh the category selector
+	//		to keep current selection (if still present)
+	//	
+	//	CALLBACK_REFRESH_CATEGORY_SELECTOR:
+	//		Repopulate the category selector and redraw the list with 'all' showing
 	public void handleCallbackEvent(int n, Object obj) {
 		switch(n) {
-		case 0:
+		case FeedActivity.CALLBACK_ADD_NEW_FEED:
 			ArrayList<FeedData> feedList = new ArrayList<FeedData>();
 			FeedData newFeed = (FeedData) obj;
 			feedList.add(newFeed);
@@ -93,20 +112,34 @@ public class FeedActivity extends Activity implements Callback, ActionBar.OnNavi
 			repopulateActiveList();
 			return;
 		
-		case 1:
+		case FeedActivity.CALLBACK_REPOPULATE_DATA_AND_REFRESH_CATEGORY_SELECTOR:
+			// step 1: note the current category
+			final ActionBar actionBar = getActionBar();
+			int selectedListIndex = actionBar.getSelectedNavigationIndex();
+			String selectedListValue = this.spinnerListItems.get(selectedListIndex);
+			
+			// step 2: refresh displayed data
 			repopulateActiveList();
+			// this call resets this.spinnerListItems to whatever is currently in the DB
+			setupCategorySpinner();
+			
+			// step 3: check if the previous selected category still exists
+			int newListIndex = this.spinnerListItems.indexOf(selectedListValue);
+			if (newListIndex == -1)
+				return;
+			
+			// step 4: the previous category is still defined, so select it
+			actionBar.setSelectedNavigationItem(newListIndex);					
 			return;
 			
-		case 2:
+		case FeedActivity.CALLBACK_REFRESH_CATEGORY_SELECTOR:
 			setupCategorySpinner();
 			return;
 			
 		default:
 			Log.e(TAG, "Unsupported callback was called!");
-			assert(false);
-			return;
+			throw new UnsupportedOperationException();
 		}
-
 	}
 	
 	// can be called if the data model is updated. the result will be that the currently
@@ -131,7 +164,7 @@ public class FeedActivity extends Activity implements Callback, ActionBar.OnNavi
 		if (category == this.getText(R.string.all))
 			category = "*";
 		
-		listFrag.loadCategoryData(category);		
+		listFrag.loadCategory(category);		
 	}
 
 	// displayed in top right of activity, lists categories by name. upon select, filter list to just those categories
@@ -185,20 +218,18 @@ public class FeedActivity extends Activity implements Callback, ActionBar.OnNavi
 		// "all" is not a real category, so account for it
 		if (category == this.getText(R.string.all))
 			category = "*";
-		currentList.loadCategoryData(category);		
+		currentList.loadCategory(category);		
 		return true; 
 	}
 	
 	
-	private void displayListView() {
+	private void displayFeedList() {
 		// add fragment to apropriate layout item
 		FragmentTransaction fTrans;
 		FragmentManager fMan = getFragmentManager();
 				
 		// fragContainer is null until something is added to it
-		if (fMan.findFragmentByTag(FeedActivity.FEED_LIST) == null) {
-			Log.i(TAG, "Adding fragment to feed_list_container");
-			
+		if (fMan.findFragmentByTag(FeedActivity.FEED_LIST) == null) {			
 			FeedList list = new FeedList();
 			fTrans = fMan.beginTransaction();
 			fTrans.add(R.id.feed_list_container, list, FeedActivity.FEED_LIST);

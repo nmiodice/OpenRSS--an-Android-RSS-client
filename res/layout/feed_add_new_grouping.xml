@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    
+    <EditText
+        android:id="@+id/category_csv_list"
+        style="@style/UserInput"
+        android:hint="@string/add_new_category"
+        android:layout_margin="8dp" 
+        />
+
+    <com.iodice.utilities.MultiSpinner
+	    android:id="@+id/add_feed_categories"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content" 
+	    />
+	    
+
+
+    
+</LinearLayout>

@@ -11,4 +11,10 @@
         android:showAsAction="never"
         android:title="@string/action_settings"/>
 
+    <item
+        android:id="@+id/action_test_re_initialize"
+        android:icon="@drawable/ic_action_refresh"
+        android:title="@string/action_test_re_initialize"
+        android:showAsAction="never"
+        />
 </menu>

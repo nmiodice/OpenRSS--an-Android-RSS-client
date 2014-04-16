@@ -73,7 +73,8 @@ public class MyApplication extends Application {
 		//new BackgroundArticleUpdateCaller().start();
 	}
 	
-	private void initDefaultFeeds(Context context) {
+	// TODO: after testing, make this private. Being used to add a repopulate menu item for testing
+	public void initDefaultFeeds(Context context) {
 		Log.i(TAG, "Initializing default RSS feeds in database");
 		List<FeedData> rssFeeds = new ArrayList<FeedData>();
 		
@@ -103,34 +104,4 @@ public class MyApplication extends Application {
 
 		FeedOrm.saveFeeds(rssFeeds, context);
 	}
-	/* depreciated. In favor of this, use an alarm to trigger the event because running it in
-	 * a thread has a high chance of the OS killing it
-	// updates articles according to the user's preferences 
-	private class BackgroundArticleUpdateCaller extends Thread {
-		
-		// returns number of seconds between web request updates
-		private int getUpdateInterval(Context context) {
-			SharedPreferences prefs = context.getSharedPreferences(
-					getString(R.string.prefs), 
-					Context.MODE_PRIVATE);
-			int defaultWait = getResources().getInteger(R.integer.prefs_default_update_interval);
-			int secToWait = prefs.getInt(
-								getString(R.string.prefs_update_interval), 
-								defaultWait); 
-			return secToWait;
-		}
-		public void run() {
-			int secToWait;
-			do {
-				ArticleUpdateService.startUpdatingAllFeeds(getApplicationContext());
-				secToWait = this.getUpdateInterval(getApplicationContext());
-				try {
-					Thread.sleep(1000 * secToWait);
-				} catch (InterruptedException e) {
-					Log.e(TAG, "Interrupt not handled");
-				}
-			} while (true);
-		}
-	}
-	*/
 }

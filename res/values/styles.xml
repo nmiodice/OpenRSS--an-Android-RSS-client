@@ -29,6 +29,13 @@
 		<item name="android:background">@color/grey_light</item>
     </style>
     
+	<!-- Article List Parent Activity theme -->
+    <style name="ArticleTileContainer" parent = "AppTheme">
+    	<item name="android:layout_width">match_parent</item>
+    	<item name="android:layout_height">match_parent</item>
+		<item name="android:background">@drawable/article_background</item>
+    </style>
+    
     
     <!-- Tile -->
     <style name="rssTile" parent="ActivityBase">

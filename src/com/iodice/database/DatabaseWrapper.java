@@ -8,6 +8,7 @@ import android.util.Log;
 public class DatabaseWrapper extends SQLiteOpenHelper {
 
     private static final String TAG = "DatabaseWrapper";
+    private static DatabaseWrapper sInstance;
 
     private static final String DATABASE_NAME = "RSSReader.db";
     private static final int DATABASE_VERSION = 21;
@@ -15,6 +16,19 @@ public class DatabaseWrapper extends SQLiteOpenHelper {
     public DatabaseWrapper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
+    
+    // follow a singleton pattern
+    public static DatabaseWrapper getInstance(Context context) {
+        // Use the application context, which will ensure that you 
+        // don't accidentally leak an Activity's context.
+        // See this article for more information: http://bit.ly/6LRzfx
+        if (sInstance == null) {
+          sInstance = new DatabaseWrapper(context.getApplicationContext());
+        }
+        return sInstance;
+      }
+    
+    
 
     /**
      * Called if the database named DATABASE_NAME doesn't exist in order to create it.
@@ -29,7 +43,10 @@ public class DatabaseWrapper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(FeedOrm.SQL_CREATE_GROUP_INDEX); 
         
         sqLiteDatabase.execSQL(FeedOrm.getCategoryTableCreateStatement());
+        sqLiteDatabase.execSQL(FeedOrm.getCategoryTableCreateIndexStatement());
+        
         sqLiteDatabase.execSQL(FeedOrm.getCategoryFeedMapTableCreateStatement());
+        sqLiteDatabase.execSQL(FeedOrm.getCategoryFeedMapTableCreateIndexStatement());
         
     }
 

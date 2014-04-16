@@ -64,7 +64,6 @@ public abstract class ListBase extends ListFragment {
     
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		Log.i(TAG, "Item " + position + "clicked");
 		if (this.isInActionMode) {
 			Log.e(TAG, "onListItemClick called in action mode! This shouldnt happen!!");
 			return;
@@ -82,6 +81,11 @@ public abstract class ListBase extends ListFragment {
 		ListView listView = getListView();
 		listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
 		listView.setMultiChoiceModeListener(getChoiceListener());
+	}
+	
+	// when the list is in load state, it is not shown, hence the negation
+	public void setLoadState(boolean isInLoadState) {
+		this.setListShown(!isInLoadState);
 	}
 	
 	
@@ -138,9 +142,6 @@ public abstract class ListBase extends ListFragment {
     // a row should have its checkboxes visible and/or checked
     public View onListElementRedraw(int position, View v, ViewGroup parent) {
     	CheckBox bx = (CheckBox) v.findViewById(R.id.item_checkbox);
-
-    	Log.i(TAG, "redrawing element " + position);
-
 		if (isInActionMode) {
 	    	bx.setVisibility(View.VISIBLE);
 	    	if (selectedListItems.contains(position)) {
@@ -163,6 +164,8 @@ public abstract class ListBase extends ListFragment {
 		// the call to replaceCurrentData is made with the *current set of data* so that the
 		// net result is that the list is redrawn. 
 		MySimpleCursorAdapter adapt = (MySimpleCursorAdapter)this.getListAdapter();
+		if (adapt == null)
+			return;
 		Cursor c = adapt.getCursor();
 		replaceCurrentData(c);
 	}
@@ -185,10 +188,7 @@ public abstract class ListBase extends ListFragment {
 		    @Override
 	        // Inflate the menu for the CAB
 		    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-		    	
-		    	Log.i(TAG, "Creating contextual action bar");
-		        int contextualMenuView = cabGetMenuLayoutId();
-
+		    	int contextualMenuView = cabGetMenuLayoutId();
 		    	MenuInflater inflater = mode.getMenuInflater();
 		    	inflater.inflate(contextualMenuView, menu);
 
@@ -204,7 +204,6 @@ public abstract class ListBase extends ListFragment {
 		        	if (child == null)
 		        		continue;
 		        	bx = (CheckBox) child.findViewById(R.id.item_checkbox);
-		        	Log.i(TAG, "tst");
 		        	bx.setVisibility(View.VISIBLE);
 		        	bx.setChecked(false);
 		        }

@@ -2,14 +2,14 @@ package com.iodice.database;
 
 import java.util.List;
 
-import com.iodice.utilities.Text;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
+
+import com.iodice.utilities.Text;
 
 public class ArticleOrm extends OrmBase {
 
@@ -92,11 +92,21 @@ public class ArticleOrm extends OrmBase {
 	    		sql += ")";
 	    }
 	    // always order by date
-	    sql += " ORDER BY DATETIME(" + ArticleOrm.COLUMN_PUBLISHED_DATE + ") DESC";
-	    
-	    Log.i(TAG,  "Executing SQL: " + sql);
+	    sql += " ORDER BY DATETIME(" + ArticleOrm.COLUMN_PUBLISHED_DATE + ") DESC";	    
 	    Cursor cursor = database.rawQuery(sql, null);
 	    return cursor;
     }
-
+    
+    public static void deleteArticlesWhereLinkIs(String url, Context context) {
+    	DatabaseWrapper databaseWrapper = new DatabaseWrapper(context);
+	    SQLiteDatabase database = databaseWrapper.getReadableDatabase();
+	    	    
+	    database.beginTransaction();
+	    Log.i(TAG, "DELETING!");
+	    int id = database.delete(ArticleOrm.TABLE_NAME, ArticleOrm.COLUMN_PARENT_URL + " = ?", new String[] {url});
+	    Log.i(TAG, "i = " + id + " :: url = " + url);
+	    database.setTransactionSuccessful();
+	    database.endTransaction();
+	  	database.close();
+    }
 }

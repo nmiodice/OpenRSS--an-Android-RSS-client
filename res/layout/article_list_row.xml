@@ -5,6 +5,7 @@
     android:id="@+id/rss_root"
     android:orientation="vertical"
     style="@style/ActivityBase"
+	android:background="@android:color/transparent"    
     >
     
     <!-- The child layout will dictate the overall style, so nested 

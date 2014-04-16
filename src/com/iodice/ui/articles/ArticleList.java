@@ -1,5 +1,6 @@
 package com.iodice.ui.articles;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.ActivityNotFoundException;
@@ -18,19 +19,45 @@ import android.widget.Toast;
 
 import com.iodice.database.ArticleOrm;
 import com.iodice.rssreader.R;
-import com.iodice.ui.ListBase;
+import com.iodice.ui.AnimatedEntryList;
+import com.iodice.utilities.Callback;
 import com.iodice.utilities.Text;
 
-public class ArticleList extends ListBase {
+public class ArticleList extends AnimatedEntryList {
 	
-	private List<String> articleURLList;
 	private static final String TAG = "ArticleList";
-
+	private List<String> articleURLList;
+	// used primarly to avoid an infinite loop that can be caused if the feed has no
+	// data, tries to re-query the web, and then fails again. Without keeping track
+	// of the first failure, the loop wont exit
+	private boolean hasAlreadyFailedToLoad = false;
+	
+	private static final String ARTICLE_LIST_TAG = "ARTICLE_LIST_TAG";
+	
 	// this listview uses a tile layout, so the default divider isnt necessary
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		getListView().setDivider(null);
 		getListView().setDividerHeight(0);
 	}
+	
+	@Override
+	// restores the article list if the parent activity has been terminated prior to invocation.
+	// then call superclass's method to redraw the fragment
+	public void onActivityCreated(Bundle savedInstanceState) {
+		if (this.articleURLList == null && savedInstanceState != null) {
+			this.articleURLList = savedInstanceState.getStringArrayList(ARTICLE_LIST_TAG);
+		}
+		super.onActivityCreated(savedInstanceState);
+	}
+		
+	public void onSaveInstanceState (Bundle outState) {
+		if (this.articleURLList == null)
+			return;
+		
+		// the list of URLs will otherwise be lost if the parent activity is terminated by the OS
+		outState.putStringArrayList(ARTICLE_LIST_TAG, (ArrayList<String>) this.articleURLList);
+	}
+
 		
 	@Override
 	// load article in browser, if avaliable
@@ -39,7 +66,7 @@ public class ArticleList extends ListBase {
 		TextView txtview = (TextView) view.findViewById(R.id.rss_url);
 		String feedURL = txtview.getText().toString();
 
-		Log.i(TAG, "Opening feed: " + feedURL);
+		Log.i(TAG, "Opening feed: " + feedURL + " in default browser");
 		
 		try {
 			browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(feedURL));
@@ -118,11 +145,24 @@ public class ArticleList extends ListBase {
 		    R.id.rss_description,
 		    R.id.rss_published_date
 		};
+
 		cursor = ArticleOrm.selectWhereParentLinkIs(getActivity().getApplicationContext(), this.articleURLList);
 		Log.i(TAG, "" + cursor.getCount() + " articles loaded");
-		// create the adapter using the cursor pointing to the desired data 
-		// as well as the layout information
-		setAdapter(cursor, columns, to, R.layout.article_list_row);
+
+		// if there isnt any data, attempt a web query one time and then fail to load
+		// data if the web query is unsuccessful. 
+		// TODO: handle the case where multiple feeds are selected but not all feeds are cached in the DB.
+		// 	in the current implementation, a refresh will not be attempted!
+		if (cursor.getCount() == 0 && this.hasAlreadyFailedToLoad == false) {
+			this.hasAlreadyFailedToLoad = true;
+			Callback callbackInterface = (Callback) getActivity();
+			callbackInterface.handleCallbackEvent(ArticleActivity.CALLBACK_UPDATE_WITH_WEB_QUERY, null);
+			// TODO: add some failure notice
+		} else {
+			// create the adapter using the cursor pointing to the desired data 
+			// as well as the layout information
+			setAdapter(cursor, columns, to, R.layout.article_list_row);
+		}
 	}
 
 	@Override

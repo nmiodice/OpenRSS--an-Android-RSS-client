@@ -14,9 +14,9 @@ import android.widget.EditText;
 import com.iodice.database.FeedData;
 import com.iodice.database.FeedOrm;
 import com.iodice.rssreader.R;
+import com.iodice.utilities.Callback;
 import com.iodice.utilities.MultiSpinner;
 import com.iodice.utilities.Sys;
-import com.iodice.utilities.Callback;
 
 public class AddNewFeedDialog {
 	
@@ -55,7 +55,7 @@ public class AddNewFeedDialog {
 	
 	private static View getCustomContentView(Context context) {
 		LayoutInflater inflater = LayoutInflater.from(context);
-		View v = inflater.inflate(R.layout.feed_add_new, null);
+		View v = inflater.inflate(R.layout.feed_add_new_feed, null);
 		v = setupCategoryContent(v, context);
 		return v;
 	}
@@ -81,7 +81,7 @@ public class AddNewFeedDialog {
 		
 		// upon OK, setup the new feed item and send the data to the defined callback. Also, 
 		// shut off the keyboard!
-		builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+		builder.setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int whichButton) {
 				
@@ -120,10 +120,10 @@ public class AddNewFeedDialog {
 			}
 		});
 
-		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		builder.setNegativeButton(context.getString(R.string.cancel), new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int whichButton) {
-				Sys.disableKeyboard(context);
+				//Sys.disableKeyboard(context);
 			}
 		});
 		

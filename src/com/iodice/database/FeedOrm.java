@@ -49,11 +49,9 @@ public class FeedOrm extends OrmBase {
 	public static void saveFeeds(List<FeedData> rssFeeds, Context context) {
 		int length = rssFeeds.size();
 		SQLiteDatabase db = OrmBase.getWritableDatabase(context);
-		int cnt = 0;
 		for (int i = 0; i < length; i++) {
 			try {
 				FeedOrm.insertFeed(rssFeeds.get(i), db);
-				cnt++;
 			} catch (Exception e) {
 				if (e.getMessage().contains("code 19")) {
 					CharSequence text = context.getText(R.string.add_feed_fail_message);
@@ -67,15 +65,35 @@ public class FeedOrm extends OrmBase {
 			}
 		}
 		db.close();
-		Log.i(TAG, "Initialized " + cnt + " feeds in database");
 	}
 
-    public static void insertFeed(FeedData feed, SQLiteDatabase database) throws SQLiteException {
+    private static void insertFeed(FeedData feed, SQLiteDatabase database) throws SQLiteException {
         ContentValues values = rssToContentValues(feed);
         long feedId = database.insertOrThrow(FeedOrm.TABLE_NAME, "null", values);
-        Log.i(TAG, "Inserted new Feed with ID: " + feedId);
         saveCategories(feed, feedId, database);
-        Log.i(TAG, "Inserted categories for Feed w/ ID = " + feedId);
+        Log.i(TAG, "Inserted new Feed with ID: " + feedId);
+    }
+    
+    public static void saveExistingFeedsInGroup(List<String> urlList, List<String> categoryList, Context context) {
+    	assert(urlList != null && categoryList != null);
+    	SQLiteDatabase database = FeedOrm.getWritableDatabase(context);
+    	int numUrls = urlList.size();
+    	int numCategories = categoryList.size();
+    	String category;
+    	int catId;
+    	
+    	for (int i = 0; i < numUrls; i++) {
+    		for (int j = 0; j < numCategories; j++) {
+    			try {
+    				category = categoryList.get(j);
+    				catId = (int) categories.insertCategory(category, database);
+    				categoryFeedMap.insertCategoryFeedPair(catId, urlList.get(i), database);
+    			} catch (Exception e) {
+    				if (!e.getMessage().contains("code 19"))
+    					Log.e(TAG, "Error saving feed. SQLiteDatabase error: " + e.getMessage());
+    			}
+    		}
+    	}
     }
     
     private static void saveCategories(FeedData feed, long feedId, SQLiteDatabase database) {
@@ -100,7 +118,6 @@ public class FeedOrm extends OrmBase {
     	 */
     	for (int i = 0; i < size; i++) {
     		catId = (int) categories.insertCategory(groups.get(i), database);
-    		Log.i(categories.TAG, "catId = " + catId);
     		categoryFeedMap.insertCategoryFeedPair(catId, feed.getURL(), database);
     	}
     }
@@ -131,8 +148,6 @@ public class FeedOrm extends OrmBase {
 
 	    // the rowid selected as _id makes this query compatible with the SimpleCursorAdapter class
 	    String sql = "SELECT rowid _id,* FROM " + FeedOrm.TABLE_NAME;
-        Log.i(TAG, "Executing: " + sql);
-
 	    Cursor cursor = database.rawQuery(sql, null);	
 	    Log.i(TAG, "Loaded " + cursor.getCount() + " feed definitions...");
 	
@@ -141,11 +156,11 @@ public class FeedOrm extends OrmBase {
     }
     
     public static Cursor selectAllOrderBy(Context context, String orderBy) {
-		Cursor cursor = FeedOrm.selectAllWhereLinkIs(context, null, orderBy);
+		Cursor cursor = FeedOrm.selectAllOrderByWhereLinkIs(context, orderBy, null);
 	    return cursor;
     }
     
-    public static Cursor selectAllOrderByWhere(Context context, String orderBy, String category) {
+    public static Cursor selectAllOrderByWhereCategoryIs(Context context, String orderBy, String category) {
 		DatabaseWrapper databaseWrapper = new DatabaseWrapper(context);
 	    SQLiteDatabase database = databaseWrapper.getReadableDatabase();
 
@@ -156,7 +171,6 @@ public class FeedOrm extends OrmBase {
 	    					" ON " + categories.COLUMN_ID + "=" + categoryFeedMap.COLUMN_CATEGORY +
 	    				" WHERE " + categories.COLUMN_CATEGORY + "=?";
 	    
-        Log.i(TAG, "Executing: " + sql);
 	    Cursor cursor = database.rawQuery(sql, new String[] {category});	
 	    Log.i(TAG, "Loaded " + cursor.getCount() + " links with the category " + category + "...");
 	    database.close();
@@ -171,13 +185,13 @@ public class FeedOrm extends OrmBase {
 			linkList.add(cursor.getString(cursor.getColumnIndex(FeedOrm.COLUMN_URL)));
 			cursor.moveToNext();
 		}
-	    cursor = selectAllWhereLinkIs(context, linkList, orderBy);
+	    cursor = selectAllOrderByWhereLinkIs(context, orderBy, linkList);
 	    
 	    return cursor;
     }
     
     // a select all query where a list of links can be used as a constraint
-    private static Cursor selectAllWhereLinkIs(Context context, List<String> links, String orderBy) {
+    private static Cursor selectAllOrderByWhereLinkIs(Context context, String orderBy, List<String> links) {
 		DatabaseWrapper databaseWrapper = new DatabaseWrapper(context);
 	    SQLiteDatabase database = databaseWrapper.getReadableDatabase();
 	    String whereClause = "";
@@ -195,8 +209,6 @@ public class FeedOrm extends OrmBase {
 	    
 	    // the rowid selected as _id makes this query compatible with the SimpleCursorAdapter class
 	    String sql = "SELECT rowid _id,* FROM " + FeedOrm.TABLE_NAME + whereClause + " ORDER BY LOWER(" + orderBy + ")";
-        Log.i(TAG, "Executing: " + sql);
-
 	    Cursor cursor = database.rawQuery(sql, null);	
 	    Log.i(TAG, "Loaded " + cursor.getCount() + " feed definitions...");
 	
@@ -213,15 +225,14 @@ public class FeedOrm extends OrmBase {
 	    SQLiteDatabase database = databaseWrapper.getReadableDatabase();
 	    	    
 	    database.beginTransaction();
-	    int numDeleted = database.delete(FeedOrm.TABLE_NAME, "url = ?", new String[] {url});
+	    database.delete(FeedOrm.TABLE_NAME, FeedOrm.COLUMN_URL + " = ?", new String[] {url});
 	    categoryFeedMap.deletePairsAssociatedWithUrl(url, database);
 	    
 	    database.setTransactionSuccessful();
 	    database.endTransaction();
 	  	database.close();
-	    
-	    Log.i(TAG, "Deleted " + numDeleted + " feed(s) from the database.");
-
+	  	
+	  	ArticleOrm.deleteArticlesWhereLinkIs(url, context);
     }
     
     
@@ -234,12 +245,18 @@ public class FeedOrm extends OrmBase {
     public static String getCategoryTableDropStatement() {
     	return categories.SQL_DROP_TABLE;
     }   
+    public static String getCategoryTableCreateIndexStatement() {
+    	return categories.SQL_CREATE_INDEX;
+    }
     
     public static String getCategoryFeedMapTableCreateStatement() {
     	return categoryFeedMap.SQL_CREATE_TABLE;
     }
     public static String getCategoryFeedMapTableDropStatement() {
     	return categoryFeedMap.SQL_DROP_TABLE;
+    }
+    public static String getCategoryFeedMapTableCreateIndexStatement() {
+    	return categoryFeedMap.SQL_CREATE_INDEX;
     }
     
     /* holds a category and ID */
@@ -253,12 +270,17 @@ public class FeedOrm extends OrmBase {
         
         private static final String COLUMN_CATEGORY_TYPE = "TEXT UNIQUE";
         public static final String COLUMN_CATEGORY = "category";
+        public static final String INDEX_CATEGORY = "categories_idx";
         
         public static final String SQL_CREATE_TABLE =
         		"CREATE TABLE "  + TABLE_NAME + " (" +
         			COLUMN_ID + " " + COLUMN_ID_TYPE + COMMA_SEP +
         			COLUMN_CATEGORY   + " " + COLUMN_CATEGORY_TYPE +
        			")";
+        
+        public static final String SQL_CREATE_INDEX = 
+        		"CREATE INDEX " + INDEX_CATEGORY + 
+        		" ON " + TABLE_NAME + "(" + COLUMN_CATEGORY  + ")";
         
         public static final String SQL_DROP_TABLE =
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
@@ -275,7 +297,6 @@ public class FeedOrm extends OrmBase {
 	        	Log.i(categories.TAG, "Inserted new category with ID: " + id);
 			} catch (SQLiteException e) {
 				if (e.getMessage().contains("code 19")) {
-					Log.i(categories.TAG, "Duplicate category = '" + category + "' found");
 					id = getCategoryId(category, database);
 				} else {
 					Log.i(categories.TAG, "Failed to save category and category does not exist in DB. Category = " + category);
@@ -292,14 +313,10 @@ public class FeedOrm extends OrmBase {
 		    		" FROM " + categories.TABLE_NAME + 
 		    		" WHERE " + categories.COLUMN_CATEGORY + " =?" +
 		    		" LIMIT 1";
-	        Log.i(categories.TAG, "Executing: " + sql);
-
 		    Cursor cursor = database.rawQuery(sql, new String[] {category});	
 		    cursor.moveToFirst();
 		    id = cursor.getInt(cursor.getColumnIndex(COLUMN_ID));
 		    cursor.close();
-		    
-		    Log.i(TAG, "Loaded category with ID = " + id);
 		    return id;
 	    }
 	    
@@ -309,14 +326,8 @@ public class FeedOrm extends OrmBase {
 		    String sql = "SELECT rowid _id," + categories.COLUMN_CATEGORY + 
 		    				" FROM " + categories.TABLE_NAME +
 		    				" ORDER BY " + categories.COLUMN_CATEGORY;  
-	        
-		    Log.i(TAG, "Executing: " + sql);
-
 		    Cursor cursor = database.rawQuery(sql, null);
 		    cursor.moveToFirst();
-		    
-		    Log.i(TAG, "Found " + cursor.getCount() + " categories");
-		    
 		    return cursor;
 	    }
     }
@@ -334,6 +345,8 @@ public class FeedOrm extends OrmBase {
         
         private static final String COLUMN_CATEGORY_TYPE = "INT";
         public static final String COLUMN_CATEGORY = "categoryID";
+        private static final String INDEX_CATEGORY = "category_feed_map_category_idx";
+
         
         public static final String SQL_CREATE_TABLE =
         		"CREATE TABLE "  + TABLE_NAME + " (" +
@@ -342,6 +355,11 @@ public class FeedOrm extends OrmBase {
         			"UNIQUE(" + COLUMN_URL + COMMA_SEP + COLUMN_CATEGORY + ") " +
        			")";
         
+        public static final String SQL_CREATE_INDEX = 
+        		"CREATE INDEX " + INDEX_CATEGORY + 
+        		" ON " + TABLE_NAME + "(" + COLUMN_CATEGORY  + ")";
+        	    		
+
         public static final String SQL_DROP_TABLE =
                 "DROP TABLE IF EXISTS " + TABLE_NAME;
         
@@ -354,8 +372,7 @@ public class FeedOrm extends OrmBase {
 	        values.put(categoryFeedMap.COLUMN_URL, url);
 	        values.put(categoryFeedMap.COLUMN_CATEGORY, categoryID);
 	        
-	        long id = database.insertOrThrow(categoryFeedMap.TABLE_NAME, "null", values);
-	        Log.i(categoryFeedMap.TAG, "Inserted category ID/feed URL pair (id " + id + "): " + categoryID + ", " + url);
+	        database.insertOrThrow(categoryFeedMap.TABLE_NAME, "null", values);
 	    }
 	    
 	   
@@ -369,7 +386,6 @@ public class FeedOrm extends OrmBase {
 		    String sql = "SELECT " + categoryFeedMap.COLUMN_CATEGORY + 
 		    				" FROM " + categoryFeedMap.TABLE_NAME +
 		    				" WHERE " + categoryFeedMap.COLUMN_URL + "=?";
-		    Log.i(TAG, "Executing: " + sql);
 		    Cursor cursor = database.rawQuery(sql, new String[] {url});
 		    
 		    // build up list of categoryIDs
@@ -381,10 +397,9 @@ public class FeedOrm extends OrmBase {
 			}
 		    
 		    // 2. delete all cateogry/link pairs with the specified link
-	    	int numDeleted = database.delete(categoryFeedMap.TABLE_NAME, 
+	    	database.delete(categoryFeedMap.TABLE_NAME, 
 	    			categoryFeedMap.COLUMN_URL + " =?", 
 	    			new String[] {url});
-	    	Log.i(categoryFeedMap.TAG, "Deleted " + numDeleted + " category/url pair(s)");
 	    	
 	    	// 3. check to see if we need to delete any category definitions
 	    	int numCats = catIDList.size();

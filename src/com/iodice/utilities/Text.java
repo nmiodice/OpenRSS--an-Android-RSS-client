@@ -1,7 +1,9 @@
 package com.iodice.utilities;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import org.jsoup.Jsoup;
@@ -20,6 +22,16 @@ public class Text {
 	
 	public static String escapeString(String s) {
 		return DatabaseUtils.sqlEscapeString(s);
+	}
+	
+	// The code splits the string on a delimiter defined as: zero or more whitespace, a literal 
+	// comma, zero or more whitespace which will place the words into the list and collapse 
+	// any whitespace between the words and commas.
+	public static List<String> splitStringOnComma(String s) {
+		if (s == null)
+			return null;
+		List<String> items = Arrays.asList(s.split("\\s*,\\s*"));
+		return items;
 	}
 
 	// display only the first x characters of the description while also displaying a full

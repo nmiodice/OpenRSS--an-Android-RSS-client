@@ -62,6 +62,7 @@ public class ArticleData {
     	try {
 			publishedDate = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH).parse(s);
 		} catch (ParseException e) {
+			Log.e(TAG, "Error setting article published date");
 			Log.e(TAG, e.getMessage());
 			e.printStackTrace();
 		}
