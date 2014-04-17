@@ -1,7 +1,9 @@
 package com.iodice.ui.articles;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -13,6 +15,7 @@ import android.view.ActionMode;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FilterQueryProvider;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,11 +34,20 @@ public class ArticleList extends AnimatedEntryList {
 	// data, tries to re-query the web, and then fails again. Without keeping track
 	// of the first failure, the loop wont exit
 	private boolean hasAlreadyFailedToLoad = false;
+	private List<String> filterTerms = new ArrayList<String>();
+	private List<String> columnsToFilterOn = Arrays.asList(new String[] {
+			ArticleOrm.COLUMN_TITLE,
+			ArticleOrm.COLUMN_DESCRIPTION,
+			ArticleOrm.COLUMN_PARENT_URL,
+			ArticleOrm.COLUMN_URL,
+			});
+
 	
 	private static final String ARTICLE_LIST_TAG = "ARTICLE_LIST_TAG";
 	
 	// this listview uses a tile layout, so the default divider isnt necessary
 	public void onViewCreated(View view, Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
 		getListView().setDivider(null);
 		getListView().setDividerHeight(0);
 	}
@@ -57,7 +69,19 @@ public class ArticleList extends AnimatedEntryList {
 		// the list of URLs will otherwise be lost if the parent activity is terminated by the OS
 		outState.putStringArrayList(ARTICLE_LIST_TAG, (ArrayList<String>) this.articleURLList);
 	}
-
+	
+	public void setFilterTerms(String contains) {
+		contains = contains.trim();
+		
+		if (contains.length() == 0) {
+			this.filterTerms = new ArrayList<String>();
+		} else {
+			if (contains.endsWith(",") == false)
+				contains += ",";
+			
+			this.filterTerms = Arrays.asList(contains.toLowerCase(Locale.US).split("\\s*,\\s*"));
+		}
+	}
 		
 	@Override
 	// load article in browser, if avaliable
@@ -162,6 +186,23 @@ public class ArticleList extends AnimatedEntryList {
 			// create the adapter using the cursor pointing to the desired data 
 			// as well as the layout information
 			setAdapter(cursor, columns, to, R.layout.article_list_row);
+			MySimpleCursorAdapter adapt = (MySimpleCursorAdapter) this.getListAdapter();
+			
+			// set up the filter callback so that filtering can be handled asynchronously
+			Log.i(TAG, "Setting query provider");
+			adapt.setFilterQueryProvider(new FilterQueryProvider() {
+				public Cursor runQuery(CharSequence constraint) {
+					setFilterTerms(constraint.toString());
+					// passing in true as the last parameter makes it so that if any term matches
+					// it will be added as a result
+					Cursor c = ArticleOrm.selectWhereParentLinkIsAndContains(getActivity(), 
+							articleURLList, 
+							filterTerms, 
+							columnsToFilterOn,
+							true);
+					return c;
+		         }
+			});
 		}
 	}
 
@@ -170,7 +211,7 @@ public class ArticleList extends AnimatedEntryList {
 			ViewGroup parent) {
 		// important to always call the parent, as it takes care of redrawing the checkboxes accurately
 		// when in action mode
-		View v = super.onListElementRedraw(position, convertView, parent);;
+		View v = convertView;
 		
 		// not all articles supply an author
 		TextView tmp = (TextView) v.findViewById(R.id.rss_author);
@@ -213,7 +254,9 @@ public class ArticleList extends AnimatedEntryList {
 		if (tmp.getText().equals(""))
 			tmp.setVisibility(View.GONE);
 
-		
+		// important to always call the parent, as it takes care of redrawing the checkboxes accurately
+		// when in action mode
+		v = super.onListElementRedraw(position, convertView, parent);
 		return v;
 	}
 	

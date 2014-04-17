@@ -90,6 +90,7 @@ public class RssFeedWebQuery implements Callable<List<ArticleData>> {
 		@SuppressWarnings("unchecked")
 		List<SyndEntry> entries = feed.getEntries();
 		int numEntries = entries.size();
+		//TODO: somehow load the feed image --> Log.i(TAG, "link = " + feed.getImage().getUrl());
 		
 		for (int i = 0; i < numEntries; i++) {
 			tmpArticle = syndEntryToArticleData(entries.get(i));
@@ -129,9 +130,8 @@ public class RssFeedWebQuery implements Callable<List<ArticleData>> {
 	    }
 	    
 	    article.setIsCached(false);
-	    
 	    article.setParentURL(this.url);
-	    
+	    	    
 	    return article;
 	}
 	

@@ -1,6 +1,7 @@
 package com.iodice.database;
 
 import java.util.List;
+import java.util.Locale;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -95,6 +96,59 @@ public class ArticleOrm extends OrmBase {
 	    sql += " ORDER BY DATETIME(" + ArticleOrm.COLUMN_PUBLISHED_DATE + ") DESC";	    
 	    Cursor cursor = database.rawQuery(sql, null);
 	    return cursor;
+    }
+    
+    // the 'inclusive' parameter determines whether or not a result is included
+    // if one of the terms matches (inclusive = true) or all of the terms match (inclusive = false)
+    public static Cursor selectWhereParentLinkIsAndContains(Context context, 
+													    		List<String> links, 
+													    		List<String> filterTerms, 
+													    		List<String> columnsToFilterOn,
+													    		boolean inclusive) {
+		DatabaseWrapper databaseWrapper = new DatabaseWrapper(context);
+	    SQLiteDatabase database = databaseWrapper.getReadableDatabase();
+    	String sql = "SELECT rowid _id,* FROM " + ArticleOrm.TABLE_NAME + 
+				" WHERE " + ArticleOrm.COLUMN_PARENT_URL + " IN(";
+		int numLinks = links.size();
+		for (int i = 0; i < numLinks; i++) {
+			sql += "'";
+			sql += links.get(i);
+			sql += "'";
+			
+			if (i < numLinks -1)
+				sql += ",";
+			else
+				sql += ")";
+		}
+		// depending on the query type (inclusive vs not inclusive), build the relevant
+		// statements
+		int numCols = columnsToFilterOn.size();
+		int numFilterTerms = filterTerms.size();
+		if (numFilterTerms != 0 && numCols != 0) {
+			sql += " AND (";
+			for (int filtTerm = 0; filtTerm < numFilterTerms; filtTerm++) {
+				if (filtTerm != 0) {
+					if (inclusive == true)
+						sql += " OR";
+					else
+						sql += " AND";
+				}
+				sql +=  "(";
+				for (int col = 0; col < numCols; col++) {
+					if (col != 0)
+						sql += " OR";
+					 sql += " LOWER(" + columnsToFilterOn.get(col) + ")" +
+							" LIKE '%" + filterTerms.get(filtTerm).toLowerCase(Locale.US) + "%'";
+				}
+				sql += ")";
+			}
+			sql += " )";
+		}
+		// always order by date
+		sql += " ORDER BY DATETIME(" + ArticleOrm.COLUMN_PUBLISHED_DATE + ") DESC";
+		Log.i(TAG, "Ecexuting sql: " + sql);
+		Cursor cursor = database.rawQuery(sql, null);
+		return cursor;
     }
     
     public static void deleteArticlesWhereLinkIs(String url, Context context) {

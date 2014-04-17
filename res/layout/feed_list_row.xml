@@ -19,6 +19,7 @@
         android:clickable="false"
         android:visibility="gone"
         />
+			
     
     <!-- Text content -->
 	<RelativeLayout

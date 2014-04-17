@@ -79,6 +79,7 @@ public abstract class ListBase extends ListFragment {
 		this.setUpAdapter();
 		
 		ListView listView = getListView();
+		listView.setTextFilterEnabled(true);
 		listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE_MODAL);
 		listView.setMultiChoiceModeListener(getChoiceListener());
 	}
@@ -260,7 +261,7 @@ public abstract class ListBase extends ListFragment {
 
 	// a SimpleCursorAdapter that allows for customization whenever a row layout needs to be re-drawn. 
 	// Customization done through the onListElementRedraw() abstract method
-	private class MySimpleCursorAdapter extends SimpleCursorAdapter {
+	public class MySimpleCursorAdapter extends SimpleCursorAdapter {
 		
 		int layout;
 		String[] columns;
@@ -296,6 +297,6 @@ public abstract class ListBase extends ListFragment {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View v = super.getView(position, convertView, parent);
 	    	return onListElementRedraw(position, v, parent);
-		}		
+		}
 	}
 }

@@ -10,14 +10,19 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Surface;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
 
 import com.iodice.rssreader.R;
 import com.iodice.services.ArticleUpdateService;
+import com.iodice.ui.ListBase.MySimpleCursorAdapter;
 import com.iodice.utilities.Callback;
 
 
@@ -26,6 +31,8 @@ public class ArticleActivity extends Activity implements Callback {
 	
 	private static final String TAG = "Activity_Rss";
 	private static final String LIST = "LIST";
+	private static final String SEARCH_KEY = "SEARCH_KEY";
+	private static final String SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY";
 	ArticleUpdateReceiver receiver; 
 	
 	/* supported callback method identifiers */
@@ -43,6 +50,7 @@ public class ArticleActivity extends Activity implements Callback {
 		List<String> urlList = intent.getStringArrayListExtra(getResources().getString(R.string.rss_url_intent));
 		
 		displayArticleList(urlList);
+		setupSearchBar();
 	}
 	
     @Override
@@ -57,6 +65,67 @@ public class ArticleActivity extends Activity implements Callback {
     		this.unregisterReceiver(receiver);
     	
     	super.onStop();
+    }
+    
+    @Override
+    protected void onSaveInstanceState (Bundle outState) {
+    	EditText txt = (EditText)findViewById(R.id.article_search_box_text);
+		View v = this.findViewById(R.id.article_search_box_container);
+
+    	if (v != null) {
+	    	if (v.getVisibility() == View.VISIBLE)
+	    		outState.putBoolean(ArticleActivity.SEARCH_KEY, true);
+	    	if (txt != null)
+	    		outState.putString(ArticleActivity.SEARCH_TEXT_KEY, txt.getText().toString());
+    	}
+    	super.onSaveInstanceState(outState);
+    }
+    @Override
+    protected void onRestoreInstanceState (Bundle savedInstanceState) {
+    	if (savedInstanceState != null) {
+    		View v = this.findViewById(R.id.article_search_box_container);
+    		if (v != null) {
+	    		boolean wasSearchVisible = savedInstanceState.getBoolean(ArticleActivity.SEARCH_KEY);
+	    		if (wasSearchVisible == true)
+	    			v.setVisibility(View.VISIBLE);	
+    		}
+    		
+    		EditText txt = (EditText) this.findViewById(R.id.article_search_box_text);
+    		if (txt != null) {
+	    		String oldSearchTerm = savedInstanceState.getString(ArticleActivity.SEARCH_TEXT_KEY);
+	    		txt.setText(oldSearchTerm);
+    		}
+    	}
+    }
+
+
+
+
+    
+    private void setupSearchBar() {
+    	EditText txtBox = (EditText)findViewById(R.id.article_search_box_text);
+
+    	txtBox.addTextChangedListener(new TextWatcher() {
+    	    @Override
+    	    public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+    	        // When user changed the Text
+    			FragmentManager fMan = getFragmentManager();
+    			ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivity.LIST);
+    			if (articleList != null) {
+    				MySimpleCursorAdapter adapt = (MySimpleCursorAdapter)articleList.getListAdapter();
+    				adapt.getFilter().filter(cs);
+    			}
+    	    }
+    	    @Override
+    	    public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {}
+    	    @Override
+    	    public void afterTextChanged(Editable arg0) {}
+    	});
+    }
+    
+    public void cancelSearchText(View v) {
+        EditText t = (EditText)findViewById(R.id.article_search_box_text);
+        t.setText("");
     }
     
 	public void queryWebForNewListData(List<String> urlList) {
@@ -87,6 +156,14 @@ public class ArticleActivity extends Activity implements Callback {
             case R.id.action_refresh:
             	this.updateCurrentListWithWebQuery();
                 return true;
+                
+            case R.id.action_article_search:
+            	View v = findViewById(R.id.article_search_box_container);
+            	if (v.getVisibility() == View.GONE)
+            		v.setVisibility(View.VISIBLE);
+            	else
+            		v.setVisibility(View.GONE);
+            	return true;
             	
             default:
                 return super.onOptionsItemSelected(item);

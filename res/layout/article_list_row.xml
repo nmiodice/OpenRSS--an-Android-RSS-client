@@ -13,6 +13,7 @@
 	<RelativeLayout
         tools:ignore="UselessParent"
         style="@style/rssTile"
+        android:id="@+id/test"
         android:padding="4dp"
         android:paddingBottom="8dp"
     	>

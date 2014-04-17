@@ -18,6 +18,7 @@
         <item name="android:spinnerDropDownItemStyle">@style/home_category_spinner_style</item>
     </style>
     
+    
     <style name="home_category_spinner_style" parent="@android:style/Widget.Holo.DropDownItem.Spinner">
     	<item name="android:textAppearance">@android:color/primary_text_dark</item>
 	</style>

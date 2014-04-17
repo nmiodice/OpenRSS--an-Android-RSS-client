@@ -15,25 +15,27 @@ public final class R {
     public static final class attr {
     }
     public static final class color {
+        public static final int article_search_background=0x7f050010;
         public static final int black=0x7f050004;
         public static final int black_transparent=0x7f050005;
         public static final int blue=0x7f050002;
         public static final int blue_opaque=0x7f050003;
-        public static final int grey_light=0x7f050008;
-        public static final int grey_shadow=0x7f050009;
-        public static final int orange=0x7f05000a;
+        public static final int grey_light=0x7f050009;
+        public static final int grey_shadow=0x7f05000a;
+        public static final int orange=0x7f05000b;
         /**  raw colors 
          */
         public static final int red=0x7f050000;
         public static final int red_opaque=0x7f050001;
-        public static final int rss_text_color_accent=0x7f05000e;
-        public static final int tile=0x7f05000c;
+        public static final int rss_text_color_accent=0x7f05000f;
+        public static final int tile=0x7f05000d;
         /**  design elements 
          */
-        public static final int tile_drop_shadow=0x7f05000b;
-        public static final int tile_pressed=0x7f05000d;
+        public static final int tile_drop_shadow=0x7f05000c;
+        public static final int tile_pressed=0x7f05000e;
         public static final int white=0x7f050006;
-        public static final int white_off=0x7f050007;
+        public static final int white_off=0x7f050008;
+        public static final int white_opaque=0x7f050007;
     }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
@@ -51,47 +53,53 @@ public final class R {
         public static final int ic_action_discard=0x7f020002;
         public static final int ic_action_new=0x7f020003;
         public static final int ic_action_refresh=0x7f020004;
-        public static final int ic_action_save=0x7f020005;
-        public static final int ic_action_select_all=0x7f020006;
-        public static final int ic_action_share=0x7f020007;
-        public static final int ic_action_web_site=0x7f020008;
-        public static final int ic_launcher=0x7f020009;
-        public static final int tile=0x7f02000a;
-        public static final int tile_pressed=0x7f02000b;
-        public static final int tile_selector=0x7f02000c;
+        public static final int ic_action_remove=0x7f020005;
+        public static final int ic_action_remove_dark=0x7f020006;
+        public static final int ic_action_save=0x7f020007;
+        public static final int ic_action_search=0x7f020008;
+        public static final int ic_action_select_all=0x7f020009;
+        public static final int ic_action_share=0x7f02000a;
+        public static final int ic_action_web_site=0x7f02000b;
+        public static final int ic_launcher=0x7f02000c;
+        public static final int tile=0x7f02000d;
+        public static final int tile_pressed=0x7f02000e;
+        public static final int tile_selector=0x7f02000f;
     }
     public static final class id {
-        public static final int action_add_feed=0x7f0b0019;
-        public static final int action_deselect_all=0x7f0b0018;
-        public static final int action_load_selected=0x7f0b001d;
-        public static final int action_refresh=0x7f0b0015;
-        public static final int action_remove_selected=0x7f0b001c;
-        public static final int action_save_group=0x7f0b001e;
-        public static final int action_select_all=0x7f0b0016;
-        public static final int action_settings=0x7f0b001a;
-        public static final int action_share_selected=0x7f0b0017;
-        public static final int action_test_re_initialize=0x7f0b001b;
-        public static final int add_feed_categories=0x7f0b000f;
-        public static final int add_feed_name=0x7f0b000c;
-        public static final int add_feed_new_category=0x7f0b000e;
-        public static final int add_feed_url=0x7f0b000d;
-        public static final int category_csv_list=0x7f0b0010;
-        public static final int feed_list_container=0x7f0b000b;
-        public static final int feed_list_text_content=0x7f0b0012;
-        public static final int feed_list_view_root=0x7f0b0011;
-        public static final int feed_name=0x7f0b0013;
-        public static final int feed_url=0x7f0b0014;
-        public static final int item_checkbox=0x7f0b0004;
-        public static final int rss_author=0x7f0b0009;
-        public static final int rss_base_url=0x7f0b0006;
-        public static final int rss_description=0x7f0b0008;
-        public static final int rss_fragment_container=0x7f0b0002;
-        public static final int rss_loading_content=0x7f0b0000;
-        public static final int rss_loading_content_text=0x7f0b0001;
-        public static final int rss_published_date=0x7f0b0007;
-        public static final int rss_root=0x7f0b0003;
-        public static final int rss_title=0x7f0b0005;
-        public static final int rss_url=0x7f0b000a;
+        public static final int action_add_feed=0x7f0b001c;
+        public static final int action_article_search=0x7f0b0017;
+        public static final int action_clear_search_term=0x7f0b0001;
+        public static final int action_deselect_all=0x7f0b001b;
+        public static final int action_load_selected=0x7f0b0020;
+        public static final int action_refresh=0x7f0b0018;
+        public static final int action_remove_selected=0x7f0b001f;
+        public static final int action_save_group=0x7f0b0021;
+        public static final int action_select_all=0x7f0b0019;
+        public static final int action_settings=0x7f0b001d;
+        public static final int action_share_selected=0x7f0b001a;
+        public static final int action_test_re_initialize=0x7f0b001e;
+        public static final int add_feed_categories=0x7f0b0011;
+        public static final int add_feed_name=0x7f0b000e;
+        public static final int add_feed_new_category=0x7f0b0010;
+        public static final int add_feed_url=0x7f0b000f;
+        public static final int article_search_box_container=0x7f0b0000;
+        public static final int article_search_box_text=0x7f0b0002;
+        public static final int category_csv_list=0x7f0b0012;
+        public static final int feed_list_container=0x7f0b000d;
+        public static final int feed_list_text_content=0x7f0b0014;
+        public static final int feed_list_view_root=0x7f0b0013;
+        public static final int feed_name=0x7f0b0015;
+        public static final int feed_url=0x7f0b0016;
+        public static final int item_checkbox=0x7f0b0006;
+        public static final int rss_author=0x7f0b000b;
+        public static final int rss_base_url=0x7f0b0008;
+        public static final int rss_description=0x7f0b000a;
+        public static final int rss_fragment_container=0x7f0b0003;
+        public static final int rss_published_date=0x7f0b0009;
+        public static final int rss_root=0x7f0b0004;
+        public static final int rss_title=0x7f0b0007;
+        public static final int rss_url=0x7f0b000c;
+        public static final int test=0x7f0b0005;
     }
     public static final class integer {
         public static final int animate_duration_base=0x7f070001;
@@ -129,6 +137,9 @@ public final class R {
         /**  Add new feed 
          */
         public static final int action_add=0x7f080021;
+        public static final int action_article_search=0x7f08003a;
+        public static final int action_article_search_hint=0x7f080039;
+        public static final int action_clear_search_term=0x7f08003b;
         public static final int action_deselect_all=0x7f08001c;
         public static final int action_load_selected=0x7f08001a;
         public static final int action_refresh=0x7f080037;

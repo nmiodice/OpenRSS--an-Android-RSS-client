@@ -77,5 +77,8 @@
     <string name="action_share_selected">Share</string>
     <string name="action_refresh">Refresh</string>
     <string name="article_share_subject">Articles sent from my mobile RSS reader</string>
+    <string name="action_article_search_hint">Search&#8230;</string>
+    <string name="action_article_search">Search articles</string>
+    <string name="action_clear_search_term">Clear search term</string>
     
 </resources>
