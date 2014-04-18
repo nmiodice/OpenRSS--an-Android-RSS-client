@@ -33,11 +33,13 @@ public class ArticleActivity extends Activity implements Callback {
 	private static final String LIST = "LIST";
 	private static final String SEARCH_KEY = "SEARCH_KEY";
 	private static final String SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY";
+	/* receives notice from the article update service and triggers a data refresh */
 	ArticleUpdateReceiver receiver; 
 	
 	/* supported callback method identifiers */
 	public static final int CALLBACK_REDRAW_WITH_CACHED_DATA = 0;
 	public static final int CALLBACK_UPDATE_WITH_WEB_QUERY = 1;
+
 
 	
 	@Override
@@ -101,14 +103,14 @@ public class ArticleActivity extends Activity implements Callback {
 
 
 
-    
+    private TextWatcher searchBarListener = null;
     private void setupSearchBar() {
     	EditText txtBox = (EditText)findViewById(R.id.article_search_box_text);
-
-    	txtBox.addTextChangedListener(new TextWatcher() {
+    	if (this.searchBarListener != null)
+    		txtBox.removeTextChangedListener(this.searchBarListener);
+    	this.searchBarListener = new TextWatcher() {
     	    @Override
     	    public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
-    	        // When user changed the Text
     			FragmentManager fMan = getFragmentManager();
     			ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivity.LIST);
     			if (articleList != null) {
@@ -120,10 +122,11 @@ public class ArticleActivity extends Activity implements Callback {
     	    public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {}
     	    @Override
     	    public void afterTextChanged(Editable arg0) {}
-    	});
+    	};
+    	txtBox.addTextChangedListener(searchBarListener);
     }
     
-    public void cancelSearchText(View v) {
+    public void clearSearchText(View v) {
         EditText t = (EditText)findViewById(R.id.article_search_box_text);
         t.setText("");
     }
@@ -142,11 +145,9 @@ public class ArticleActivity extends Activity implements Callback {
 	private void updateCurrentListWithWebQuery() {
 		FragmentManager fMan = getFragmentManager();
 		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivity.LIST);
-		if (articleList != null) {
+		if (articleList != null)
 			articleList.setLoadState(true);
-			this.queryWebForNewListData(articleList.getArticleURLList());
-		} else
-			this.queryWebForNewListData(null);
+		this.queryWebForNewListData(articleList.getArticleURLList());
 	}
     
     @Override
@@ -239,6 +240,7 @@ public class ArticleActivity extends Activity implements Callback {
 		switch (n) {
 			case ArticleActivity.CALLBACK_REDRAW_WITH_CACHED_DATA:
 				this.redrawActiveArticleListWithCachedData();
+				this.setupSearchBar();
 				return;
 			case ArticleActivity.CALLBACK_UPDATE_WITH_WEB_QUERY:
 				this.updateCurrentListWithWebQuery();

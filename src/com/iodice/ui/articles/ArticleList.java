@@ -3,7 +3,6 @@ package com.iodice.ui.articles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -79,7 +78,8 @@ public class ArticleList extends AnimatedEntryList {
 			if (contains.endsWith(",") == false)
 				contains += ",";
 			
-			this.filterTerms = Arrays.asList(contains.toLowerCase(Locale.US).split("\\s*,\\s*"));
+			this.filterTerms = Text.getCleanStringList(contains.toString());  
+					//Arrays.asList(contains.toLowerCase(Locale.US).split("\\s*,\\s*"));
 		}
 	}
 		
@@ -190,19 +190,23 @@ public class ArticleList extends AnimatedEntryList {
 			
 			// set up the filter callback so that filtering can be handled asynchronously
 			Log.i(TAG, "Setting query provider");
-			adapt.setFilterQueryProvider(new FilterQueryProvider() {
-				public Cursor runQuery(CharSequence constraint) {
-					setFilterTerms(constraint.toString());
-					// passing in true as the last parameter makes it so that if any term matches
-					// it will be added as a result
-					Cursor c = ArticleOrm.selectWhereParentLinkIsAndContains(getActivity(), 
-							articleURLList, 
-							filterTerms, 
-							columnsToFilterOn,
-							true);
-					return c;
-		         }
-			});
+			//if (adapt.getFilterQueryProvider() == null) {
+				adapt.setFilterQueryProvider(new FilterQueryProvider() {
+					public Cursor runQuery(CharSequence constraint) {
+						setFilterTerms(constraint.toString());
+						// passing in true as the last parameter makes it so that if any term matches
+						// it will be added as a result
+						Cursor c = ArticleOrm.selectWhereParentLinkIsAndContains(getActivity(), 
+								articleURLList, 
+								filterTerms, 
+								columnsToFilterOn,
+								true);
+						Log.i(TAG, "cursor = " + c);
+						Log.i(TAG, "filterTerms = " + filterTerms.toString());
+						return c;
+			         }
+				});
+			//}
 		}
 	}
 
@@ -217,12 +221,8 @@ public class ArticleList extends AnimatedEntryList {
 		TextView tmp = (TextView) v.findViewById(R.id.rss_author);
 		if (tmp.getText().equals(""))
 			tmp.setVisibility(View.GONE);
-
-        // query local parameters to see whether or not we have data to 
-        // populate the fragment with
-    	tmp = (TextView) v.findViewById(R.id.rss_author);
-		if (tmp.getText().equals(""))
-			tmp.setVisibility(View.GONE);
+		else
+			tmp.setVisibility(View.VISIBLE);
 
     	tmp = (TextView) v.findViewById(R.id.rss_description);
     	String desc = tmp.getText().toString();
@@ -240,10 +240,14 @@ public class ArticleList extends AnimatedEntryList {
     	tmp = (TextView) v.findViewById(R.id.rss_title);
 		if (tmp.getText().equals(""))
 			tmp.setVisibility(View.GONE);
-        
+		else
+			tmp.setVisibility(View.VISIBLE);
+		
         tmp = (TextView) v.findViewById(R.id.rss_base_url);
 		if (tmp.getText().equals(""))
 			tmp.setVisibility(View.GONE);  
+		else
+			tmp.setVisibility(View.VISIBLE);
 		
 		// the url never needs to be shown, it only holds data to launch the article
 		// in a browser
@@ -253,6 +257,8 @@ public class ArticleList extends AnimatedEntryList {
     	tmp = (TextView) v.findViewById(R.id.rss_published_date);
 		if (tmp.getText().equals(""))
 			tmp.setVisibility(View.GONE);
+		else
+			tmp.setVisibility(View.VISIBLE);
 
 		// important to always call the parent, as it takes care of redrawing the checkboxes accurately
 		// when in action mode

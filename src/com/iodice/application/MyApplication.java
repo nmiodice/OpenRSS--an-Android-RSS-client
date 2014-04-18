@@ -45,7 +45,7 @@ public class MyApplication extends Application {
 			editor.putBoolean(getString(R.string.prefs_first_run), false);
 			editor.commit();
 		}
-		startArticleUpdateService(context);
+	startArticleUpdateService(context);
 	}
 	
 	private void startArticleUpdateService(Context context) {
@@ -70,7 +70,6 @@ public class MyApplication extends Application {
 		
 		
 		Log.i(TAG, "started article update service");
-		//new BackgroundArticleUpdateCaller().start();
 	}
 	
 	// TODO: after testing, make this private. Being used to add a repopulate menu item for testing

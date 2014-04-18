@@ -87,7 +87,7 @@ public class AddNewGroupingDialog {
 				editText = (EditText) v.findViewById(R.id.category_csv_list);
 				String userInput = editText.getText().toString();
 				if (userInput != null && !userInput.equals("")) {
-					List<String> userInputList = Text.splitStringOnComma(userInput);
+					List<String> userInputList = Text.getCleanStringList(userInput);
 					categories.addAll(userInputList);
 				}
 				

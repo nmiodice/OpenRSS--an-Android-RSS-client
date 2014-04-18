@@ -81,7 +81,9 @@
 		        android:textStyle="italic"
 		        android:textColor="@color/rss_text_color_accent"
 		        android:layout_below="@id/rss_description" 
-		        android:padding="2dp"
+		        android:paddingBottom="2dp"
+		        android:paddingLeft="2dp"
+		        android:paddingRight="2dp"
 		        />
 		    
 		

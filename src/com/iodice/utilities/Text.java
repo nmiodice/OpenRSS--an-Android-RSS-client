@@ -24,13 +24,15 @@ public class Text {
 		return DatabaseUtils.sqlEscapeString(s);
 	}
 	
-	// The code splits the string on a delimiter defined as: zero or more whitespace, a literal 
-	// comma, zero or more whitespace which will place the words into the list and collapse 
-	// any whitespace between the words and commas.
-	public static List<String> splitStringOnComma(String s) {
+	// clean punctuation and other crap. returns a list of lowercase plain text words
+	public static List<String> getCleanStringList(String s) {
 		if (s == null)
 			return null;
-		List<String> items = Arrays.asList(s.split("\\s*,\\s*"));
+		s = s.toLowerCase(Locale.US);
+		s = s.trim();
+		s = removeHTML(s);
+		s = s.replaceAll("[^a-zA-Z0-9 ]", "");
+		List<String> items = Arrays.asList(s.split(" "));
 		return items;
 	}
 

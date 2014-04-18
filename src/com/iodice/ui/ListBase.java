@@ -162,24 +162,13 @@ public abstract class ListBase extends ListFragment {
 	// redraw a list, presumably because the underlying data set has changed and views need to be
 	// updtated
 	public void redrawListView() {
-		// the call to replaceCurrentData is made with the *current set of data* so that the
-		// net result is that the list is redrawn. 
 		MySimpleCursorAdapter adapt = (MySimpleCursorAdapter)this.getListAdapter();
-		if (adapt == null)
-			return;
-		Cursor c = adapt.getCursor();
-		replaceCurrentData(c);
+		adapt.notifyDataSetChanged();
 	}
 	
 	public void replaceCurrentData(Cursor c) {
 		MySimpleCursorAdapter adapt = (MySimpleCursorAdapter)this.getListAdapter();
-		int layout = adapt.getLayout();
-		String[] columns = adapt.getColumns();
-		int[] layoutMapping = adapt.getLayoutMapping();
-		
-		this.setAdapter(c, columns, layoutMapping, layout);
-		adapt = (MySimpleCursorAdapter) this.getListAdapter();
-		adapt.notifyDataSetChanged();	
+		adapt.changeCursor(c);
 	}
 	
 	// sets up contextual action bar actions
