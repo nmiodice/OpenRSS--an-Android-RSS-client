@@ -22,7 +22,7 @@ import android.widget.EditText;
 
 import com.iodice.rssreader.R;
 import com.iodice.services.ArticleUpdateService;
-import com.iodice.ui.ListBase.MySimpleCursorAdapter;
+import com.iodice.ui.MultiselectList.MySimpleCursorAdapter;
 import com.iodice.utilities.Callback;
 
 

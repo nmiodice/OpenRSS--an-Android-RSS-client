@@ -21,7 +21,7 @@ import android.widget.AbsListView.OnScrollListener;
 import com.iodice.rssreader.R;
 
 
-public abstract class AnimatedEntryList extends ListBase {
+public abstract class AnimatedEntryList extends MultiselectList {
 	private int lastPosition = -1;
 	private boolean isScrolling = false;
 	

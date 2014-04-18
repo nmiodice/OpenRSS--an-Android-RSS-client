@@ -41,7 +41,7 @@ import android.widget.SimpleCursorAdapter;
 
 import com.iodice.rssreader.R;
 
-public abstract class ListBase extends ListFragment {
+public abstract class MultiselectList extends ListFragment {
 	private final String TAG = "List_Base";
 
 	protected ArrayList<Integer> selectedListItems = new ArrayList<Integer>();

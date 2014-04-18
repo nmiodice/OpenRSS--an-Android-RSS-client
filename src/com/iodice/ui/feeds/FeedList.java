@@ -19,13 +19,13 @@ import android.widget.Toast;
 
 import com.iodice.database.FeedOrm;
 import com.iodice.rssreader.R;
-import com.iodice.ui.ListBase;
+import com.iodice.ui.MultiselectList;
 import com.iodice.ui.articles.ArticleActivity;
 import com.iodice.utilities.Callback;
 
 
 @SuppressLint("UseValueOf")
-public class FeedList extends ListBase implements Callback {
+public class FeedList extends MultiselectList implements Callback {
 	
 	private final String TAG = "Feed_List";
 	private static final int CALLBACK_INITIATE_DELETE_TASK = 0;
