@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import com.iodice.rssreader.R;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.app.PendingIntent;
@@ -18,7 +19,6 @@ import android.util.Log;
 
 import com.iodice.database.FeedData;
 import com.iodice.database.FeedOrm;
-import com.iodice.rssreader.R;
 import com.iodice.services.ArticleUpdateService;
 
 public class MyApplication extends Application {
@@ -45,7 +45,7 @@ public class MyApplication extends Application {
 			editor.putBoolean(getString(R.string.prefs_first_run), false);
 			editor.commit();
 		}
-	startArticleUpdateService(context);
+		startArticleUpdateService(context);
 	}
 	
 	private void startArticleUpdateService(Context context) {

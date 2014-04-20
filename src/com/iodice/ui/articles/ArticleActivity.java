@@ -2,7 +2,6 @@ package com.iodice.ui.articles;
 
 import java.util.List;
 
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -22,12 +21,13 @@ import android.widget.EditText;
 
 import com.iodice.rssreader.R;
 import com.iodice.services.ArticleUpdateService;
-import com.iodice.ui.MultiselectList.MySimpleCursorAdapter;
+import com.iodice.ui.base.NavigationDrawerBaseActivity;
+import com.iodice.ui.base.MultiselectList.MySimpleCursorAdapter;
 import com.iodice.utilities.Callback;
 
 
 
-public class ArticleActivity extends Activity implements Callback {
+public class ArticleActivity extends NavigationDrawerBaseActivity implements Callback {
 	
 	private static final String TAG = "Activity_Rss";
 	private static final String LIST = "LIST";
@@ -45,7 +45,6 @@ public class ArticleActivity extends Activity implements Callback {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.article_activity);
 		
 		// get list of feed URLs
 		Intent intent = getIntent();
@@ -53,6 +52,24 @@ public class ArticleActivity extends Activity implements Callback {
 		
 		displayArticleList(urlList);
 		setupSearchBar();
+	}
+	
+	@Override
+	public int getViewLayoutId() {
+		return R.layout.article_activity;
+	}
+	
+	@Override
+	protected boolean isActionBarNavDrawerIndicatorVisible() {
+		return false;
+	}
+	
+	@Override
+	public int[] getViewsToHidewOnNavigationBarOpen() {
+		return new int[] {
+				R.id.action_article_search,
+				R.id.action_refresh,
+		};
 	}
 	
     @Override
@@ -160,8 +177,10 @@ public class ArticleActivity extends Activity implements Callback {
                 
             case R.id.action_article_search:
             	View v = findViewById(R.id.article_search_box_container);
-            	if (v.getVisibility() == View.GONE)
+            	if (v.getVisibility() == View.GONE) {
             		v.setVisibility(View.VISIBLE);
+            		Log.i(TAG, "search clicked!");
+            	}
             	else
             		v.setVisibility(View.GONE);
             	return true;

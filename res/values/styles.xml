@@ -16,6 +16,8 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
         <item name="android:spinnerDropDownItemStyle">@style/home_category_spinner_style</item>
+        <item name="android:activatedBackgroundIndicator">@drawable/listitem_background</item>
+        
     </style>
     
     
@@ -43,8 +45,8 @@
         <item name="android:background">@drawable/tile_selector</item>
         <item name="android:layout_marginLeft">10dp</item>
 		<item name="android:layout_marginRight">10dp</item>
-		<item name="android:layout_marginTop">2dp</item>
-		<item name="android:layout_marginBottom">2dp</item> 
+		<item name="android:layout_marginTop">3dp</item>
+		<item name="android:layout_marginBottom">3dp</item> 
 		<item name="android:paddingTop">8dp</item>
 		<item name="android:paddingLeft">8dp</item>
 		<item name="android:paddingRight">8dp</item>

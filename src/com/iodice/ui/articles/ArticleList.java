@@ -21,7 +21,7 @@ import android.widget.Toast;
 
 import com.iodice.database.ArticleOrm;
 import com.iodice.rssreader.R;
-import com.iodice.ui.AnimatedEntryList;
+import com.iodice.ui.base.AnimatedEntryList;
 import com.iodice.utilities.Callback;
 import com.iodice.utilities.Text;
 
@@ -190,23 +190,21 @@ public class ArticleList extends AnimatedEntryList {
 			
 			// set up the filter callback so that filtering can be handled asynchronously
 			Log.i(TAG, "Setting query provider");
-			//if (adapt.getFilterQueryProvider() == null) {
-				adapt.setFilterQueryProvider(new FilterQueryProvider() {
-					public Cursor runQuery(CharSequence constraint) {
-						setFilterTerms(constraint.toString());
-						// passing in true as the last parameter makes it so that if any term matches
-						// it will be added as a result
-						Cursor c = ArticleOrm.selectWhereParentLinkIsAndContains(getActivity(), 
-								articleURLList, 
-								filterTerms, 
-								columnsToFilterOn,
-								true);
-						Log.i(TAG, "cursor = " + c);
-						Log.i(TAG, "filterTerms = " + filterTerms.toString());
-						return c;
-			         }
-				});
-			//}
+			adapt.setFilterQueryProvider(new FilterQueryProvider() {
+				public Cursor runQuery(CharSequence constraint) {
+					setFilterTerms(constraint.toString());
+					// passing in true as the last parameter makes it so that if any term matches
+					// it will be added as a result, false makes it so every term needs to match
+					Cursor c = ArticleOrm.selectWhereParentLinkIsAndContains(getActivity(), 
+							articleURLList, 
+							filterTerms, 
+							columnsToFilterOn,
+							false);
+					Log.i(TAG, "cursor = " + c);
+					Log.i(TAG, "filterTerms = " + filterTerms.toString());
+					return c;
+		         }
+			});
 		}
 	}
 

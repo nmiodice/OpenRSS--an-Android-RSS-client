@@ -31,7 +31,7 @@ public class Text {
 		s = s.toLowerCase(Locale.US);
 		s = s.trim();
 		s = removeHTML(s);
-		s = s.replaceAll("[^a-zA-Z0-9 ]", "");
+		s = s.replaceAll("[^a-zA-Z0-9 \\.]", "");
 		List<String> items = Arrays.asList(s.split(" "));
 		return items;
 	}

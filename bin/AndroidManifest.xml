@@ -6,7 +6,7 @@
 
     <!-- Supported Versions -->
     <uses-sdk
-        android:minSdkVersion="14"
+        android:minSdkVersion="16"
         android:targetSdkVersion="19" />
     
     <!-- Permissions -->
@@ -22,7 +22,7 @@
         android:theme="@style/AppTheme" >
         
         <activity
-            android:name="com.iodice.ui.feeds.FeedActivity"
+            android:name="com.iodice.ui.rssgroups.FeedActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,7 +36,7 @@
         <activity
             android:name="com.iodice.ui.articles.ArticleActivity"
             android:label="@string/app_name"
-            android:parentActivityName="com.iodice.ui.feeds.FeedActivity" >
+            android:parentActivityName="com.iodice.ui.rssgroups.FeedActivity" >
             
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data

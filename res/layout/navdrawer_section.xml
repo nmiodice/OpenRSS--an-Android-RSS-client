@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   android:layout_width="fill_parent"
+   android:layout_height="wrap_content"
+   android:background="@color/white">
+    
+    <TextView
+       android:id="@+id/navmenusection_label"
+       android:layout_width="fill_parent"
+       android:layout_height="wrap_content"
+       android:text="@string/null_string"
+       android:textSize="22sp"
+       android:padding="10dp"
+       android:paddingLeft="16dp"
+       style="@style/Header"
+       android:textStyle="bold"
+       android:background="@color/white"/>
+
+</RelativeLayout>
