@@ -36,7 +36,7 @@ public class ArticleUpdateService extends IntentService {
 	 */
 	public static void startUpdatingAllFeeds(Context context, List<String> urlList, Integer callbackFunctionNumber) {
 		Intent intent = new Intent(context, ArticleUpdateService.class);
-		if (intent != null)
+		if (callbackFunctionNumber != null)
 			intent.putExtra(ArticleUpdateReceiver.HANDLE_ARTICLE_REFRESH, callbackFunctionNumber);
 
 		if (urlList != null)

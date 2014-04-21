@@ -183,22 +183,28 @@ public class FeedActivity extends NavigationDrawerBaseActivity implements Callba
 			int selectedListIndex = actionBar.getSelectedNavigationIndex();
 			String selectedListValue = this.spinnerListItems.get(selectedListIndex);
 			
-			// step 2: refresh displayed data
+			// step 2: refresh displayed data with proper list items
 			repopulateActiveList();
-			// this call resets this.spinnerListItems to whatever is currently in the DB
-			setupCategorySpinner();
-			
-			// step 3: check if the previous selected category still exists
-			int newListIndex = this.spinnerListItems.indexOf(selectedListValue);
-			if (newListIndex == -1)
-				return;
-			
-			// step 4: the previous category is still defined, so select it
-			actionBar.setSelectedNavigationItem(newListIndex);					
+			// Step 3: this call resets this.spinnerListItems to whatever is currently
+			// in the DB. it is an asynchronous call
+			if (selectedListValue != null) {
+				Log.i(TAG,  selectedListValue);
+				setupCategorySpinnerWithSelection(selectedListValue);
+			} else
+				setupCategorySpinner();		
 			return;
-			
+		
+		/* TODO: is this the intended behavor, or should it always redraw it
+		 * fresh w/o reselecting what was selected before?
+		 */
 		case FeedActivity.CALLBACK_REFRESH_CATEGORY_SELECTOR:
-			setupCategorySpinner();
+			String s = null;
+			if (obj != null) {
+				s = (String)obj;
+				Log.i(TAG,  s);
+				setupCategorySpinnerWithSelection(s);
+			} else
+				setupCategorySpinner();
 			return;
 			
 		default:

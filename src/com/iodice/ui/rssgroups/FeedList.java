@@ -159,7 +159,7 @@ public class FeedList extends MultiselectList implements Callback {
     	 */
     	if (c == null) {
     		Callback callbackInterface = (Callback) getActivity();
-    		callbackInterface.handleCallbackEvent(FeedActivity.CALLBACK_REFRESH_CATEGORY_SELECTOR, null);
+    		callbackInterface.handleCallbackEvent(FeedActivity.CALLBACK_REFRESH_CATEGORY_SELECTOR, category);
     		Log.i(TAG, "callback interface");
     		return;
     	}

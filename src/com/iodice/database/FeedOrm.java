@@ -13,6 +13,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.iodice.rssreader.R;
+import com.iodice.services.ArticleUpdateService;
 
 
 @SuppressLint("DefaultLocale")
@@ -49,9 +50,11 @@ public class FeedOrm extends OrmBase {
 	public static void saveFeeds(List<FeedData> rssFeeds, Context context) {
 		int length = rssFeeds.size();
 		SQLiteDatabase db = OrmBase.getWritableDatabase(context);
+		ArrayList<String> urlListToUpdate = new ArrayList<String>();
 		for (int i = 0; i < length; i++) {
 			try {
 				FeedOrm.insertFeed(rssFeeds.get(i), db);
+		        urlListToUpdate.add(rssFeeds.get(i).getURL());
 			} catch (Exception e) {
 				if (e.getMessage().contains("code 19")) {
 					CharSequence text = context.getText(R.string.add_feed_fail_message);
@@ -65,6 +68,7 @@ public class FeedOrm extends OrmBase {
 			}
 		}
 		db.close();
+		ArticleUpdateService.startUpdatingAllFeeds(context, urlListToUpdate, null);
 	}
 
     private static void insertFeed(FeedData feed, SQLiteDatabase database) throws SQLiteException {
