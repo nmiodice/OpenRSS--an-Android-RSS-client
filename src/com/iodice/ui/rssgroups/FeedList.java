@@ -140,23 +140,8 @@ public class FeedList extends MultiselectList implements Callback {
 // Contextual action bar setup
     @Override
     public void setUpAdapter() {
-		String[] columns;
-		int[] to;
-		Cursor cursor;		
-		
-		columns = new String[] {
-			FeedOrm.COLUMN_NAME,
-			FeedOrm.COLUMN_URL
-		};
-		to = new int[] { 
-		    R.id.feed_name,
-		    R.id.feed_url
-		};
-		cursor = FeedOrm.selectAllOrderBy(getActivity().getApplicationContext(), FeedOrm.COLUMN_NAME);
-
-		// create the adapter using the cursor pointing to the desired data 
-		// as well as the layout information
-		setAdapter(cursor, columns, to, R.layout.feed_list_row);
+		PopulateListData asyncTask = new PopulateListData();
+		asyncTask.execute();
     }
     
     // refresh current data with a new selection based on category
@@ -175,10 +160,11 @@ public class FeedList extends MultiselectList implements Callback {
     	if (c == null) {
     		Callback callbackInterface = (Callback) getActivity();
     		callbackInterface.handleCallbackEvent(FeedActivity.CALLBACK_REFRESH_CATEGORY_SELECTOR, null);
+    		Log.i(TAG, "callback interface");
     		return;
     	}
     		
-    		
+    	Log.i(TAG, "replacing data set");
     	this.replaceCurrentData(c);
     }
 
@@ -238,10 +224,7 @@ public class FeedList extends MultiselectList implements Callback {
 			// when the task is called from the main UI thread
 			if (this.selectedUrlList == null)
 				selectedUrlList = getSelectedUrls();
-	        context = getListView().getContext();
-	        
-	        Log.e(TAG, "HELLO");
-	        Log.e(TAG, "" + selectedUrlList.size());
+	        context = getListView().getContext();	        
 		}
 		
 		// process db request in background thread
@@ -279,4 +262,37 @@ public class FeedList extends MultiselectList implements Callback {
 				Log.w(TAG, "Detected null callbackInterface! Cannot update UI thread.");
 		}
 	}
+	
+	// allows the list to process a query asynchronously, cutting down work in the main UI thread
+	private class PopulateListData extends AsyncTask<Void, Void, Cursor> {
+		
+		protected void onPreExecute() {
+			setLoadState(false);
+		}
+		
+		// process db request in background thread
+		protected Cursor doInBackground(Void... arg0) {
+			Cursor cursor;		
+			cursor = FeedOrm.selectAllOrderBy(getActivity().getApplicationContext(), FeedOrm.COLUMN_NAME);
+			return cursor;
+		}
+		
+		protected void onPostExecute(Cursor cursor) {
+			String[] columns;
+			int[] to;
+			
+			columns = new String[] {
+				FeedOrm.COLUMN_NAME,
+				FeedOrm.COLUMN_URL
+			};
+			to = new int[] { 
+			    R.id.feed_name,
+			    R.id.feed_url
+			};
+			// create the adapter using the cursor pointing to the desired data 
+			// as well as the layout information
+			setAdapter(cursor, columns, to, R.layout.feed_list_row);
+		}
+	}
+
 }

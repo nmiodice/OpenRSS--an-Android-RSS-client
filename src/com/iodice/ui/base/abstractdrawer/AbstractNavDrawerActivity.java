@@ -1,5 +1,6 @@
 package com.iodice.ui.base.abstractdrawer;
 
+import android.app.ActionBar;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -22,13 +23,15 @@ public abstract class AbstractNavDrawerActivity extends FragmentActivity {
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
-    // used to keep track of the last selected menu item
-    private int lastSelectedPosition = -1;
     
-    private ListView mDrawerList;
+    protected ListView mDrawerList;
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
-    private NavDrawerActivityConfiguration navConf;
+    protected NavDrawerActivityConfiguration navConf;
+    
+    private int ORIGINAL_NAVIGATION_MODE = -1;
+    private String ORIGINAL_NAVIGATION_MODE_KEY = "ORIGINAL_NAVIGATION_MODE_KEY";
+    private String IS_DRAWER_OPEN_KEY = "IS_DRAWER_OPEN_KEY";
     
     protected abstract NavDrawerActivityConfiguration getNavDrawerConfiguration();
     protected abstract void onNavItemSelected(int id );
@@ -70,17 +73,43 @@ public abstract class AbstractNavDrawerActivity extends FragmentActivity {
             public void onDrawerClosed(View view) {
                 getActionBar().setTitle(mTitle);
                 invalidateOptionsMenu();
+                getActionBar().setNavigationMode(ORIGINAL_NAVIGATION_MODE);
             }
 
             public void onDrawerOpened(View drawerView) {
                 getActionBar().setTitle(mDrawerTitle);
                 invalidateOptionsMenu();
+                ORIGINAL_NAVIGATION_MODE = getActionBar().getNavigationMode();
+    			getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
             }
         };
         // some activities may want an 'up' button instead of the navigation drawer. For example,
         // any low level application component
         mDrawerToggle.setDrawerIndicatorEnabled(this.isActionBarNavDrawerIndicatorVisible());
         mDrawerLayout.setDrawerListener(mDrawerToggle);
+        
+        if (savedInstanceState != null) {
+        	// without resetting the original navigation mode, any custom navigation may not be
+        	// drawn properly
+        	ORIGINAL_NAVIGATION_MODE = savedInstanceState.getInt(ORIGINAL_NAVIGATION_MODE_KEY);
+	        boolean isDrawerOpen = savedInstanceState.getBoolean(IS_DRAWER_OPEN_KEY, false);
+	        if(isDrawerOpen)
+	        	getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+	        else
+	        	getActionBar().setNavigationMode(ORIGINAL_NAVIGATION_MODE);
+        }
+    }
+    
+    @Override
+    protected void onSaveInstanceState (Bundle outState) {
+    	if (ORIGINAL_NAVIGATION_MODE == -1)
+            ORIGINAL_NAVIGATION_MODE = getActionBar().getNavigationMode();
+    	outState.putInt(ORIGINAL_NAVIGATION_MODE_KEY, ORIGINAL_NAVIGATION_MODE);
+    	
+    	boolean isDrawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
+    	outState.putBoolean(IS_DRAWER_OPEN_KEY, isDrawerOpen);
+    	
+    	super.onSaveInstanceState(outState);
     }
     
     protected void initDrawerShadow() {
@@ -107,7 +136,7 @@ public abstract class AbstractNavDrawerActivity extends FragmentActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         if ( navConf.getActionMenuItemsToHideWhenDrawerOpen() != null ) {
             boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-            for( int iItem : navConf.getActionMenuItemsToHideWhenDrawerOpen()) {
+            for(int iItem : navConf.getActionMenuItemsToHideWhenDrawerOpen()) {
                 menu.findItem(iItem).setVisible(!drawerOpen);
             }
         }
@@ -127,7 +156,7 @@ public abstract class AbstractNavDrawerActivity extends FragmentActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ( keyCode == KeyEvent.KEYCODE_MENU ) {
-            if ( this.mDrawerLayout.isDrawerOpen(this.mDrawerList)) {
+            if (this.mDrawerLayout.isDrawerOpen(this.mDrawerList)) {
                 this.mDrawerLayout.closeDrawer(this.mDrawerList);
             }
             else {
@@ -155,20 +184,6 @@ public abstract class AbstractNavDrawerActivity extends FragmentActivity {
     
     public void selectItem(int position) {
         NavDrawerItem selectedItem = navConf.getNavItems()[position];
-        
-        if (selectedItem.getType() == NavMenuItem.ITEM_TYPE) {
-        	if (position != lastSelectedPosition) {
-        		// set the view selected, incase the adapter needs to redraw it
-        		NavMenuItem _sItem = (NavMenuItem)selectedItem;
-        		_sItem.setIsSelected(true);
-        		if (lastSelectedPosition != -1) {
-        			// set the old view unslected, incase the adapter needs to redraw it
-        			_sItem = (NavMenuItem)navConf.getNavItems()[lastSelectedPosition];
-        			_sItem.setIsSelected(false);
-        		}
-        		lastSelectedPosition = position;
-        	}
-        }
         
         this.onNavItemSelected(selectedItem.getId());
         mDrawerList.setItemChecked(position, true);

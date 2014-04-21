@@ -168,7 +168,13 @@ public abstract class MultiselectList extends ListFragment {
 	
 	public void replaceCurrentData(Cursor c) {
 		MySimpleCursorAdapter adapt = (MySimpleCursorAdapter)this.getListAdapter();
-		adapt.changeCursor(c);
+		// because data collection is handled in a separate thread, the adapter
+		// may be null if the data is replaced prior to the thread execution
+		if (c != null && adapt != null) {
+			adapt.changeCursor(c);
+			adapt.notifyDataSetChanged();
+		} else
+			Log.e(TAG, "Adapter or cursor is null! adapter = " + adapt + ", cursor = " + c);
 	}
 	
 	// sets up contextual action bar actions

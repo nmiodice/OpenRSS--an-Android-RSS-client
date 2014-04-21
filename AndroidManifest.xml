@@ -29,9 +29,20 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            
+              <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.iodice.ui.Activity_Main" />          
         </activity>
         
+        <activity
+            android:name="com.iodice.ui.rsstopics.TopicsActivity"
+            android:label="@string/app_name" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.iodice.ui.rsstopics.TopicsActivity" />
+        </activity>        
                 
         <activity
             android:name="com.iodice.ui.articles.ArticleActivity"

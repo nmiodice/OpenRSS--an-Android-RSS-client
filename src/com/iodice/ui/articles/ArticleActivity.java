@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -21,8 +22,8 @@ import android.widget.EditText;
 
 import com.iodice.rssreader.R;
 import com.iodice.services.ArticleUpdateService;
-import com.iodice.ui.base.NavigationDrawerBaseActivity;
 import com.iodice.ui.base.MultiselectList.MySimpleCursorAdapter;
+import com.iodice.ui.base.NavigationDrawerBaseActivity;
 import com.iodice.utilities.Callback;
 
 
@@ -184,6 +185,9 @@ public class ArticleActivity extends NavigationDrawerBaseActivity implements Cal
             	else
             		v.setVisibility(View.GONE);
             	return true;
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
             	
             default:
                 return super.onOptionsItemSelected(item);
@@ -191,6 +195,9 @@ public class ArticleActivity extends NavigationDrawerBaseActivity implements Cal
     }
 	
 	private void displayArticleList(List<String> urlList) {
+		if (urlList == null) {
+			throw new NullPointerException();
+		}
 		// add fragment to apropriate layout item
 		FragmentTransaction fTrans;
 		FragmentManager fMan = getFragmentManager();
