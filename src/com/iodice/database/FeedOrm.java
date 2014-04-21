@@ -3,7 +3,6 @@ package com.iodice.database;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -16,7 +15,6 @@ import com.iodice.rssreader.R;
 import com.iodice.services.ArticleUpdateService;
 
 
-@SuppressLint("DefaultLocale")
 public class FeedOrm extends OrmBase {
 	private static final String TAG = "feedsOrm";
 	private static final String TABLE_NAME = "feeds";
@@ -68,6 +66,7 @@ public class FeedOrm extends OrmBase {
 			}
 		}
 		db.close();
+		// handle web queries asynchronously
 		ArticleUpdateService.startUpdatingAllFeeds(context, urlListToUpdate, null);
 	}
 

@@ -81,12 +81,15 @@ public class MyApplication extends Application {
 		ArrayList<String> news = new ArrayList<String>();
 		ArrayList<String> reddit = new ArrayList<String>();
 		ArrayList<String> sports = new ArrayList<String>();
+		ArrayList<String> food = new ArrayList<String>();
+		ArrayList<String> comboA = new ArrayList<String>();
+		ArrayList<String> comboB = new ArrayList<String>();
 		
 		tech.add("Technology");
 		news.add("News");
 		reddit.add("Reddit");
-		reddit.add("Technology");
 		sports.add("Sports");
+		food.add("Recipes & Food");
 		
 		rssFeeds.add(new FeedData("Apple", tech, "ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=10/xml"));
 		rssFeeds.add(new FeedData("Wired", tech, "http://feeds.wired.com/wired/index"));
@@ -97,10 +100,27 @@ public class MyApplication extends Application {
 		rssFeeds.add(new FeedData("NPR", news, "http://www.npr.org/rss/rss.php?id=1001"));
 		rssFeeds.add(new FeedData("Reuters", news, "http://feeds.reuters.com/reuters/topNews"));
 		rssFeeds.add(new FeedData("BBC America", news, "http://newsrss.bbc.co.uk/rss/newsonline_world_edition/americas/rss.xml"));
-		rssFeeds.add(new FeedData("/r/androiddev", reddit, "http://www.reddit.com/r/androiddev/.rss"));
+		
+		comboA.addAll(reddit);
+		comboA.addAll(tech);
+		rssFeeds.add(new FeedData("/r/androiddev", comboA, "http://www.reddit.com/r/androiddev/.rss"));
+		rssFeeds.add(new FeedData("/r/programming", comboA, "http://www.reddit.com/r/programming/.rss"));
+		rssFeeds.add(new FeedData("/r/android", comboA, "http://www.reddit.com/r/Android/.rss"));
+		rssFeeds.add(new FeedData("/r/engineering", comboA, "http://www.reddit.com/r/engineering/.rss"));
+		rssFeeds.add(new FeedData("/r/math", reddit, "http://www.reddit.com/r/math/.rss"));
+		rssFeeds.add(new FeedData("/r/gradschool", reddit, "http://www.reddit.com/r/GradSchool/.rss"));
 		rssFeeds.add(new FeedData("Yahoo Skiing", sports, "http://sports.yahoo.com/ski/rss.xml"));
 		rssFeeds.add(new FeedData("Y.Combinator", tech, "https://news.ycombinator.com/rss"));
 		rssFeeds.add(new FeedData("ESPN", sports, "http://sports.espn.go.com/espn/rss/news"));
+		
+		comboB.addAll(reddit);
+		comboB.addAll(sports);
+		rssFeeds.add(new FeedData("/r/skiing", comboB, "http://www.reddit.com/r/skiing/.rss"));
+		rssFeeds.add(new FeedData("Food.com", food, "http://www.food.com/rss?"));
+		rssFeeds.add(new FeedData("All Recipes", food, "http://rss.allrecipes.com/daily.aspx?hubID=84"));
+		rssFeeds.add(new FeedData("TechCrunch", tech, "http://feeds.feedburner.com/TechCrunch/"));
+
+			
 
 		FeedOrm.saveFeeds(rssFeeds, context);
 	}
