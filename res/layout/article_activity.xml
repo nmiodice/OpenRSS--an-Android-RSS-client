@@ -32,6 +32,7 @@
 	        	android:background="@color/article_search_background"
 			    >
 	        
+			    
 				<ImageView
 				    android:id="@+id/action_clear_search_term"
 		            android:layout_width="wrap_content"
@@ -44,13 +45,25 @@
 		            android:onClick="clearSearchText"
 		            />
 		        
+				<ImageView
+				    android:id="@+id/action_save_search_term"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:src="@drawable/ic_action_save"
+		            android:contentDescription="@string/action_save_search_term" 
+		            android:layout_centerInParent="true"
+		            android:layout_toLeftOf="@id/action_clear_search_term"
+		            android:paddingLeft="8dp"
+		            android:onClick="saveSearchText"
+		            />
+				
 		        <EditText
 					style="@style/Header"
 					android:id="@+id/article_search_box_text"
 		        	android:layout_width="fill_parent"
 		        	android:layout_height="wrap_content"
 		        	android:hint="@string/action_article_search_hint"
-		        	android:layout_toLeftOf="@id/action_clear_search_term"
+		        	android:layout_toLeftOf="@id/action_save_search_term"
 		        	
 					android:textSize="18sp"
 					android:text="@string/null_string"

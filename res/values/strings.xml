@@ -93,5 +93,6 @@
     <string name="action_article_search_hint">Search&#8230;</string>
     <string name="action_article_search">Search articles</string>
     <string name="action_clear_search_term">Clear search term</string>
+    <string name="action_save_search_term">Save search term</string>
     
 </resources>

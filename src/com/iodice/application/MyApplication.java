@@ -45,7 +45,7 @@ public class MyApplication extends Application {
 			editor.putBoolean(getString(R.string.prefs_first_run), false);
 			editor.commit();
 		}
-		//startArticleUpdateService(context);
+		startArticleUpdateService(context);
 	}
 	
 	private void startArticleUpdateService(Context context) {

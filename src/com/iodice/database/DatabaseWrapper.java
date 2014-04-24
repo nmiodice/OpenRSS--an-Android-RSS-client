@@ -11,7 +11,7 @@ public class DatabaseWrapper extends SQLiteOpenHelper {
     private static DatabaseWrapper sInstance;
 
     private static final String DATABASE_NAME = "RSSReader.db";
-    private static final int DATABASE_VERSION = 21;
+    private static final int DATABASE_VERSION = 23;
 
     public DatabaseWrapper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -47,6 +47,8 @@ public class DatabaseWrapper extends SQLiteOpenHelper {
         
         sqLiteDatabase.execSQL(FeedOrm.getCategoryFeedMapTableCreateStatement());
         sqLiteDatabase.execSQL(FeedOrm.getCategoryFeedMapTableCreateIndexStatement());
+
+        sqLiteDatabase.execSQL(SearchesOrm.SQL_CREATE_TABLE);
         
     }
 
@@ -60,6 +62,7 @@ public class DatabaseWrapper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(FeedOrm.SQL_DROP_TABLE);
         sqLiteDatabase.execSQL(FeedOrm.getCategoryTableDropStatement());
         sqLiteDatabase.execSQL(FeedOrm.getCategoryFeedMapTableDropStatement());
+        sqLiteDatabase.execSQL(SearchesOrm.SQL_DROP_TABLE);
         
         onCreate(sqLiteDatabase);
     }

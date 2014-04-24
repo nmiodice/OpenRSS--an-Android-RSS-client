@@ -199,6 +199,7 @@ public abstract class MultiselectList extends ListFragment {
 		        	child = v.getChildAt(i);
 		        	if (child == null)
 		        		continue;
+		        	v.setSelected(true);
 		        	bx = (CheckBox) child.findViewById(R.id.item_checkbox);
 		        	bx.setVisibility(View.VISIBLE);
 		        	bx.setChecked(false);

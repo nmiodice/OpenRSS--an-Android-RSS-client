@@ -22,7 +22,7 @@ import android.widget.Toast;
 import com.iodice.database.ArticleOrm;
 import com.iodice.rssreader.R;
 import com.iodice.ui.base.AnimatedEntryList;
-import com.iodice.utilities.Callback;
+import com.iodice.utilities.ListRefreshCallback;
 import com.iodice.utilities.Text;
 
 public class ArticleList extends AnimatedEntryList {
@@ -179,8 +179,8 @@ public class ArticleList extends AnimatedEntryList {
 		// 	in the current implementation, a refresh will not be attempted!
 		if (cursor.getCount() == 0 && this.hasAlreadyFailedToLoad == false) {
 			this.hasAlreadyFailedToLoad = true;
-			Callback callbackInterface = (Callback) getActivity();
-			callbackInterface.handleCallbackEvent(ArticleActivity.CALLBACK_UPDATE_WITH_WEB_QUERY, null);
+			ListRefreshCallback callbackInterface = (ListRefreshCallback) getActivity();
+			callbackInterface.refreshCurrentList();
 			// TODO: add some failure notice
 		} else {
 			// create the adapter using the cursor pointing to the desired data 

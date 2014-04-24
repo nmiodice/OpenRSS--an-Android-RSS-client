@@ -19,16 +19,20 @@ import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.SpinnerAdapter;
 
+import com.iodice.database.SearchesOrm;
+import com.iodice.database.SearchData;
 import com.iodice.rssreader.R;
 import com.iodice.services.ArticleUpdateService;
 import com.iodice.ui.base.MultiselectList.MySimpleCursorAdapter;
 import com.iodice.ui.base.NavigationDrawerBaseActivity;
-import com.iodice.utilities.Callback;
+import com.iodice.ui.base.NavigationDrawerWithSpinner;
+import com.iodice.utilities.ListRefreshCallback;
 
 
 
-public class ArticleActivity extends NavigationDrawerBaseActivity implements Callback {
+public class ArticleActivity extends NavigationDrawerWithSpinner implements ListRefreshCallback {
 	
 	private static final String TAG = "Activity_Rss";
 	private static final String LIST = "LIST";
@@ -147,6 +151,16 @@ public class ArticleActivity extends NavigationDrawerBaseActivity implements Cal
     public void clearSearchText(View v) {
         EditText t = (EditText)findViewById(R.id.article_search_box_text);
         t.setText("");
+    }
+    
+    public void saveSearchText(View v) {
+        EditText t = (EditText)findViewById(R.id.article_search_box_text);
+        String tText = t.getText().toString();
+        
+        SearchData sd = new SearchData();
+        sd.setSearchTerm(tText);
+        sd.setName("name");
+        SearchesOrm.insertSearch(sd, this);
     }
     
 	public void queryWebForNewListData(List<String> urlList) {
@@ -274,5 +288,34 @@ public class ArticleActivity extends NavigationDrawerBaseActivity implements Cal
 			default:
 				throw new UnsupportedOperationException();
 		}
+	}
+
+	@Override
+	public void refreshCurrentList() {
+		this.handleCallbackEvent(ArticleActivity.CALLBACK_REDRAW_WITH_CACHED_DATA, null);
+	}
+
+	@Override
+	public void setupCategorySpinner() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setupCategorySpinnerWithSelection(String selection) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean onSpinnerItemClick(int position, long id) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public SpinnerAdapter backgroundSpinnerQuery() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 } // end rssActivity

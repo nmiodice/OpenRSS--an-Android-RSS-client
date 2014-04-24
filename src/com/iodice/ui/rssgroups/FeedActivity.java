@@ -1,15 +1,12 @@
 package com.iodice.ui.rssgroups;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.app.ActionBar;
-import android.app.ActionBar.OnNavigationListener;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -21,15 +18,14 @@ import com.iodice.database.FeedData;
 import com.iodice.database.FeedOrm;
 import com.iodice.rssreader.R;
 import com.iodice.services.ArticleUpdateService;
-import com.iodice.ui.base.NavigationDrawerBaseActivity;
+import com.iodice.ui.base.NavigationDrawerWithSpinner;
 import com.iodice.utilities.Callback;
 
-public class FeedActivity extends NavigationDrawerBaseActivity implements Callback, ActionBar.OnNavigationListener {
+public class FeedActivity extends NavigationDrawerWithSpinner 
+implements Callback {
 	
 	private static final String TAG = "Activity_Home";
 	private static final String FEED_LIST = "FEED_LIST";
-	private static final String LAST_SELECTED_LIST_NAV_ITEM = "LAST_SELECTED_LIST_NAV_ITEM";
-	private List<String> spinnerListItems = null;
 
 	/* supported callback method identifiers */
 	public static final int CALLBACK_ADD_NEW_FEED = 0;
@@ -38,22 +34,9 @@ public class FeedActivity extends NavigationDrawerBaseActivity implements Callba
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		String oldSelectedListNavigationItem = null;
-		
-		if (savedInstanceState != null)
-			oldSelectedListNavigationItem = savedInstanceState.getString(LAST_SELECTED_LIST_NAV_ITEM);
-	
-		if (oldSelectedListNavigationItem == null)
-			setupCategorySpinner();
-		else
-			setupCategorySpinnerWithSelection(oldSelectedListNavigationItem);
-	
-		
+		super.onCreate(savedInstanceState);
 		if (savedInstanceState == null)
 			displayFeedList();
-		// call this after the other calls because it controls whether or not the spinner
-		// is visible
-		super.onCreate(savedInstanceState);
 	}
 	
 	@Override
@@ -106,40 +89,44 @@ public class FeedActivity extends NavigationDrawerBaseActivity implements Callba
                 return defaultValue;
         }
     }
-    
-    private int getSelectedNavigationIndex() {
-    	ActionBar ab = getActionBar();
-    	int oldNavMode = ab.getNavigationMode();
-		ab.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-		int i = ab.getSelectedNavigationIndex();
-		ab.setNavigationMode(oldNavMode);
-		return i;
-    }
-    private void setSelectedNavigationIndex(int i) {
-    	ActionBar ab = getActionBar();
-    	int oldNavMode = this.getActionBar().getNavigationMode();
-		ab.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
-		ab.setSelectedNavigationItem(i);
-		ab.setNavigationMode(oldNavMode);
-    }
 
     
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		if (this.spinnerListItems != null) {
-			int selListItemIdx = getSelectedNavigationIndex();
-			if (selListItemIdx >= 0 && selListItemIdx < spinnerListItems.size())
-				outState.putString(LAST_SELECTED_LIST_NAV_ITEM, this.spinnerListItems.get(selListItemIdx));
-			else 
-				Log.e(TAG, "spinnerListItem index out of bounds!");
-		}
-		super.onSaveInstanceState(outState);
-	}
 	
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 	    super.onRestoreInstanceState(savedInstanceState);
 	}
+	
+	// displayed in top right of activity, lists categories by name. upon select, filter list to just those categories
+	public void setupCategorySpinner() {
+		PopulateActionBarSpinner asyncTask = new PopulateActionBarSpinner();
+		asyncTask.setOnNavigationListener(this);
+		asyncTask.execute();
+	}
+	
+	public void setupCategorySpinnerWithSelection(String selection) {
+		PopulateActionBarSpinner asyncTask = new PopulateActionBarSpinner();
+		asyncTask.setOnNavigationListener(this);
+		if (selection != null)
+			asyncTask.setSelectionIfPossible(selection);
+		asyncTask.execute();
+	}
+	
+	// when a spinner item is selected, this method is called. returns true if the
+	// event was handled, false otherwise
+	public boolean onSpinnerItemClick(int position, long id) {
+		FragmentManager fMan = getFragmentManager();
+		FeedList currentList = (FeedList) fMan.findFragmentByTag(FeedActivity.FEED_LIST);
+
+		String category = this.spinnerListItems.get(position);
+		
+		// "all" is not a real category, so account for it
+		if (category == this.getText(R.string.all))
+			category = "*";
+		currentList.loadCategory(category);		
+		return true; 
+	}
+	
 	
 	// this brings up an input menu where the user can add new feed information. The response
 	// is handled by 'respondToEvent.'
@@ -237,47 +224,7 @@ public class FeedActivity extends NavigationDrawerBaseActivity implements Callba
 		
 		listFrag.loadCategory(category);		
 	}
-
-	// displayed in top right of activity, lists categories by name. upon select, filter list to just those categories
-	private void setupCategorySpinner() {
-		PopulateActionBarSpinner asyncTask = new PopulateActionBarSpinner();
-		asyncTask.setOnNavigationListener(this);
-		asyncTask.execute();
-	}
 	
-	private void setupCategorySpinnerWithSelection(String selection) {
-		PopulateActionBarSpinner asyncTask = new PopulateActionBarSpinner();
-		asyncTask.setOnNavigationListener(this);
-		if (selection != null)
-			asyncTask.setSelectionIfPossible(selection);
-		asyncTask.execute();
-	}
-	
-	@Override
-	// when a spinner item is selected, this method is called. returns true if the
-	// event was handled, false otherwise
-	public boolean onNavigationItemSelected(int position, long id) {
-		FragmentManager fMan = getFragmentManager();
-		FeedList currentList = (FeedList) fMan.findFragmentByTag(FeedActivity.FEED_LIST);
-
-		if (this.spinnerListItems == null) {
-			Log.e(TAG, "spinner items are null! This should never happen");
-			return false;
-		} else if (position < 0 || position >= this.spinnerListItems.size()) {
-			Log.e(TAG, "item position in onNavigationItemSelected is out of range");
-			return false;
-		} else if (currentList == null) {
-			Log.e(TAG, "currently active list is null. This should never happen");
-			return false;
-		}
-		String category = this.spinnerListItems.get(position);
-		
-		// "all" is not a real category, so account for it
-		if (category == this.getText(R.string.all))
-			category = "*";
-		currentList.loadCategory(category);		
-		return true; 
-	}
 	
 	
 	private void displayFeedList() {
@@ -296,73 +243,27 @@ public class FeedActivity extends NavigationDrawerBaseActivity implements Callba
 			Log.i(TAG, "Adding new feed!");
 		}
 	}
-
 	
-	// handles query to load the action bar details
-	private class PopulateActionBarSpinner extends AsyncTask<Void, Void, ArrayAdapter<String>> {
-
-		private OnNavigationListener listener = null;
-		private String requestedSelection = null;
+	public ArrayAdapter<String> backgroundSpinnerQuery() {
+		// populate list data
+		Cursor c = FeedOrm.selectAllCategories(getApplicationContext());
+		ArrayList<String> items = new ArrayList<String>();
+		items.add(getString(R.string.all));
 		
-		private void setOnNavigationListener(OnNavigationListener listener) {
-			this.listener = listener;
-		}
-		private void setSelectionIfPossible(String s) {
-			this.requestedSelection = s;
-		}
-		protected void onPreExecute() {
-			// Set up the action bar to show a dropdown list.
-			final ActionBar actionBar = getActionBar();
-			actionBar.setDisplayShowTitleEnabled(false);
-			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+		
+		c.moveToFirst();
+		while(!c.isAfterLast()) {
+		     items.add(c.getString(c.getColumnIndex(FeedOrm.getCategoryTableCategoryKey())));
+		     c.moveToNext();
 		}
 		
-		// process db request in background thread
-		protected ArrayAdapter<String> doInBackground(Void... arg0) {
+		// note: actionBar.getThemedContext() ensures the correct colors based on the action bar theme
+		ArrayAdapter<String> aAdpt = new ArrayAdapter<String>(getActionBar().getThemedContext(),
+				android.R.layout.simple_list_item_1, 
+				android.R.id.text1, 
+				items);
 
-			// populate list data
-			Cursor c = FeedOrm.selectAllCategories(getApplicationContext());
-			ArrayList<String> items = new ArrayList<String>();
-			items.add(getString(R.string.all));
-			
-			
-			c.moveToFirst();
-			while(!c.isAfterLast()) {
-			     items.add(c.getString(c.getColumnIndex(FeedOrm.getCategoryTableCategoryKey())));
-			     c.moveToNext();
-			}
-			
-			// note: actionBar.getThemedContext() ensures the correct colors based on the action bar theme
-			ArrayAdapter<String> aAdpt = new ArrayAdapter<String>(getActionBar().getThemedContext(),
-					android.R.layout.simple_list_item_1, 
-					android.R.id.text1, 
-					items);
-
-			spinnerListItems = items;
-			return aAdpt;
-		}
-		
-	    // Call the callback function to refresh UI
-		protected void onPostExecute(ArrayAdapter<String> aAdpt) {
-			if (listener == null)
-				throw new NullPointerException();			
-			getActionBar().setListNavigationCallbacks(aAdpt, listener);
-			
-			// select the proper list selection
-			if (this.requestedSelection != null) {
-				int listItemCnt = spinnerListItems.size();
-				for (int i = 0; i < listItemCnt; i++) {
-					if (spinnerListItems.get(i).equals(requestedSelection) == true) {
-						setSelectedNavigationIndex(i);
-						break;
-					}
-						
-				}
-			}
-			Log.i(TAG, "post xecute");
-		}
-	
+		spinnerListItems = items;
+		return aAdpt;
 	}
-	
-
 }
