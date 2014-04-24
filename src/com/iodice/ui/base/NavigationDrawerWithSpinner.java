@@ -7,7 +7,6 @@ import android.app.ActionBar.OnNavigationListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.SpinnerAdapter;
 
 public abstract class NavigationDrawerWithSpinner extends NavigationDrawerBaseActivity
