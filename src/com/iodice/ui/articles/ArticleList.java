@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -214,6 +216,7 @@ public class ArticleList extends AnimatedEntryList {
 		// important to always call the parent, as it takes care of redrawing the checkboxes accurately
 		// when in action mode
 		View v = convertView;
+		Activity activity = getActivity();
 		
 		// not all articles supply an author
 		TextView tmp = (TextView) v.findViewById(R.id.rss_author);
@@ -238,8 +241,15 @@ public class ArticleList extends AnimatedEntryList {
     	tmp = (TextView) v.findViewById(R.id.rss_title);
 		if (tmp.getText().equals(""))
 			tmp.setVisibility(View.GONE);
-		else
+		else {
+			Log.i(TAG, activity.getText(R.string.tile_font).toString());
+			Typeface headline_font = Typeface.createFromAsset(
+					activity.getAssets(), 
+					activity.getText(R.string.tile_font).toString());
+			tmp.setTypeface(headline_font);
 			tmp.setVisibility(View.VISIBLE);
+		}
+			
 		
         tmp = (TextView) v.findViewById(R.id.rss_base_url);
 		if (tmp.getText().equals(""))

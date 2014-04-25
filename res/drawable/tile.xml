@@ -1,22 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-	
-    <!-- Bottom 2dp Shadow -->
+      <!-- Drop Shadow Stack -->
+     <item>
+        <shape>
+            <padding android:top="1dp" android:right="1dp" android:bottom="1dp" android:left="1dp" />
+            <solid android:color="#00bcbcbc" />
+		    <corners android:radius="3dp"/>
+        </shape>
+    </item>
+     <item>
+        <shape>
+            <padding android:top="1dp" android:right="1dp" android:bottom="1dp" android:left="1dp" />
+            <solid android:color="#10bcbcbc" />
+		    <corners android:radius="3dp"/>
+        </shape>
+    </item>
+     <item>
+        <shape>
+            <padding android:top="1dp" android:right="1dp" android:bottom="1dp" android:left="1dp" />
+            <solid android:color="#20bcbcbc" />
+		    <corners android:radius="3dp"/>
+        </shape>
+    </item>
+     <item>
+        <shape>
+            <padding android:top="1dp" android:right="1dp" android:bottom="1dp" android:left="1dp" />
+            <solid android:color="#30bcbcbc" />
+            <corners android:radius="3dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape>
+            <padding android:top="1dp" android:right="1dp" android:bottom="1dp" android:left="1dp" />
+            <solid android:color="#50bcbcbc" />
+		    <corners android:radius="3dp"/>
+        </shape>
+    </item>
+     
+     
+    <!-- Bottom 2dp Shadow 
 	<item>
 	    <shape  android:shape="rectangle">
 	
 	        <solid android:color="@color/tile_drop_shadow" />
 	        <corners android:radius="3dp" />
-	
 	    </shape>
+
 	</item>
-    
-	<!-- Tile with 'android:bottom' dp of shadow -->
+    -->
+	<!-- Tile with 'android:bottom' dp of shadow 
 	<item android:bottom="3dp">
+	-->
+	<item>
 		<shape>
 		    <solid android:color="@color/tile"/>
 		    <stroke android:width="1dp" android:color="@color/tile" />
 		    <corners android:radius="3dp"/>
 		</shape>
-	</item>  
+    </item>
 </layer-list>

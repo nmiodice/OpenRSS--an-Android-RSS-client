@@ -1,4 +1,4 @@
-package com.iodice.ui.rssgroups;
+package com.iodice.ui.feedgroups;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.ActionMode;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,12 +21,12 @@ import android.widget.Toast;
 import com.iodice.database.FeedOrm;
 import com.iodice.rssreader.R;
 import com.iodice.ui.articles.ArticleActivity;
-import com.iodice.ui.base.MultiselectList;
+import com.iodice.ui.base.AnimatedEntryList;
 import com.iodice.utilities.Callback;
 
 
 @SuppressLint("UseValueOf")
-public class FeedList extends MultiselectList implements Callback {
+public class FeedList extends AnimatedEntryList implements Callback {
 	
 	private final String TAG = "Feed_List";
 	private static final int CALLBACK_INITIATE_DELETE_TASK = 0;
@@ -174,7 +175,19 @@ public class FeedList extends MultiselectList implements Callback {
 		return R.menu.feeds_cab;
 	}
 	
-	
+    @Override
+    public View onListElementRedraw(int position, View convertView, ViewGroup parent) { 
+    	convertView = super.onListElementRedraw(position, convertView, parent);
+    	if (convertView != null) {
+	    	if (position % 2 == 0)
+	    		convertView.setBackgroundColor(getResources().getColor(R.color.grey_light));
+	    	else
+	    		convertView.setBackgroundColor(getResources().getColor(R.color.white));
+    	} else
+	    	throw new NullPointerException();
+	    
+    	return convertView;
+    }
 
 	@Override
 	/* n = CALLBACK_INITIATE_DELETE_TASK: 

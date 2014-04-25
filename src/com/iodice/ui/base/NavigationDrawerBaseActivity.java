@@ -20,8 +20,8 @@ import com.iodice.ui.base.abstractdrawer.NavDrawerAdapter;
 import com.iodice.ui.base.abstractdrawer.NavDrawerItem;
 import com.iodice.ui.base.abstractdrawer.NavMenuItem;
 import com.iodice.ui.base.abstractdrawer.NavMenuSection;
-import com.iodice.ui.rssgroups.FeedActivity;
-import com.iodice.ui.rsstopics.TopicsActivity;
+import com.iodice.ui.feedgroups.FeedActivity;
+import com.iodice.ui.feedtopics.TopicsActivity;
 
 /**
  * @author Nicholas M. Iodice

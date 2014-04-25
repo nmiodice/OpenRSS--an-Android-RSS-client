@@ -1,13 +1,16 @@
-package com.iodice.ui.rsstopics;
+package com.iodice.ui.feedtopics;
 
 import java.util.ArrayList;
 
+import android.app.FragmentManager;
 import android.database.Cursor;
 import android.widget.ArrayAdapter;
 
 import com.iodice.database.SearchesOrm;
 import com.iodice.rssreader.R;
 import com.iodice.ui.articles.ArticleActivity;
+import com.iodice.ui.articles.ArticleList;
+import com.iodice.ui.base.MultiselectList.MySimpleCursorAdapter;
 
 public class TopicsActivity extends ArticleActivity {
 
@@ -28,12 +31,18 @@ public class TopicsActivity extends ArticleActivity {
 
 	@Override
 	public boolean onSpinnerItemClick(int position, long id) {
-		// TODO Auto-generated method stub
-		return false;
+		FragmentManager fMan = getFragmentManager();
+		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivity.LIST);
+		if (articleList != null && this.spinnerListItemPrimaryKeys != null) {
+			String filterTerm = this.spinnerListItemPrimaryKeys.get(position);
+			MySimpleCursorAdapter adapt = (MySimpleCursorAdapter)articleList.getListAdapter();
+			adapt.getFilter().filter(filterTerm);
+		}
+		return true;
 	}
 
 	@Override
-	public ArrayAdapter<String> backgroundSpinnerQuery() {
+	public AdapterListPair backgroundSpinnerQuery() {
 		// populate list data
 		Cursor c = SearchesOrm.selectAll(getApplicationContext());
 		ArrayList<String> items = new ArrayList<String>();
@@ -51,8 +60,9 @@ public class TopicsActivity extends ArticleActivity {
 				android.R.layout.simple_list_item_1, 
 				android.R.id.text1, 
 				items);
-
-		spinnerListItems = items;
-		return aAdpt;
+		AdapterListPair queryPair = new AdapterListPair();
+		queryPair.setAdapter(aAdpt);
+		queryPair.setComparisonKeyList(items);
+		return queryPair;
 	}
 }

@@ -1,4 +1,4 @@
-package com.iodice.ui.rssgroups;
+package com.iodice.ui.feedgroups;
 
 import java.util.ArrayList;
 import java.util.List;

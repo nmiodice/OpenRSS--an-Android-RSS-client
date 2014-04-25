@@ -5,18 +5,18 @@
     <color name="red">#FF4444</color>
     <color name="red_opaque">#8CFF4444</color>
     <color name="blue">#33B5E5</color>
-    <color name="blue_opaque">#8C33B5E5</color>
+    <color name="blue_opaque">#4Cb6e6f9</color>
     <color name="black">#000000</color>
     <color name="black_transparent">#7C000000</color>
     <color name="white">#FFFFFF</color>
     <color name="white_opaque">#8CFFFFFF</color>
     <color name="white_off">#FFF6F6</color>
-    <color name="grey_light">#f2f2f2</color>
+    <color name="grey_light">#e9e8e8</color>
     <color name="grey_shadow">#CCdedede</color>
     <color name="orange">#FFBB33</color>
     
     <!-- design elements -->
-    <color name="tile_drop_shadow">@color/grey_shadow</color>
+    <color name="tile_drop_shadow">@color/blue_opaque</color>
     <color name="tile">@color/white</color>
     <color name="tile_pressed">@color/white_off</color>
     <color name="rss_text_color_accent">@color/black_transparent</color>

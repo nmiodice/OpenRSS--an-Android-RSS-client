@@ -246,10 +246,12 @@ public final class R {
         /**  Feed Activity 
          */
         public static final int rss_url_intent=0x7f080024;
+        public static final int saved_search_already_exists=0x7f080048;
         /**  ID strings & generic identifiers 
          */
         public static final int scroll_position=0x7f080014;
         public static final int share=0x7f08001e;
+        public static final int tile_font=0x7f080049;
         public static final int title=0x7f080019;
         /**  RSS 
          */

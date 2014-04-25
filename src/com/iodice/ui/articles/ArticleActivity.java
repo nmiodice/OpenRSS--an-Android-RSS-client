@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 
 import com.iodice.database.SearchData;
@@ -27,14 +26,14 @@ import com.iodice.rssreader.R;
 import com.iodice.services.ArticleUpdateService;
 import com.iodice.ui.base.MultiselectList.MySimpleCursorAdapter;
 import com.iodice.ui.base.NavigationDrawerWithSpinner;
-import com.iodice.ui.rsstopics.TopicsActivity;
+import com.iodice.ui.feedtopics.TopicsActivity;
 import com.iodice.utilities.ListRefreshCallback;
 
 
 
 public class ArticleActivity extends NavigationDrawerWithSpinner implements ListRefreshCallback {
 	private static final String TAG = "ArticleActivity";
-	private static final String LIST = "LIST";
+	protected static final String LIST = "LIST";
 	private static final String SEARCH_KEY = "SEARCH_KEY";
 	private static final String SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY";
 	/* receives notice from the article update service and triggers a data refresh */
@@ -312,7 +311,7 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
 		return false;
 	}
 	@Override
-	public ArrayAdapter<String> backgroundSpinnerQuery() {
+	public AdapterListPair backgroundSpinnerQuery() {
 		return null;
 	}
 }

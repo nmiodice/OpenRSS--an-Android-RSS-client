@@ -1,4 +1,4 @@
-package com.iodice.ui.rssgroups;
+package com.iodice.ui.feedgroups;
 
 import java.util.ArrayList;
 
@@ -118,7 +118,7 @@ implements Callback {
 		FragmentManager fMan = getFragmentManager();
 		FeedList currentList = (FeedList) fMan.findFragmentByTag(FeedActivity.FEED_LIST);
 
-		String category = this.spinnerListItems.get(position);
+		String category = this.spinnerListItemPrimaryKeys.get(position);
 		
 		// "all" is not a real category, so account for it
 		if (category == this.getText(R.string.all))
@@ -168,11 +168,11 @@ implements Callback {
 			// step 1: note the current category
 			final ActionBar actionBar = getActionBar();
 			int selectedListIndex = actionBar.getSelectedNavigationIndex();
-			String selectedListValue = this.spinnerListItems.get(selectedListIndex);
+			String selectedListValue = this.spinnerListItemPrimaryKeys.get(selectedListIndex);
 			
 			// step 2: refresh displayed data with proper list items
 			repopulateActiveList();
-			// Step 3: this call resets this.spinnerListItems to whatever is currently
+			// Step 3: this call resets this.spinnerListItemPrimaryKeys to whatever is currently
 			// in the DB. it is an asynchronous call
 			if (selectedListValue != null) {
 				Log.i(TAG,  selectedListValue);
@@ -217,7 +217,7 @@ implements Callback {
 		// Step 2. Reset the fragments adapter and redraw it
 		final ActionBar actionBar = getActionBar();
 		int position = actionBar.getSelectedNavigationIndex();
-		String category = this.spinnerListItems.get(position);
+		String category = this.spinnerListItemPrimaryKeys.get(position);
 		// "all" is not a real category, so account for it
 		if (category == this.getText(R.string.all))
 			category = "*";
@@ -244,7 +244,7 @@ implements Callback {
 		}
 	}
 	
-	public ArrayAdapter<String> backgroundSpinnerQuery() {
+	public AdapterListPair backgroundSpinnerQuery() {
 		// populate list data
 		Cursor c = FeedOrm.selectAllCategories(getApplicationContext());
 		ArrayList<String> items = new ArrayList<String>();
@@ -262,8 +262,9 @@ implements Callback {
 				android.R.layout.simple_list_item_1, 
 				android.R.id.text1, 
 				items);
-
-		spinnerListItems = items;
-		return aAdpt;
+		AdapterListPair queryPair = new AdapterListPair();
+		queryPair.setAdapter(aAdpt);
+		queryPair.setComparisonKeyList(items);
+		return queryPair;
 	}
 }

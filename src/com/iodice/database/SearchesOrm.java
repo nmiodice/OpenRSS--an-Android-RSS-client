@@ -1,11 +1,14 @@
 package com.iodice.database;
 
+import com.iodice.rssreader.R;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.util.Log;
+import android.widget.Toast;
 
 public class SearchesOrm extends OrmBase {
 
@@ -35,12 +38,24 @@ public class SearchesOrm extends OrmBase {
     	
     	ContentValues values = searchToContentValues(search);
         
-    	database.beginTransaction();
-        long id = database.insertOrThrow(SearchesOrm.TABLE_NAME, "null", values);
-        database.setTransactionSuccessful();
-        database.endTransaction();
-        database.close();
-        Log.i(TAG, "Inserted new SearchData with ID: " + id);
+		try {
+	    	database.beginTransaction();
+	        long id = database.insertOrThrow(SearchesOrm.TABLE_NAME, "null", values);
+	        database.setTransactionSuccessful();
+	        database.endTransaction();
+	        database.close();
+	        Log.i(TAG, "Inserted new SearchData with ID: " + id);
+		} catch (Exception e) {
+			if (e.getMessage().contains("code 19")) {
+				CharSequence text = context.getText(R.string.saved_search_already_exists);
+				int duration = Toast.LENGTH_SHORT;
+
+				Toast toast = Toast.makeText(context, text, duration);
+				toast.show();
+			} else {
+				Log.e(TAG, "Error saving feed. SQLiteDatabase error: " + e.getMessage());
+			}
+		}
     }
     
     private static ContentValues searchToContentValues(SearchData search) {

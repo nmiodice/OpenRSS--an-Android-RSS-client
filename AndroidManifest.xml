@@ -22,7 +22,7 @@
         android:theme="@style/AppTheme" >
         
         <activity
-            android:name="com.iodice.ui.rssgroups.FeedActivity"
+            android:name="com.iodice.ui.feedgroups.FeedActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,7 +36,7 @@
         </activity>
         
         <activity
-            android:name="com.iodice.ui.rsstopics.TopicsActivity"
+            android:name="com.iodice.ui.feedtopics.TopicsActivity"
             android:label="@string/app_name" >
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -47,7 +47,7 @@
         <activity
             android:name="com.iodice.ui.articles.ArticleActivity"
             android:label="@string/app_name"
-            android:parentActivityName="com.iodice.ui.rssgroups.FeedActivity" >
+            android:parentActivityName="com.iodice.ui.feedgroups.FeedActivity" >
             
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
