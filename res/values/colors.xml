@@ -14,6 +14,8 @@
     <color name="grey_light">#e9e8e8</color>
     <color name="grey_shadow">#CCdedede</color>
     <color name="orange">#FFBB33</color>
+    <color name="brown_light">#fcf4e3</color>
+    <color name="blue_light">#eaf4f8</color>
     
     <!-- design elements -->
     <color name="tile_drop_shadow">@color/blue_opaque</color>
@@ -21,6 +23,7 @@
     <color name="tile_pressed">@color/white_off</color>
     <color name="rss_text_color_accent">@color/black_transparent</color>
     <color name="article_search_background">@color/black_transparent</color>
-    
+    <color name="rss_list_zebra_color_1">@color/grey_light</color>
+    <color name="rss_list_zebra_color_2">@color/white</color>
 
 </resources>

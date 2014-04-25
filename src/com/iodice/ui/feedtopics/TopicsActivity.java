@@ -13,12 +13,16 @@ import com.iodice.ui.articles.ArticleList;
 import com.iodice.ui.base.MultiselectList.MySimpleCursorAdapter;
 
 public class TopicsActivity extends ArticleActivity {
+	
+	public boolean isActionBarNavDrawerIndicatorVisible() {
+		return true;
+	}
 
 	// displayed in top right of activity, lists categories by name. upon select, filter list to just those categories
 	public void setupCategorySpinner() {
 		PopulateActionBarSpinner asyncTask = new PopulateActionBarSpinner();
 		asyncTask.setOnNavigationListener(this);
-		asyncTask.execute();
+		asyncTask.execute();		
 	}
 	
 	public void setupCategorySpinnerWithSelection(String selection) {

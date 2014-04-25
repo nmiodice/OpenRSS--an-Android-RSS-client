@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -197,9 +196,6 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
             	else
             		v.setVisibility(View.GONE);
             	return true;
-            case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
             	
             default:
                 return super.onOptionsItemSelected(item);

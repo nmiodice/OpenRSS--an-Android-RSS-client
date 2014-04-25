@@ -180,9 +180,9 @@ public class FeedList extends AnimatedEntryList implements Callback {
     	convertView = super.onListElementRedraw(position, convertView, parent);
     	if (convertView != null) {
 	    	if (position % 2 == 0)
-	    		convertView.setBackgroundColor(getResources().getColor(R.color.grey_light));
+	    		convertView.setBackgroundColor(getResources().getColor(R.color.rss_list_zebra_color_2));
 	    	else
-	    		convertView.setBackgroundColor(getResources().getColor(R.color.white));
+	    		convertView.setBackgroundColor(getResources().getColor(R.color.rss_list_zebra_color_1));
     	} else
 	    	throw new NullPointerException();
 	    

@@ -15,11 +15,13 @@ public final class R {
     public static final class attr {
     }
     public static final class color {
-        public static final int article_search_background=0x7f050010;
+        public static final int article_search_background=0x7f050012;
         public static final int black=0x7f050004;
         public static final int black_transparent=0x7f050005;
         public static final int blue=0x7f050002;
+        public static final int blue_light=0x7f05000d;
         public static final int blue_opaque=0x7f050003;
+        public static final int brown_light=0x7f05000c;
         public static final int grey_light=0x7f050009;
         public static final int grey_shadow=0x7f05000a;
         public static final int orange=0x7f05000b;
@@ -27,12 +29,14 @@ public final class R {
          */
         public static final int red=0x7f050000;
         public static final int red_opaque=0x7f050001;
-        public static final int rss_text_color_accent=0x7f05000f;
-        public static final int tile=0x7f05000d;
+        public static final int rss_list_zebra_color_1=0x7f050013;
+        public static final int rss_list_zebra_color_2=0x7f050014;
+        public static final int rss_text_color_accent=0x7f050011;
+        public static final int tile=0x7f05000f;
         /**  design elements 
          */
-        public static final int tile_drop_shadow=0x7f05000c;
-        public static final int tile_pressed=0x7f05000e;
+        public static final int tile_drop_shadow=0x7f05000e;
+        public static final int tile_pressed=0x7f050010;
         public static final int white=0x7f050006;
         public static final int white_off=0x7f050008;
         public static final int white_opaque=0x7f050007;

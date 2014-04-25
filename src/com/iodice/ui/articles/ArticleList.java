@@ -242,7 +242,6 @@ public class ArticleList extends AnimatedEntryList {
 		if (tmp.getText().equals(""))
 			tmp.setVisibility(View.GONE);
 		else {
-			Log.i(TAG, activity.getText(R.string.tile_font).toString());
 			Typeface headline_font = Typeface.createFromAsset(
 					activity.getAssets(), 
 					activity.getText(R.string.tile_font).toString());
