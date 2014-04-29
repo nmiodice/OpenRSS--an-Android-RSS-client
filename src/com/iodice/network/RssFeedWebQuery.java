@@ -105,27 +105,27 @@ public class RssFeedWebQuery implements Callable<List<ArticleData>> {
 		String tmpStr;
 		
 		if (entry.getTitle() != null) {
-			tmpStr = Text.removeHTML(entry.getTitle());
+			tmpStr = Text.removeHTMLAndStrip(entry.getTitle());
 			article.setTitle(tmpStr);
 		}
 		
 		if (entry.getAuthor() != null) {
-			tmpStr = Text.removeHTML(entry.getAuthor());
+			tmpStr = Text.removeHTMLAndStrip(entry.getAuthor());
 			article.setAuthor(tmpStr);
 		}
 	    
 		if (entry.getDescription() != null) {
-			tmpStr = Text.removeHTML(entry.getDescription().getValue());
+			tmpStr = Text.removeHTMLAndStrip(entry.getDescription().getValue());
 			article.setDescription(tmpStr);
 		}
 	    
 	    if (entry.getPublishedDate() != null) {
-	    	tmpStr = Text.removeHTML(entry.getPublishedDate().toString());
+	    	tmpStr = Text.removeHTMLAndStrip(entry.getPublishedDate().toString());
 	    	article.setPublishedDate(tmpStr);
 	    }
 	    
 	    if (entry.getLink() != null) {
-	    	tmpStr = Text.removeHTML(entry.getLink());
+	    	tmpStr = Text.removeHTMLAndStrip(entry.getLink());
 	    	article.setURL(tmpStr);
 	    }
 	    

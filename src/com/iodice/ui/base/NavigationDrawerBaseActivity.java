@@ -20,8 +20,8 @@ import com.iodice.ui.base.abstractdrawer.NavDrawerAdapter;
 import com.iodice.ui.base.abstractdrawer.NavDrawerItem;
 import com.iodice.ui.base.abstractdrawer.NavMenuItem;
 import com.iodice.ui.base.abstractdrawer.NavMenuSection;
-import com.iodice.ui.feedgroups.FeedActivity;
-import com.iodice.ui.feedtopics.TopicsActivity;
+import com.iodice.ui.feeds.FeedActivity;
+import com.iodice.ui.topics.TopicsActivity;
 
 /**
  * @author Nicholas M. Iodice
@@ -125,7 +125,6 @@ extends AbstractNavDrawerActivity {
 	
 	private void sendIntent(Intent intent) {
 		if (intent != null) {
-			//intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 			
 			try {
 				startActivity(intent);

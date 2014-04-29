@@ -25,7 +25,7 @@ import com.iodice.rssreader.R;
 import com.iodice.services.ArticleUpdateService;
 import com.iodice.ui.base.MultiselectList.MySimpleCursorAdapter;
 import com.iodice.ui.base.NavigationDrawerWithSpinner;
-import com.iodice.ui.feedtopics.TopicsActivity;
+import com.iodice.ui.topics.TopicsActivity;
 import com.iodice.utilities.ListRefreshCallback;
 
 
@@ -37,6 +37,8 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
 	private static final String SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY";
 	/* receives notice from the article update service and triggers a data refresh */
 	ArticleUpdateReceiver receiver; 
+	/* controlls the behavior of the filter */
+	protected boolean filterListInclusive = false;
 	
 	/* supported callback method identifiers */
 	public static final int CALLBACK_REDRAW_WITH_CACHED_DATA = 0;
@@ -213,6 +215,7 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
 		// fragContainer is null until something is added to it
 		if (fMan.findFragmentByTag(ArticleActivity.LIST) == null) {			
 			ArticleList list = new ArticleList();
+			list.setFilterInclusive(filterListInclusive);
 			list.setFeeds(urlList);
 			fTrans = fMan.beginTransaction();
 			fTrans.add(R.id.rss_fragment_container, list, ArticleActivity.LIST);

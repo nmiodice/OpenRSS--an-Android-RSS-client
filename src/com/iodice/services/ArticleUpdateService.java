@@ -13,9 +13,6 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
-import android.util.Log;
 
 import com.iodice.database.ArticleData;
 import com.iodice.database.ArticleOrm;
@@ -25,7 +22,6 @@ import com.iodice.ui.articles.ArticleUpdateReceiver;
 
 public class ArticleUpdateService extends IntentService {
 	
-	private final static String TAG = "Feed_Update_Service";
 	private final static String URL_LIST = "URL_LIST";
 
 	/* a public callin that will handle setting up the general use case for this service, updating all
@@ -109,25 +105,7 @@ public class ArticleUpdateService extends IntentService {
 	private void commitArticlesToDatabase(List<ArticleData> articles) {
 		if (articles == null)
 			return;
-		  
-		ArticleData data = null;
-		int listSize = articles.size();
-		SQLiteDatabase db = ArticleOrm.getWritableDatabase(getApplication().getApplicationContext());
-
-
-		for (int i = 0; i < listSize; i++) {
-			data = articles.get(i);
-			if (data == null)
-				continue;
-			  
-			try {
-				ArticleOrm.insertArticle(data, db);
-			} catch (SQLiteException e) {
-				if (!e.getMessage().contains("code 19"))
-					Log.e(TAG, "Error commiting article data. SQLiteDatabase error: " + e.getMessage());
-				}
-			}
-		db.close();
+		ArticleOrm.insertArticles(getApplication().getApplicationContext(), articles);
 	}
 	
 	private void queryWebForArticles(List<String> links) {
@@ -156,8 +134,7 @@ public class ArticleUpdateService extends IntentService {
 		// shut it down LEMON!
         executor.shutdown();
         
-        // as the data comes in save the article data to the database. TODO: This
-        // could be improved if the database requests became threaded
+        // as the data comes in save the article data to the database.
         List<ArticleData> threadResult;
         try {
 	        for (int i = 0; i < numLinks; i++) {

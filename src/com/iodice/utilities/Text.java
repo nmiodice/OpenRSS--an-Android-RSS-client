@@ -9,11 +9,14 @@ import java.util.Locale;
 import org.jsoup.Jsoup;
 
 import android.database.DatabaseUtils;
+import android.util.Log;
 
 public class Text {
 	
-	public static String removeHTML(String s) {
-		return Jsoup.parse(s).text();
+	public static String removeHTMLAndStrip(String s) {
+		s = Jsoup.parse(s).text();
+		s = s.trim();
+		return s;
 	}
 	
 	public static String makeFilesystemSafe(String s) {
@@ -25,15 +28,49 @@ public class Text {
 	}
 	
 	// clean punctuation and other crap. returns a list of lowercase plain text words
-	public static List<String> getCleanStringList(String s) {
+	public static List<String> getCleanStringListAsLowercase(String s, String delimiter) {
 		if (s == null)
 			return null;
 		s = s.toLowerCase(Locale.US);
 		s = s.trim();
-		s = removeHTML(s);
+		s = removeHTMLAndStrip(s);
 		s = s.replaceAll("[^a-zA-Z0-9 \\.]", "");
-		List<String> items = Arrays.asList(s.split(" "));
+		List<String> items = Arrays.asList(s.split(delimiter));
 		return items;
+	}
+
+	
+	public static String toFirstLetterUppercase(String s) {
+		List<String> strings = Arrays.asList(s.split(" "));
+		int size = strings.size();
+		
+		String w;
+		String output = "";
+		
+		for (int i = 0; i < size; i++) {
+			if (i != 0)
+				output += " ";
+
+			w = strings.get(i);
+			
+			Log.i("TEXT", "i = " + i);
+			Log.i("TEXT", "output = " + output);
+			Log.i("TEXT", "w = " + w);
+			Log.i("TEXT", "output = " + output);
+			Log.i("TEXT", "\n\n");
+			Log.i("TEXT", "\n\n");
+			
+			if (w.length() == 0)
+				continue;
+			if (w.length() == 1)
+				w = w.toUpperCase(Locale.getDefault());
+			else {
+				w = w.substring(0, 1).toUpperCase(Locale.getDefault()) 
+						+ w.substring(1).toLowerCase(Locale.getDefault());
+			}
+			output += w;
+		}
+		return output;
 	}
 
 	// display only the first x characters of the description while also displaying a full

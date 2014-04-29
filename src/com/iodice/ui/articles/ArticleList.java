@@ -42,6 +42,8 @@ public class ArticleList extends AnimatedEntryList {
 			ArticleOrm.COLUMN_PARENT_URL,
 			ArticleOrm.COLUMN_URL,
 			});
+	
+	private boolean filterInclusive = false;
 
 	
 	private static final String ARTICLE_LIST_TAG = "ARTICLE_LIST_TAG";
@@ -80,8 +82,7 @@ public class ArticleList extends AnimatedEntryList {
 			if (contains.endsWith(",") == false)
 				contains += ",";
 			
-			this.filterTerms = Text.getCleanStringList(contains.toString());  
-					//Arrays.asList(contains.toLowerCase(Locale.US).split("\\s*,\\s*"));
+			this.filterTerms = Text.getCleanStringListAsLowercase(contains.toString(), " ");  
 		}
 	}
 		
@@ -192,22 +193,31 @@ public class ArticleList extends AnimatedEntryList {
 			
 			// set up the filter callback so that filtering can be handled asynchronously
 			Log.i(TAG, "Setting query provider");
-			adapt.setFilterQueryProvider(new FilterQueryProvider() {
-				public Cursor runQuery(CharSequence constraint) {
-					setFilterTerms(constraint.toString());
-					// passing in true as the last parameter makes it so that if any term matches
-					// it will be added as a result, false makes it so every term needs to match
-					Cursor c = ArticleOrm.selectWhereParentLinkIsAndContains(getActivity(), 
-							articleURLList, 
-							filterTerms, 
-							columnsToFilterOn,
-							false);
-					Log.i(TAG, "cursor = " + c);
-					Log.i(TAG, "filterTerms = " + filterTerms.toString());
-					return c;
-		         }
-			});
+			adapt.setFilterQueryProvider(getFilterQueryProvider());
 		}
+	}
+	
+	public void setFilterInclusive(boolean b) {
+		this.filterInclusive = b;
+	}
+	
+	
+	private FilterQueryProvider getFilterQueryProvider() {
+		return new FilterQueryProvider() {
+			public Cursor runQuery(CharSequence constraint) {
+				setFilterTerms(constraint.toString());
+				// passing in true as the last parameter makes it so that if any term matches
+				// it will be added as a result, false makes it so every term needs to match
+				Cursor c = ArticleOrm.selectWhereParentLinkIsAndContains(getActivity(), 
+						articleURLList, 
+						filterTerms, 
+						columnsToFilterOn,
+						filterInclusive);
+				Log.i(TAG, "cursor = " + c);
+				Log.i(TAG, "filterTerms = " + filterTerms.toString());
+				return c;
+	         }
+		};
 	}
 
 	@Override

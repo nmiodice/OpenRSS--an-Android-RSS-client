@@ -1,5 +1,6 @@
 package com.iodice.database;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -12,7 +13,7 @@ import android.util.Log;
 
 import com.iodice.utilities.Text;
 
-public class ArticleOrm extends OrmBase {
+public class ArticleOrm extends BaseOrm {
 
 	private static final String TAG = "rssOrm";
 	private static final String TABLE_NAME = "articles";
@@ -58,10 +59,44 @@ public class ArticleOrm extends OrmBase {
     		"CREATE INDEX " + INDEX_PARENT_URL + " ON " + TABLE_NAME + "(" + COLUMN_PARENT_URL + ")";
     
 
-    public static void insertArticle(ArticleData article, SQLiteDatabase database) throws SQLiteException {
+    public static void insertArticle(Context context, ArticleData article) throws SQLiteException {
+	    SQLiteDatabase database = BaseOrm.getWritableDatabase(context);
         ContentValues values = articleToContentValues(article);
-        long rssId = database.insertOrThrow(ArticleOrm.TABLE_NAME, "null", values);
-        Log.i(TAG, "Inserted new Article_Data with ID: " + rssId);
+		WriteLockManager.beginWriteTransaction(database);
+        insertArticleWithDB(values, database);
+		WriteLockManager.setWriteTransactionSuccessfull(database);
+		WriteLockManager.endWriteTransaction(database);
+    }
+    
+    // leave caller to handle transaction handeling because callers who insert large chunks in one
+    // transaction may want to use them less frequently than single updaters (for performance reasons)
+    private static void insertArticleWithDB(ContentValues values, SQLiteDatabase db) {
+    	try {
+    		long rssId = db.insertOrThrow(ArticleOrm.TABLE_NAME, "null", values);
+    		Log.i(TAG, "Inserted new Article_Data with ID: " + rssId);
+    	} catch (SQLiteException e) {
+    		if (!e.getMessage().contains("code 19"))
+				throw e;
+    	}
+    }
+    
+    public static void insertArticles(Context context, List<ArticleData> articles) throws SQLiteException {
+    	SQLiteDatabase database = BaseOrm.getWritableDatabase(context);
+		ArrayList<ContentValues> valueList = new ArrayList<ContentValues>();
+		int numArticles = articles.size();
+		int i;
+		
+		// batch convert --> shorter in transaction time
+		for (i = 0; i < numArticles; i++)
+			valueList.add(articleToContentValues(articles.get(i)));
+		
+		// nest calls in transaction to boost write time
+		WriteLockManager.beginWriteTransaction(database);
+		for (i = 0; i < numArticles; i++) {
+			insertArticleWithDB(valueList.get(i), database);
+		}
+		WriteLockManager.setWriteTransactionSuccessfull(database);
+		WriteLockManager.endWriteTransaction(database);
     }
     
     private static ContentValues articleToContentValues(ArticleData article) {
@@ -77,8 +112,7 @@ public class ArticleOrm extends OrmBase {
     }
     
     public static Cursor selectWhereParentLinkIs(Context context, List<String> links) {
-		DatabaseWrapper databaseWrapper = new DatabaseWrapper(context);
-	    SQLiteDatabase database = databaseWrapper.getReadableDatabase();
+	    SQLiteDatabase database = BaseOrm.getReadableDatabase(context);
 	    String sql = "SELECT rowid _id,* FROM " + ArticleOrm.TABLE_NAME + 
 	    				" WHERE " + ArticleOrm.COLUMN_PARENT_URL + " IN(";
 	    int numLinks = links.size();
@@ -105,8 +139,7 @@ public class ArticleOrm extends OrmBase {
 													    		List<String> filterTerms, 
 													    		List<String> columnsToFilterOn,
 													    		boolean inclusive) {
-		DatabaseWrapper databaseWrapper = new DatabaseWrapper(context);
-	    SQLiteDatabase database = databaseWrapper.getReadableDatabase();
+	    SQLiteDatabase database = BaseOrm.getReadableDatabase(context);
     	String sql = "SELECT rowid _id,* FROM " + ArticleOrm.TABLE_NAME + 
 				" WHERE " + ArticleOrm.COLUMN_PARENT_URL + " IN(";
 		int numLinks = links.size();
@@ -152,8 +185,7 @@ public class ArticleOrm extends OrmBase {
     }
     
     public static void deleteArticlesWhereLinkIs(String url, Context context) {
-    	DatabaseWrapper databaseWrapper = new DatabaseWrapper(context);
-	    SQLiteDatabase database = databaseWrapper.getReadableDatabase();
+    	SQLiteDatabase database = BaseOrm.getReadableDatabase(context);
 	    	    
 	    database.beginTransaction();
 	    Log.i(TAG, "DELETING!");
@@ -161,6 +193,5 @@ public class ArticleOrm extends OrmBase {
 	    Log.i(TAG, "i = " + id + " :: url = " + url);
 	    database.setTransactionSuccessful();
 	    database.endTransaction();
-	  	database.close();
     }
 }

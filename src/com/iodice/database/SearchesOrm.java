@@ -10,7 +10,7 @@ import android.database.sqlite.SQLiteException;
 import android.util.Log;
 import android.widget.Toast;
 
-public class SearchesOrm extends OrmBase {
+public class SearchesOrm extends BaseOrm {
 
 	private static final String TAG = "SavedSearchesOrm";
 	
@@ -34,16 +34,15 @@ public class SearchesOrm extends OrmBase {
             "DROP TABLE IF EXISTS " + TABLE_NAME;
 
     public static void insertSearch(SearchData search, Context context) throws SQLiteException {
-    	SQLiteDatabase database = getWritableDatabase(context);
+    	SQLiteDatabase database = BaseOrm.getWritableDatabase(context);
     	
     	ContentValues values = searchToContentValues(search);
         
 		try {
-	    	database.beginTransaction();
+			WriteLockManager.beginWriteTransaction(database);
 	        long id = database.insertOrThrow(SearchesOrm.TABLE_NAME, "null", values);
-	        database.setTransactionSuccessful();
-	        database.endTransaction();
-	        database.close();
+	        WriteLockManager.setWriteTransactionSuccessfull(database);
+	        WriteLockManager.endWriteTransaction(database);
 	        Log.i(TAG, "Inserted new SearchData with ID: " + id);
 		} catch (Exception e) {
 			if (e.getMessage().contains("code 19")) {
@@ -55,6 +54,7 @@ public class SearchesOrm extends OrmBase {
 			} else {
 				Log.e(TAG, "Error saving feed. SQLiteDatabase error: " + e.getMessage());
 			}
+			WriteLockManager.endWriteTransaction(database);
 		}
     }
     
@@ -66,8 +66,7 @@ public class SearchesOrm extends OrmBase {
     }
     
     public static Cursor selectAll(Context context) {
-    	DatabaseWrapper databaseWrapper = new DatabaseWrapper(context);
-	    SQLiteDatabase database = databaseWrapper.getReadableDatabase();
+    	SQLiteDatabase database = BaseOrm.getReadableDatabase(context);
 	    String sql = "SELECT rowid _id,* FROM " + SearchesOrm.TABLE_NAME;
 
 	    // always order by date
@@ -76,9 +75,8 @@ public class SearchesOrm extends OrmBase {
 	    return cursor;
     }
     
-    public static void deleteArticlesWhereLinkIs(String name, Context context) {
-    	DatabaseWrapper databaseWrapper = new DatabaseWrapper(context);
-	    SQLiteDatabase database = databaseWrapper.getReadableDatabase();
+    public static void deleteSearchesWhereNameIs(String name, Context context) {
+	    SQLiteDatabase database = BaseOrm.getWritableDatabase(context);
 	    	    
 	    database.beginTransaction();
 	    Log.i(TAG, "DELETING!");
@@ -86,6 +84,5 @@ public class SearchesOrm extends OrmBase {
 	    Log.i(TAG, "i = " + id + " :: name = " + name);
 	    database.setTransactionSuccessful();
 	    database.endTransaction();
-	  	database.close();
     }
 }
