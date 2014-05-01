@@ -1,11 +1,11 @@
 package com.iodice.ui.topics;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.FragmentManager;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.widget.ArrayAdapter;
 
 import com.iodice.database.SearchesOrm;
 import com.iodice.rssreader.R;
@@ -65,7 +65,7 @@ public class TopicsActivity extends ArticleActivity {
 	}
 
 	@Override
-	public AdapterListPair backgroundSpinnerQuery() {
+	public List<String> backgroundSpinnerQuery() {
 		// populate list data
 		Cursor c = SearchesOrm.selectAll(getApplicationContext());
 		ArrayList<String> items = new ArrayList<String>();
@@ -78,14 +78,12 @@ public class TopicsActivity extends ArticleActivity {
 		     c.moveToNext();
 		}
 		
-		// note: actionBar.getThemedContext() ensures the correct colors based on the action bar theme
-		ArrayAdapter<String> aAdpt = new ArrayAdapter<String>(getActionBar().getThemedContext(),
-				android.R.layout.simple_list_item_1, 
-				android.R.id.text1, 
-				items);
-		AdapterListPair queryPair = new AdapterListPair();
-		queryPair.setAdapter(aAdpt);
-		queryPair.setComparisonKeyList(items);
-		return queryPair;
+//		aAdpt.setTitleText("Saved Searches");
+		return items;
+	}
+	
+	@Override
+	public String getSpinnerTitleText() {
+		return getText(R.string.saved_search_spinner_title).toString();
 	}
 }

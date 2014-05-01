@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rss_root"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    
+	android:background="@android:color/transparent"    
+    >
+    
+    <TextView
+        android:id="@+id/text_top"
+		style="@style/Spinner_Large_Text"
+        />
+    
+    <TextView
+        android:id="@+id/text_bottom"
+        style="@style/Spinner_Small_Text"
+        android:layout_below="@id/text_top"
+        />
+    
+</RelativeLayout>
+

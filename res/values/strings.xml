@@ -56,6 +56,7 @@
     <string name="action_save_group">Save as group</string>
     <string name="all">All</string>
     <string name="action_test_re_initialize">reload init data TMP!</string>
+    <string name="categories_spinner_text">Categories</string>
     
     
     
@@ -96,6 +97,10 @@
     <string name="action_save_search_term">Save search term</string>
     <string name="saved_search_already_exists">Search topic already saved</string>
     <string name="tile_font">fonts/RobotoSlab-Regular.ttf</string>
+    
+    <!-- Topics activity -->
+    <string name = "topics">Topics</string>
+    <string name="saved_search_spinner_title">Saved searches</string>
     
     
 </resources>

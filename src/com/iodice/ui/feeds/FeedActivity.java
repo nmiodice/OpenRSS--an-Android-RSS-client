@@ -1,6 +1,7 @@
 package com.iodice.ui.feeds;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
@@ -11,7 +12,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 
 import com.iodice.application.MyApplication;
 import com.iodice.database.FeedData;
@@ -246,7 +246,7 @@ implements SelectorRefreshCallback {
 		}
 	}
 	
-	public AdapterListPair backgroundSpinnerQuery() {
+	public List<String> backgroundSpinnerQuery() {
 		// populate list data
 		Cursor c = FeedOrm.selectAllCategories(getApplicationContext());
 		ArrayList<String> items = new ArrayList<String>();
@@ -258,20 +258,16 @@ implements SelectorRefreshCallback {
 		     items.add(c.getString(c.getColumnIndex(FeedOrm.getCategoryTableCategoryKey())));
 		     c.moveToNext();
 		}
-		
-		// note: actionBar.getThemedContext() ensures the correct colors based on the action bar theme
-		ArrayAdapter<String> aAdpt = new ArrayAdapter<String>(getActionBar().getThemedContext(),
-				android.R.layout.simple_list_item_1, 
-				android.R.id.text1, 
-				items);
-		AdapterListPair queryPair = new AdapterListPair();
-		queryPair.setAdapter(aAdpt);
-		queryPair.setComparisonKeyList(items);
-		return queryPair;
+		return items;
 	}
 
 	@Override
 	public void refreshCurrentSelector() {
 		this.handleCallbackEvent(CALLBACK_REFRESH_CATEGORY_SELECTOR, null);
+	}
+
+	@Override
+	public String getSpinnerTitleText() {
+		return getText(R.string.categories_spinner_text).toString();
 	}
 }

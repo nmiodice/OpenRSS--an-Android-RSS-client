@@ -310,7 +310,12 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
 		return false;
 	}
 	@Override
-	public AdapterListPair backgroundSpinnerQuery() {
+	public List<String> backgroundSpinnerQuery() {
+		return null;
+	}
+
+	@Override
+	public String getSpinnerTitleText() {
 		return null;
 	}
 }

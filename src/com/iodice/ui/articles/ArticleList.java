@@ -178,8 +178,10 @@ public class ArticleList extends AnimatedEntryList {
 
 		// if there isnt any data, attempt a web query one time and then fail to load
 		// data if the web query is unsuccessful. 
-		// TODO: handle the case where multiple feeds are selected but not all feeds are cached in the DB.
-		// 	in the current implementation, a refresh will not be attempted!
+		// The case where multiple feeds are selected but not all feeds are cached in the D
+		// 	is not handled in the current implementation. Background services regularly update
+		//  the data & when a feed is added, an update is triggerd, so its likely not very necessary
+		//  to handle this unhandled case
 		if (cursor.getCount() == 0 && this.hasAlreadyFailedToLoad == false) {
 			this.hasAlreadyFailedToLoad = true;
 			ListRefreshCallback callbackInterface = (ListRefreshCallback) getActivity();
@@ -197,6 +199,9 @@ public class ArticleList extends AnimatedEntryList {
 		}
 	}
 	
+	/* only valid after the adapter is refreshed because the adapter setup code creates
+	 * the filter query provider, which utilizes this value at creation time
+	 */
 	public void setFilterInclusive(boolean b) {
 		this.filterInclusive = b;
 	}
