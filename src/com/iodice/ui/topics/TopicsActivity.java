@@ -11,7 +11,7 @@ import com.iodice.database.SearchesOrm;
 import com.iodice.rssreader.R;
 import com.iodice.ui.articles.ArticleActivity;
 import com.iodice.ui.articles.ArticleList;
-import com.iodice.ui.base.MultiselectList.MySimpleCursorAdapter;
+import com.iodice.ui.base.CabMultiselectList.MySimpleCursorAdapter;
 
 public class TopicsActivity extends ArticleActivity {
 	
@@ -21,7 +21,7 @@ public class TopicsActivity extends ArticleActivity {
 		super.onCreate(savedInstanceState);
 	}
 	
-	public boolean isActionBarNavDrawerIndicatorVisible() {
+	public boolean isActionBarDrawerIndicatorVisible() {
 		return true;
 	}
 
@@ -65,7 +65,7 @@ public class TopicsActivity extends ArticleActivity {
 	}
 
 	@Override
-	public List<String> backgroundSpinnerQuery() {
+	public List<String> getSpinnerListPrimaryKeys() {
 		// populate list data
 		Cursor c = SearchesOrm.selectAll(getApplicationContext());
 		ArrayList<String> items = new ArrayList<String>();

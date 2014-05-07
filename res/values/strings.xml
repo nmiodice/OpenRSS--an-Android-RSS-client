@@ -96,7 +96,8 @@
     <string name="action_clear_search_term">Clear search term</string>
     <string name="action_save_search_term">Save search term</string>
     <string name="saved_search_already_exists">Search topic already saved</string>
-    <string name="tile_font">fonts/RobotoSlab-Regular.ttf</string>
+    <string name="tile_font_heavy">fonts/RobotoSlab-Regular.ttf</string>
+    <string name="tile_font_light">fonts/RobotoSlab-Light.ttf</string>
     
     <!-- Topics activity -->
     <string name = "topics">Topics</string>

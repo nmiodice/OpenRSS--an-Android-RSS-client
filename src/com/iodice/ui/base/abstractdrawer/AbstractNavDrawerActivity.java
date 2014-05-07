@@ -39,7 +39,7 @@ public abstract class AbstractNavDrawerActivity extends FragmentActivity {
     // some activities may want an 'up' button instead of the navigation drawer. For example,
     // any low level application component. This method returns true if the drawer icon should
     // be visible and false if not
-    protected abstract boolean isActionBarNavDrawerIndicatorVisible();
+    protected abstract boolean isActionBarDrawerIndicatorVisible();
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +85,7 @@ public abstract class AbstractNavDrawerActivity extends FragmentActivity {
         };
         // some activities may want an 'up' button instead of the navigation drawer. For example,
         // any low level application component
-        mDrawerToggle.setDrawerIndicatorEnabled(this.isActionBarNavDrawerIndicatorVisible());
+        mDrawerToggle.setDrawerIndicatorEnabled(this.isActionBarDrawerIndicatorVisible());
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         
         if (savedInstanceState != null) {

@@ -1,24 +1,5 @@
 package com.iodice.ui.base;
 
-/**
- * This class provides a simple abstraction of a listview that include support for a 
- * contextual actionbar with multiselection. Most of the legwork is done in this class
- * leaving only critical and customizable functions to override. This allows for visual
- * flexibility with consistent backend behavior.
- * 
- * Important notes:
- * 	1. When providing a row layout, it is important to know that the ListView class
- * 		requests the parent view's child layout. Therefore, any important style must
- * 		not be applied to the top level view, rather it needs to be applied to 
- * 		a child layout
- * 
- * 	2. The current implementation relies on a checkbox included in the layout. See the
- * 		code for details on the name. This may be changed in favor of onSelect() and
- * 		onDeselect() functions that allow the user to control this, possibly with a 
- * 		different selection behavior
- */
-
-
 import java.util.ArrayList;
 
 import android.app.ListFragment;
@@ -41,16 +22,69 @@ import android.widget.SimpleCursorAdapter;
 
 import com.iodice.rssreader.R;
 
-public abstract class MultiselectList extends ListFragment {
+/**
+ * This class provides a simple abstraction of a listview that include support for a 
+ * contextual actionbar with multiselection. Most of the legwork is done in this class
+ * leaving only critical and customizable functions to override. This allows for visual
+ * flexibility with consistent backend behavior.
+ * 
+ * Important notes:
+ * 	1. When providing a row layout, it is important to know that the ListView class
+ * 		requests the parent view's child layout. Therefore, any important style must
+ * 		not be applied to the top level view, rather it needs to be applied to 
+ * 		a child layout
+ * 
+ * 	2. The current implementation relies on a checkbox included in the layout. See the
+ * 		code for details on the name. This may be changed in favor of onSelect() and
+ * 		onDeselect() functions that allow the user to control this, possibly with a 
+ * 		different selection behavior
+ * 
+ * @author Nicholas M. Iodice
+ *
+ */
+public abstract class CabMultiselectList extends ListFragment {
 	private final String TAG = "List_Base";
 
 	protected ArrayList<Integer> selectedListItems = new ArrayList<Integer>();
 	protected boolean isInActionMode = false;
 	
+	/**
+	 * The action taken out when a single list item is clicked while the
+	 * contextual action bar is not visible
+	 * @param view
+	 */
     abstract public void onSingleItemClick(View view);
-    abstract public void cabOnMultipleItemClick();
+    
+    /**
+     * The primary action to be taken when multiple items are selected while
+     * the contextual action bar is visible. This method isnt currently
+     * called internally.
+     */
+    abstract public void cabMultiselectPrimaryAction();
+    
+    /**
+     * Populate the list data. The proper implementation for this method will do
+     * the following:
+     * 	1) run asynchronously, likely as an AsyncTask
+     * 	2) call setAdapter(...) instead of setListAdapter(...) 
+     * 
+     * (1) is suggested, (2) is required
+     */
     abstract public void setUpAdapter();
-    abstract public boolean cabRespondToMenuItemClick(ActionMode mode, MenuItem item);
+    
+    /**
+     * Respond to a menu item click while the contextual action bar is present. This is
+     * a wrapper for the android library 'onActionItemClicked' method, and is only here
+     * to make the base API method calls consistent
+     * 
+     * @param mode Same as from the 'onActionItemClicked' android library method call 
+     * @param item Same as from the 'onActionItemClicked' android library method call
+     */
+    
+    abstract public boolean cabOnMenuItemClicked(ActionMode mode, MenuItem item);
+    /**
+     * @return The menu layout ID to be used while the contextual action bar is active
+     */
     abstract public int cabGetMenuLayoutId();
 
     @Override
@@ -65,15 +99,13 @@ public abstract class MultiselectList extends ListFragment {
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
 		if (this.isInActionMode) {
-			Log.e(TAG, "onListItemClick called in action mode! This shouldnt happen!!");
-			return;
+			throw new UnsupportedOperationException();
 		}
 		onSingleItemClick(v);
 	}
  
     
 	@Override
-	// set up the contextual action bar
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		this.setUpAdapter();
@@ -101,7 +133,10 @@ public abstract class MultiselectList extends ListFragment {
 				    to));
 	}
 	
-	/* if all are selected, deselect all */
+	/**
+	 * Select all the list elements, or if all of them are already selected,
+	 * deselect all list elements
+	 */
     public void selectAll() {
         ListView v = getListView();
         int vCnt = v.getCount();
@@ -116,12 +151,20 @@ public abstract class MultiselectList extends ListFragment {
         	this.selectedListItems.add(i);
         redrawListView();
     }
-
+    
+    /**
+     * Deselect all list elements
+     */
     public void deselectAll() {
         selectedListItems.clear();
         redrawListView();
     }
     
+    /**
+     * Select the checkbox at the specified list position
+     * @param position Absolute position in the list, not the position out of all
+     * visible list items
+     */
     public void selectCheckBox(int position) {
     	ListView v = getListView();
         CheckBox bx; 
@@ -139,10 +182,22 @@ public abstract class MultiselectList extends ListFragment {
         }
     }
 
+    
+    /**
+     * The base implementation takes care of redrawing checkboxes to ensure that they are selected
+     * or deselected as appropriate. This method also provides flexibility for the client to
+     * redraw or change any features of the list element. For more complex lists it is suggested
+     * that this method be overridden (but also for it to call super.onListElementRedraw as well)
+     * 
+     * @param position Absolute position in the list
+     * @param view View to be redrawn before modification
+     * @param parent Parent view group
+     * @return View to be redrawn after modification
+     */
     // this logic is applied to each list row whenever the list needs to be re-drawn. It tracks whether or not
     // a row should have its checkboxes visible and/or checked
-    public View onListElementRedraw(int position, View v, ViewGroup parent) {
-    	CheckBox bx = (CheckBox) v.findViewById(R.id.item_checkbox);
+    public View onListElementRedraw(int position, View view, ViewGroup parent) {
+    	CheckBox bx = (CheckBox) view.findViewById(R.id.item_checkbox);
 		if (isInActionMode) {
 	    	bx.setVisibility(View.VISIBLE);
 	    	if (selectedListItems.contains(position)) {
@@ -156,28 +211,39 @@ public abstract class MultiselectList extends ListFragment {
 	    	bx.setChecked(false);
 	    	bx.setVisibility(View.GONE);
 	    }
-		return v;
+		return view;
     }
 	
-	// redraw a list, presumably because the underlying data set has changed and views need to be
-	// updtated
+	/** 
+	 * Redraw a list, presumably because the underlying data set has changed and views
+	 * need to be updtated
+	 */
 	public void redrawListView() {
 		MySimpleCursorAdapter adapt = (MySimpleCursorAdapter)this.getListAdapter();
 		adapt.notifyDataSetChanged();
 	}
 	
-	public void replaceCurrentData(Cursor c) {
+	/**
+	 * Replace the current dataset & redraw the list. The adapter is not recreated
+	 * inside this method
+	 * @param cursor The cursor containig the new set of data
+	 */
+	public void replaceCurrentData(Cursor cursor) {
 		MySimpleCursorAdapter adapt = (MySimpleCursorAdapter)this.getListAdapter();
 		// because data collection is handled in a separate thread, the adapter
 		// may be null if the data is replaced prior to the thread execution
-		if (c != null && adapt != null) {
-			adapt.changeCursor(c);
+		if (cursor != null && adapt != null) {
+			adapt.changeCursor(cursor);
 			adapt.notifyDataSetChanged();
 		} else
-			Log.e(TAG, "Adapter or cursor is null! adapter = " + adapt + ", cursor = " + c);
+			Log.e(TAG, "Adapter or cursor is null! adapter = " + adapt + ", cursor = " + cursor);
 	}
 	
-	// sets up contextual action bar actions
+	/**
+	 * @return A MultiChoiceModeListener that provides basic functionality for the list
+	 * while the contextual actionbar is created. This calls into the parent class for
+	 * basic functionality, allowing the user to override specific actions if desired
+	 */
 	private MultiChoiceModeListener getChoiceListener() {
 		return new MultiChoiceModeListener() {
 			
@@ -211,7 +277,7 @@ public abstract class MultiselectList extends ListFragment {
 		    @Override
 	        // Respond to clicks on the actions in the CAB
 		    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-		    	return cabRespondToMenuItemClick(mode, item);
+		    	return cabOnMenuItemClicked(mode, item);
 		    }
 			
 			@Override
@@ -255,8 +321,14 @@ public abstract class MultiselectList extends ListFragment {
 	
 	
 
-	// a SimpleCursorAdapter that allows for customization whenever a row layout needs to be re-drawn. 
-	// Customization done through the onListElementRedraw() abstract method
+	/**
+	 * A SimpleCursorAdapter that allows for customization whenever a row layout
+	 * needs to be re-drawn. Customization done through the onListElementRedraw()
+	 * abstract method
+	 * 
+	 * @author Nicholas M. Iodice
+	 *
+	 */
 	public class MySimpleCursorAdapter extends SimpleCursorAdapter {
 		
 		int layout;

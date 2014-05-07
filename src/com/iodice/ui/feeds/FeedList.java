@@ -48,7 +48,7 @@ public class FeedList extends AnimatedEntryList implements Callback {
 	
 
 	@Override
-	public void cabOnMultipleItemClick() {
+	public void cabMultiselectPrimaryAction() {
 		Intent intent = new Intent(getActivity(), ArticleActivity.class);
 		String key = getResources().getString(R.string.rss_url_intent);
 		List<String> selectedUrlList = this.getSelectedUrls();    
@@ -65,11 +65,11 @@ public class FeedList extends AnimatedEntryList implements Callback {
     }
 	
 	@Override
-	public boolean cabRespondToMenuItemClick(ActionMode mode,
+	public boolean cabOnMenuItemClicked(ActionMode mode,
 			MenuItem item) {
 		switch (item.getItemId()) {
 	        case R.id.action_load_selected:
-	            cabOnMultipleItemClick();
+	            cabMultiselectPrimaryAction();
 	            mode.finish();
 	            return true;
 	            
@@ -141,7 +141,6 @@ public class FeedList extends AnimatedEntryList implements Callback {
     }
     
     
-// Contextual action bar setup
     @Override
     public void setUpAdapter() {
 		PopulateListData asyncTask = new PopulateListData();

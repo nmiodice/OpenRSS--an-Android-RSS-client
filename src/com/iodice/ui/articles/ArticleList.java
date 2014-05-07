@@ -31,10 +31,12 @@ public class ArticleList extends AnimatedEntryList {
 	
 	private static final String TAG = "ArticleList";
 	private List<String> articleURLList;
+	private Typeface headline_font = null;
+	
 	// used primarly to avoid an infinite loop that can be caused if the feed has no
 	// data, tries to re-query the web, and then fails again. Without keeping track
 	// of the first failure, the loop wont exit
-	private boolean hasAlreadyFailedToLoad = false;
+	private int loadFailCount = 0;
 	private List<String> filterTerms = new ArrayList<String>();
 	private List<String> columnsToFilterOn = Arrays.asList(new String[] {
 			ArticleOrm.COLUMN_TITLE,
@@ -43,9 +45,9 @@ public class ArticleList extends AnimatedEntryList {
 			ArticleOrm.COLUMN_URL,
 			});
 	
+	// If true, filtering will be based on 'include if any term matches.' If false,
+	// filtering will be more strict and require each term to appear
 	private boolean filterInclusive = false;
-
-	
 	private static final String ARTICLE_LIST_TAG = "ARTICLE_LIST_TAG";
 	
 	// this listview uses a tile layout, so the default divider isnt necessary
@@ -79,6 +81,7 @@ public class ArticleList extends AnimatedEntryList {
 		if (contains.length() == 0) {
 			this.filterTerms = new ArrayList<String>();
 		} else {
+			// TODO: is this if statement necessary?
 			if (contains.endsWith(",") == false)
 				contains += ",";
 			
@@ -109,7 +112,7 @@ public class ArticleList extends AnimatedEntryList {
 
 	@Override
 	// share selected article content
-	public void cabOnMultipleItemClick() {
+	public void cabMultiselectPrimaryAction() {
 		Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
 		sharingIntent.setType("text/plain");
 		
@@ -182,11 +185,10 @@ public class ArticleList extends AnimatedEntryList {
 		// 	is not handled in the current implementation. Background services regularly update
 		//  the data & when a feed is added, an update is triggerd, so its likely not very necessary
 		//  to handle this unhandled case
-		if (cursor.getCount() == 0 && this.hasAlreadyFailedToLoad == false) {
-			this.hasAlreadyFailedToLoad = true;
+		if (cursor.getCount() == 0 && this.loadFailCount == 0) {
+			this.loadFailCount++;
 			ListRefreshCallback callbackInterface = (ListRefreshCallback) getActivity();
 			callbackInterface.refreshCurrentList();
-			// TODO: add some failure notice
 		} else {
 			// create the adapter using the cursor pointing to the desired data 
 			// as well as the layout information
@@ -199,14 +201,22 @@ public class ArticleList extends AnimatedEntryList {
 		}
 	}
 	
-	/* only valid after the adapter is refreshed because the adapter setup code creates
+	/**
+	 * only valid after the adapter is refreshed because the adapter setup code creates
 	 * the filter query provider, which utilizes this value at creation time
 	 */
 	public void setFilterInclusive(boolean b) {
 		this.filterInclusive = b;
 	}
 	
-	
+	/**
+	 * Defines the query to be run when a filter is called. If this method is triggered
+	 * multiple times in quick succession, only the last call will generate a valid
+	 * filter query. Therefore, this can be called many times quickly without worrying
+	 * about stale queries becoming active
+	 * 
+	 * @return
+	 */
 	private FilterQueryProvider getFilterQueryProvider() {
 		return new FilterQueryProvider() {
 			public Cursor runQuery(CharSequence constraint) {
@@ -228,12 +238,19 @@ public class ArticleList extends AnimatedEntryList {
 	@Override
 	public View onListElementRedraw(int position, View convertView,
 			ViewGroup parent) {
-		// important to always call the parent, as it takes care of redrawing the checkboxes accurately
-		// when in action mode
 		View v = convertView;
-		Activity activity = getActivity();
 		
-		// not all articles supply an author
+		// the headline font is different. Lazy loading is ideal here because
+		// this instance can be shared. This allows the animation to not get
+		// bogged down ith disk i/o & object creation overhead
+		if (headline_font == null) {
+			Activity activity = getActivity();
+			headline_font = Typeface.createFromAsset(
+					activity.getAssets(), 
+					activity.getText(R.string.tile_font_heavy).toString());
+		}
+		
+		// hide any empty views
 		TextView tmp = (TextView) v.findViewById(R.id.rss_author);
 		if (tmp.getText().equals(""))
 			tmp.setVisibility(View.GONE);
@@ -257,9 +274,6 @@ public class ArticleList extends AnimatedEntryList {
 		if (tmp.getText().equals(""))
 			tmp.setVisibility(View.GONE);
 		else {
-			Typeface headline_font = Typeface.createFromAsset(
-					activity.getAssets(), 
-					activity.getText(R.string.tile_font).toString());
 			tmp.setTypeface(headline_font);
 			tmp.setVisibility(View.VISIBLE);
 		}
@@ -294,7 +308,7 @@ public class ArticleList extends AnimatedEntryList {
 	}
 
 	@Override
-	public boolean cabRespondToMenuItemClick(ActionMode mode,
+	public boolean cabOnMenuItemClicked(ActionMode mode,
 			MenuItem item) {
 		switch (item.getItemId()) {
 		
@@ -307,7 +321,7 @@ public class ArticleList extends AnimatedEntryList {
 		    	return true;
 		    	
 		    case R.id.action_share_selected:
-		    	this.cabOnMultipleItemClick();
+		    	this.cabMultiselectPrimaryAction();
 	            mode.finish();
 		    	return true;
 		    	

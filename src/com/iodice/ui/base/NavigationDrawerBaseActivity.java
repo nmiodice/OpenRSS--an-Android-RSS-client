@@ -35,20 +35,22 @@ extends AbstractNavDrawerActivity {
 	
 	private static String TAG = "ApplicationDrawerBaseActivity";
     abstract public int getViewLayoutId();
-    abstract public int[] getViewsToHidewOnNavigationBarOpen();
+    abstract public int[] getViewsToHidewOnDrawerOpen();
     
+    /* Navigation drawer indices. Each entry must have an index that is sequential
+     * and indicates its position in the navigation drawer list
+     */
     private static final int RSS = 0;
     private static final int GROUPS = 1;
     private static final int TOPICS = 2;
-    
     private static final int GENERAL = 3;
     private static final int SETTINGS = 4;
     private static final int ABOUT = 5;
     private static final int GITHUB = 6;
     private static final int EXIT = 7;
     
-    private int SELECTED_DRAWER_POSITION = -1;
     private int DEFAULT_SELECTED_POSITION = 1;
+    private int SELECTED_DRAWER_POSITION = -1;
     private static final String SELECTED_DRAWER_POSITION_KEY = "SELECTED_POSITION_KEY";
     
     @Override
@@ -60,12 +62,13 @@ extends AbstractNavDrawerActivity {
     		SELECTED_DRAWER_POSITION = savedInstanceState.getInt(SELECTED_DRAWER_POSITION_KEY);
     	} else if (intent != null) {
     		SELECTED_DRAWER_POSITION = intent.getIntExtra(SELECTED_DRAWER_POSITION_KEY, -1);
-    	} 
+    	}
+    	
     	if (SELECTED_DRAWER_POSITION == -1){
     		SELECTED_DRAWER_POSITION = DEFAULT_SELECTED_POSITION;
     	}
+    	
         NavDrawerItem selectedItem = navConf.getNavItems()[SELECTED_DRAWER_POSITION];
-        
         if (selectedItem.getType() == NavMenuItem.ITEM_TYPE) {
 			// set the view selected, incase the adapter needs to redraw it
 			NavMenuItem _sItem = (NavMenuItem)selectedItem;
@@ -80,6 +83,9 @@ extends AbstractNavDrawerActivity {
     	super.onSaveInstanceState(outState);
     }
 
+    /**
+     * Get the universal configuration for the application nav drawer
+     */
 	@Override
 	protected NavDrawerActivityConfiguration getNavDrawerConfiguration() {
 		Log.i(TAG, "Getting nav drawer config");
@@ -105,24 +111,28 @@ extends AbstractNavDrawerActivity {
         activityConfiguration.setDrawerCloseDesc(R.string.drawer_close);
         
         activityConfiguration.setActionMenuItemsToHideWhenDrawerOpen(
-        		this.getViewsToHidewOnNavigationBarOpen());
+        		this.getViewsToHidewOnDrawerOpen());
         activityConfiguration.setBaseAdapter(
-        		new NavDrawerAdapter(this, R.layout.navdrawer_item, menu ));
+        		new NavDrawerAdapter(this, R.layout.navdrawer_item, menu));
         return activityConfiguration;
 	}
 	
+	/**
+	 * A visual trick. Here, we set the list item that corresponds to the current
+	 * activity so that it appears that only one navigation drawer extends all 
+	 * activies
+	 */
 	@Override
-	// must call superclass first, and then unselect the just-selected view.
-	// this is custom to the current implementation because it makes it appear
-	// that each activity uses the same drawer, rather than a new drawer for
-	// each activity
     public void selectItem(int position) {
 		super.selectItem(position);
-        // unselects the just-selected list item
         mDrawerList.setItemChecked(position, false);
         mDrawerList.setItemChecked(SELECTED_DRAWER_POSITION, true);
     }
 	
+	/**
+	 * Send an intent, with error handeling!
+	 * @param intent
+	 */
 	private void sendIntent(Intent intent) {
 		if (intent != null) {
 			
@@ -139,6 +149,9 @@ extends AbstractNavDrawerActivity {
 			throw new NullPointerException();
 	}
 
+	/**
+	 * Handles list item clicks. Not all list items need to launch a new intent
+	 */
 	@Override
 	protected void onNavItemSelected(int id) {
 		Intent intent = null;
@@ -159,10 +172,10 @@ extends AbstractNavDrawerActivity {
 				return;
 				
 			case SETTINGS:
-				break;
+				return;
 				
 			case ABOUT:
-				break;
+				return;
 				
 			case GITHUB:
 				String feedURL = "https://www.google.com/";
@@ -183,9 +196,14 @@ extends AbstractNavDrawerActivity {
 	}
 
 	
-	// this activity is started in the background because it a query on the DB is 
-	// needed to load the list of all RSS feeds, which may or may not be avaliable
-	// in the currently activity
+	/**
+	 * This activity is started in the background because it a query on the DB is
+	 * needed to load the list of all RSS feeds, which may or may not be avaliable
+	 * in the currently activity 
+	 * 
+	 * @author Nicholas M. Iodice
+	 *
+	 */
 	private class StartTopicsActivity extends AsyncTask<Void, Void, Intent> {
 		
 		private Context context = null;

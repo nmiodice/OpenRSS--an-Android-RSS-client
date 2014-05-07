@@ -5,7 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.iodice.utilities.Callback;
-
+/**
+ * A small class that acts as a receiver for re-query events
+ * 
+ * @author Nicholas M. Iodice
+ *
+ */
 public class ArticleUpdateReceiver extends BroadcastReceiver {
 	public static final String HANDLE_ARTICLE_REFRESH = "HANDLE_ARTICLE_REFRESH";
 	public static final String ACTION_REFRESH_DATA = "ACTION_REFRESH_DATA";

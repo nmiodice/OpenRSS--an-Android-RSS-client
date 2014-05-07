@@ -25,20 +25,31 @@ implements ActionBar.OnNavigationListener {
 	private static final String LAST_SELECTED_LIST_NAV_ITEM = "LAST_SELECTED_LIST_NAV_ITEM";
 	protected List<String> spinnerListItemPrimaryKeys = null;
 	
-	public abstract void setupCategorySpinner();
-	public abstract void setupCategorySpinnerWithSelection(String selection);
+	
+	/**
+	 * Respond to a list item click
+	 * @param position The position of the item in the list. This can be used as an index into 'spinnerListItemPrimaryKeys'
+	 * @param id ID of the item clicked
+	 * @return True if the event was handled, false otherwise
+	 */
 	public abstract boolean onSpinnerItemClick(int position, long id);
-	// must return a pair with an adapter & the primary keys for the spinner list. These primary keys
-	// will be used for automated item selection, as well as other things. The spinnerListItemPrimaryKeys
-	// property will be set to the value of this list
-	public abstract List<String> backgroundSpinnerQuery();
+	
+	/**
+	 * Called in a background thread, this method queries some content provider (DB, web, etc...)
+	 * for a list of items to be set as the spinner list items
+	 * @return
+	 */
+	public abstract List<String> getSpinnerListPrimaryKeys();
+	
+	/**
+	 * @return The spinner's title text
+	 */
 	public abstract String getSpinnerTitleText();
 
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		String oldSelectedListNavigationItem = null;
-		
 		if (savedInstanceState != null)
 			oldSelectedListNavigationItem = savedInstanceState.getString(LAST_SELECTED_LIST_NAV_ITEM);
 	
@@ -64,6 +75,28 @@ implements ActionBar.OnNavigationListener {
 		super.onSaveInstanceState(outState);
 	}
 	
+	/**
+	 * Run the setup in the background because it may take a while to query for the data
+	 */
+	public void setupCategorySpinner() {
+		PopulateActionBarSpinner asyncTask = new PopulateActionBarSpinner();
+		asyncTask.setOnNavigationListener(this);
+		asyncTask.execute();
+	}
+	
+	public void setupCategorySpinnerWithSelection(String selection) {
+		PopulateActionBarSpinner asyncTask = new PopulateActionBarSpinner();
+		asyncTask.setOnNavigationListener(this);
+		if (selection != null)
+			asyncTask.setSelectionIfPossible(selection);
+		asyncTask.execute();
+	}
+	
+	/**
+	 * Get the spinner's selected index. This wrapper will temporarly enable it in the
+	 * case that it is hidden. If this did not happen, it may crash the activity
+	 * @return
+	 */
     private int getSelectedNavigationIndex() {
     	ActionBar ab = getActionBar();
     	int oldNavMode = ab.getNavigationMode();
@@ -72,6 +105,12 @@ implements ActionBar.OnNavigationListener {
 		ab.setNavigationMode(oldNavMode);
 		return i;
     }
+    
+	/**
+	 * Set the spinner's selected index. This wrapper will temporarly enable it in the
+	 * case that it is hidden. If this did not happen, it may crash the activity
+	 * @return
+	 */
     private void setSelectedNavigationIndex(int i) {
     	ActionBar ab = getActionBar();
     	int oldNavMode = this.getActionBar().getNavigationMode();
@@ -81,10 +120,10 @@ implements ActionBar.OnNavigationListener {
     }
    
 	
-	
+	/**
+	 * A small wrapper that provides error condition checking & calls an abstract method
+	 */
 	@Override
-	// when a spinner item is selected, this method is called. returns true if the
-	// event was handled, false otherwise
 	public boolean onNavigationItemSelected(int position, long id) {
 
 		if (this.spinnerListItemPrimaryKeys == null) {
@@ -121,7 +160,14 @@ implements ActionBar.OnNavigationListener {
 	}
 
 	
-	// handles query to load the action bar details
+	/**
+	 * Handles the majority of work necessary to populate an actionbar spinner
+	 * via an async task. The user has the flexibility to choose what is selected
+	 * through an abstract method.
+	 * 
+	 * @author Nicholas M. Iodice
+	 *
+	 */
 	public class PopulateActionBarSpinner extends AsyncTask<Void, Void, SpinnerAdapter> {
 
 		private OnNavigationListener listener = null;
@@ -142,7 +188,7 @@ implements ActionBar.OnNavigationListener {
 		
 		// process db request in background thread
 		protected SpinnerAdapter doInBackground(Void... arg0) {
-			List<String> items = backgroundSpinnerQuery();
+			List<String> items = getSpinnerListPrimaryKeys();
 			spinnerListItemPrimaryKeys = items;
 			// note: actionBar.getThemedContext() ensures the correct colors based on the action bar theme.
 			// note: use text2 because it is the bottom text element. text1 holds descriptive text
@@ -154,7 +200,9 @@ implements ActionBar.OnNavigationListener {
 			return aAdpt;
 		}
 		
-	    // Call the callback function to refresh UI
+	    /**
+	     * Process the response & call the callback function to refresh UI
+	     */
 		protected void onPostExecute(SpinnerAdapter aAdpt) {
 			if (listener == null)
 				throw new NullPointerException();
@@ -175,7 +223,6 @@ implements ActionBar.OnNavigationListener {
 						
 				}
 			}
-			Log.i(TAG, "post xecute");
 		}
 	
 	}

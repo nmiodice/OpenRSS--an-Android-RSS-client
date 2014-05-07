@@ -21,16 +21,16 @@ import android.widget.AbsListView.OnScrollListener;
 import com.iodice.rssreader.R;
 
 
-public abstract class AnimatedEntryList extends MultiselectList {
+public abstract class AnimatedEntryList extends CabMultiselectList {
 	private int lastPosition = -1;
 	private boolean isScrolling = false;
 	
-	@Override
 	/**
 	 * Called in order to detect if the view is currently scrolling. This prevents unwanted animations
 	 * when the listview needs to be redrawn for other reasons -- the swipe up/down animations are only
 	 * fun to watch if the list is being scrolled through. Otherwise, its pointless.
 	 */
+	@Override
 	public void onViewCreated (View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		getListView().setOnScrollListener(new OnScrollListener() {
@@ -47,7 +47,7 @@ public abstract class AnimatedEntryList extends MultiselectList {
 		
 	}
 
-	/**
+	/*
 	 * Handles animation
 	 */
     @Override

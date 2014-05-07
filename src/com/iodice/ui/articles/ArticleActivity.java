@@ -17,13 +17,16 @@ import android.view.MenuItem;
 import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.EditText;
+import android.widget.ListView;
 
 import com.iodice.database.SearchData;
 import com.iodice.database.SearchesOrm;
 import com.iodice.rssreader.R;
 import com.iodice.services.ArticleUpdateService;
-import com.iodice.ui.base.MultiselectList.MySimpleCursorAdapter;
+import com.iodice.ui.base.CabMultiselectList.MySimpleCursorAdapter;
 import com.iodice.ui.base.NavigationDrawerWithSpinner;
 import com.iodice.ui.topics.TopicsActivity;
 import com.iodice.utilities.ListRefreshCallback;
@@ -39,6 +42,9 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
 	ArticleUpdateReceiver receiver; 
 	/* controlls the behavior of the filter */
 	protected boolean filterListInclusive = false;
+	/* used to trigger list updates when the search bar text changes */
+    private TextWatcher searchBarListener = null;
+
 	
 	/* supported callback method identifiers */
 	public static final int CALLBACK_REDRAW_WITH_CACHED_DATA = 0;
@@ -50,9 +56,11 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		// get list of feed URLs
+		// these URLs correspond to the parent source URL (as opposed to 
+		// URLs to individual articles
 		Intent intent = getIntent();
-		List<String> urlList = intent.getStringArrayListExtra(getResources().getString(R.string.rss_url_intent));
+		List<String> urlList = intent.getStringArrayListExtra(
+				getResources().getString(R.string.rss_url_intent));
 		
 		displayArticleList(urlList);
 		setupSearchBar();
@@ -64,12 +72,13 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
 	}
 	
 	@Override
-	protected boolean isActionBarNavDrawerIndicatorVisible() {
+	protected boolean isActionBarDrawerIndicatorVisible() {
+		// instead of the menu to pull up the nav drawer, show an "up" indicator
 		return false;
 	}
 	
 	@Override
-	public int[] getViewsToHidewOnNavigationBarOpen() {
+	public int[] getViewsToHidewOnDrawerOpen() {
 		return new int[] {
 				R.id.action_article_search,
 				R.id.action_refresh,
@@ -84,6 +93,8 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
     }
     
     public void onStop() {
+    	// this prevents an article update from notifying an activity/list
+    	// that no longer exists (i.e., prevents a crash)!
     	if (receiver != null)
     		this.unregisterReceiver(receiver);
     	
@@ -92,40 +103,41 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
     
     @Override
     protected void onSaveInstanceState (Bundle outState) {
-    	EditText txt = (EditText)findViewById(R.id.article_search_box_text);
-		View v = this.findViewById(R.id.article_search_box_container);
+    	EditText sText = (EditText)findViewById(R.id.article_search_box_text);
+		View sContainer = this.findViewById(R.id.article_search_box_container);
 
-    	if (v != null) {
-	    	if (v.getVisibility() == View.VISIBLE)
+    	if (sContainer != null) {
+	    	if (sContainer.getVisibility() == View.VISIBLE)
 	    		outState.putBoolean(ArticleActivity.SEARCH_KEY, true);
-	    	if (txt != null)
-	    		outState.putString(ArticleActivity.SEARCH_TEXT_KEY, txt.getText().toString());
+	    	if (sText != null)
+	    		outState.putString(ArticleActivity.SEARCH_TEXT_KEY, sText.getText().toString());
     	}
     	super.onSaveInstanceState(outState);
     }
     @Override
     protected void onRestoreInstanceState (Bundle savedInstanceState) {
     	if (savedInstanceState != null) {
-    		View v = this.findViewById(R.id.article_search_box_container);
-    		if (v != null) {
+    		View sContainer = this.findViewById(R.id.article_search_box_container);
+    		if (sContainer != null) {
 	    		boolean wasSearchVisible = savedInstanceState.getBoolean(ArticleActivity.SEARCH_KEY);
 	    		if (wasSearchVisible == true)
-	    			v.setVisibility(View.VISIBLE);	
+	    			sContainer.setVisibility(View.VISIBLE);	
     		}
     		
-    		EditText txt = (EditText) this.findViewById(R.id.article_search_box_text);
-    		if (txt != null) {
+    		EditText sText = (EditText) this.findViewById(R.id.article_search_box_text);
+    		if (sText != null) {
 	    		String oldSearchTerm = savedInstanceState.getString(ArticleActivity.SEARCH_TEXT_KEY);
-	    		txt.setText(oldSearchTerm);
+	    		sText.setText(oldSearchTerm);
     		}
     	}
     }
 
 
-
-
-    private TextWatcher searchBarListener = null;
-    private void setupSearchBar() {
+    /**
+     * Configures the current search bar to listen for text changes & trigger a
+     * query on the current list of articles
+     */
+    private void addSearchBarListener() {
     	EditText txtBox = (EditText)findViewById(R.id.article_search_box_text);
     	if (this.searchBarListener != null)
     		txtBox.removeTextChangedListener(this.searchBarListener);
@@ -145,6 +157,71 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
     	    public void afterTextChanged(Editable arg0) {}
     	};
     	txtBox.addTextChangedListener(searchBarListener);
+    }
+    
+    /**
+     * TODO: Finish! Fix! Something, this crap is broken
+     * TODO: comment effectively
+     */
+    private void addSearchBarAnimation() {
+    	FragmentManager fMan = getFragmentManager();
+		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivity.LIST);
+		if (articleList == null)
+			return;
+		ListView lv = articleList.getListView();
+		if (lv == null)
+			return;
+		
+		Log.i(TAG, "adfafafasf2");		
+		lv.setOnScrollListener(new OnScrollListener() {
+			private int yPositionAtLastStop = 0;
+			private boolean animatedSinceLastStop = false;
+			@Override
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+		    	if(scrollState == OnScrollListener.SCROLL_STATE_IDLE && view != null) {
+		    		// a listview has no notion of the total list size, and therefore 
+		    		// no scroll position. Therefore, we use the position of the top child
+		    		View topChild = view.getChildAt(0);
+		    		if (topChild != null)
+		    			yPositionAtLastStop = topChild.getTop();
+		    	}
+		    	animatedSinceLastStop = false;
+			}
+			@Override
+			/**
+			 * Trigger an animation only if the change in scroll value is sufficiently
+			 * large & the animation is necessary. For example, a searchbar will be
+			 * animated up if the scroll is down and it is already visible
+			 */
+			public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
+				if (animatedSinceLastStop == true || view == null)
+					return;
+
+				// a listview has no notion of the total list size, and therefore 
+	    		// no scroll position. Therefore, we use the position of the top child
+	    		View topChild = view.getChildAt(0);
+	    		if (topChild == null)
+	    			return;
+	    		
+	    		int currScrollY = topChild.getTop();
+				int deltaScroll = currScrollY - yPositionAtLastStop;
+				
+				// this is an arbitrary threshold at which I want the animation to start
+				if (Math.abs(deltaScroll) < 50)
+					return;
+				
+				if (deltaScroll < 0) {
+					Log.i(TAG,  "TRIGGER ANIMATION");
+					animatedSinceLastStop = true;
+				}
+			}
+		});
+		
+    }
+    
+    private void setupSearchBar() {
+    	addSearchBarListener();
     }
     
     public void clearSearchText(View v) {
@@ -190,6 +267,7 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
                 return true;
                 
             case R.id.action_article_search:
+            	addSearchBarAnimation();
             	View v = findViewById(R.id.article_search_box_container);
             	if (v.getVisibility() == View.GONE) {
             		v.setVisibility(View.VISIBLE);
@@ -220,6 +298,7 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
 			fTrans = fMan.beginTransaction();
 			fTrans.add(R.id.rss_fragment_container, list, ArticleActivity.LIST);
 			fTrans.commit();
+			//fMan.executePendingTransactions();
 		}
 	}
 
@@ -270,16 +349,26 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
         this.receiver = null;
 	}
 	
+	/**
+	 * Resets search bar with the currently active filter. Assumes that the active list
+	 * is already set as a listener to the search bar text
+	 */
+	private void refilterArticles() {
+    	EditText searchText = (EditText)findViewById(R.id.article_search_box_text);
+    	if (searchText != null) {
+    		searchText.setText(searchText.getText().toString());
+    	}
+	}
+	
 	@Override
-	/* n = 0: 
-	 * 	Asks the article list to update. Principle caller is 
-	 *  ArticleUpdateReceiver.onReceive()
+	/**
+	 * Handle a callback event.
 	 */
 	public void handleCallbackEvent(int n, Object obj) {
 		switch (n) {
 			case ArticleActivity.CALLBACK_REDRAW_WITH_CACHED_DATA:
 				this.redrawActiveArticleListWithCachedData();
-				this.setupSearchBar();
+				this.refilterArticles();
 				return;
 			case ArticleActivity.CALLBACK_UPDATE_WITH_WEB_QUERY:
 				this.updateCurrentListWithWebQuery();
@@ -310,7 +399,7 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
 		return false;
 	}
 	@Override
-	public List<String> backgroundSpinnerQuery() {
+	public List<String> getSpinnerListPrimaryKeys() {
 		return null;
 	}
 

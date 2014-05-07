@@ -255,19 +255,20 @@ public final class R {
          */
         public static final int rss_url_intent=0x7f080024;
         public static final int saved_search_already_exists=0x7f080049;
-        public static final int saved_search_spinner_title=0x7f08004c;
+        public static final int saved_search_spinner_title=0x7f08004d;
         /**  ID strings & generic identifiers 
          */
         public static final int scroll_position=0x7f080014;
         public static final int share=0x7f08001e;
-        public static final int tile_font=0x7f08004a;
+        public static final int tile_font_heavy=0x7f08004a;
+        public static final int tile_font_light=0x7f08004b;
         public static final int title=0x7f080019;
         /**  RSS 
          */
         public static final int title_activity_rss=0x7f080039;
         /**  Topics activity 
          */
-        public static final int topics=0x7f08004b;
+        public static final int topics=0x7f08004c;
         public static final int url=0x7f08001b;
         public static final int url_list=0x7f080015;
         public static final int web_query_failed=0x7f080023;

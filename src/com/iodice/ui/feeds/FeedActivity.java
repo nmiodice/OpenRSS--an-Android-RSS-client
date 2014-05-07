@@ -45,7 +45,7 @@ implements SelectorRefreshCallback {
 	}
 	
 	@Override
-	public int[] getViewsToHidewOnNavigationBarOpen() {
+	public int[] getViewsToHidewOnDrawerOpen() {
 		return new int[] {
 				R.id.action_add_feed,
 				R.id.action_settings,
@@ -54,7 +54,7 @@ implements SelectorRefreshCallback {
 	}
 	
 	@Override
-	protected boolean isActionBarNavDrawerIndicatorVisible() {
+	protected boolean isActionBarDrawerIndicatorVisible() {
 		return true;
 	}
 		
@@ -97,20 +97,7 @@ implements SelectorRefreshCallback {
 	    super.onRestoreInstanceState(savedInstanceState);
 	}
 	
-	// displayed in top right of activity, lists categories by name. upon select, filter list to just those categories
-	public void setupCategorySpinner() {
-		PopulateActionBarSpinner asyncTask = new PopulateActionBarSpinner();
-		asyncTask.setOnNavigationListener(this);
-		asyncTask.execute();
-	}
-	
-	public void setupCategorySpinnerWithSelection(String selection) {
-		PopulateActionBarSpinner asyncTask = new PopulateActionBarSpinner();
-		asyncTask.setOnNavigationListener(this);
-		if (selection != null)
-			asyncTask.setSelectionIfPossible(selection);
-		asyncTask.execute();
-	}
+
 	
 	// when a spinner item is selected, this method is called. returns true if the
 	// event was handled, false otherwise
@@ -246,7 +233,7 @@ implements SelectorRefreshCallback {
 		}
 	}
 	
-	public List<String> backgroundSpinnerQuery() {
+	public List<String> getSpinnerListPrimaryKeys() {
 		// populate list data
 		Cursor c = FeedOrm.selectAllCategories(getApplicationContext());
 		ArrayList<String> items = new ArrayList<String>();
