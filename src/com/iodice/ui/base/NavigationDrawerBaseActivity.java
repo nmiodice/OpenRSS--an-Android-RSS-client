@@ -178,7 +178,7 @@ extends AbstractNavDrawerActivity {
 				return;
 				
 			case GITHUB:
-				String feedURL = "https://www.google.com/";
+				String feedURL = getString(R.string.git_url);
 				intent = new Intent(Intent.ACTION_VIEW, Uri.parse(feedURL));
 				break;
 				
