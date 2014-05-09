@@ -36,14 +36,26 @@ public class SearchesOrm extends BaseOrm {
     public static void insertSearch(SearchData search, Context context) throws SQLiteException {
     	SQLiteDatabase database = BaseOrm.getWritableDatabase(context);
     	
+    	if (search.getSearchTerm().isEmpty()) {
+	        CharSequence text = context.getText(R.string.saved_search_is_empty);
+			int duration = Toast.LENGTH_SHORT;
+			Toast toast = Toast.makeText(context, text, duration);
+			toast.show();
+			return;
+    	}
+    	
     	ContentValues values = searchToContentValues(search);
-        
+    	
 		try {
 			WriteLockManager.beginWriteTransaction(database);
-	        long id = database.insertOrThrow(SearchesOrm.TABLE_NAME, "null", values);
+	        database.insertOrThrow(SearchesOrm.TABLE_NAME, "null", values);
 	        WriteLockManager.setWriteTransactionSuccessfull(database);
 	        WriteLockManager.endWriteTransaction(database);
-	        Log.i(TAG, "Inserted new SearchData with ID: " + id);
+		
+	        CharSequence text = context.getText(R.string.saved_search_success);
+			int duration = Toast.LENGTH_SHORT;
+			Toast toast = Toast.makeText(context, text, duration);
+			toast.show();
 		} catch (Exception e) {
 			if (e.getMessage().contains("code 19")) {
 				CharSequence text = context.getText(R.string.saved_search_already_exists);

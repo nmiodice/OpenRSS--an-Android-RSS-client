@@ -376,11 +376,12 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
 	 * is already set as a listener to the search bar text
 	 */
 	private void refilterArticles() {
-    	EditText searchText = (EditText)findViewById(R.id.article_search_box_text);
-    	
-    	if (searchText != null) {
-    		searchText.setText(searchText.getText().toString());
-    	}
+		if (showSearchBar) {
+	    	EditText searchText = (EditText)findViewById(R.id.article_search_box_text);
+	    	if (searchText != null) {
+	    		searchText.setText(searchText.getText().toString());
+	    	}
+		}
 	}
 	
 	@Override

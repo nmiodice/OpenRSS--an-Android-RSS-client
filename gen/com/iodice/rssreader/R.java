@@ -258,20 +258,21 @@ public final class R {
          */
         public static final int rss_url_intent=0x7f080023;
         public static final int saved_search_already_exists=0x7f080048;
-        public static final int saved_searches=0x7f08004c;
+        public static final int saved_search_is_empty=0x7f08004a;
+        public static final int saved_search_success=0x7f080049;
+        /**  Topics activity 
+         */
+        public static final int saved_searches=0x7f08004d;
         /**  ID strings & generic identifiers 
          */
         public static final int scroll_position=0x7f080013;
         public static final int share=0x7f08001d;
-        public static final int tile_font_heavy=0x7f080049;
-        public static final int tile_font_light=0x7f08004a;
+        public static final int tile_font_heavy=0x7f08004b;
+        public static final int tile_font_light=0x7f08004c;
         public static final int title=0x7f080018;
         /**  RSS 
          */
         public static final int title_activity_rss=0x7f080038;
-        /**  Topics activity 
-         */
-        public static final int topics=0x7f08004b;
         public static final int url=0x7f08001a;
         public static final int url_list=0x7f080014;
         public static final int web_query_failed=0x7f080022;
