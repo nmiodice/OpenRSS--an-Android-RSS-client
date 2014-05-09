@@ -187,7 +187,6 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
 		if (lv == null)
 			return;
 		
-		Log.i(TAG, "adfafafasf2");		
 		lv.setOnScrollListener(new OnScrollListener() {
 			private int yPositionAtLastStop = 0;
 			private boolean animatedSinceLastStop = false;
@@ -375,7 +374,7 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
 	 * Resets search bar with the currently active filter. Assumes that the active list
 	 * is already set as a listener to the search bar text
 	 */
-	private void refilterArticles() {
+	protected void refilterArticles() {
 		if (showSearchBar) {
 	    	EditText searchText = (EditText)findViewById(R.id.article_search_box_text);
 	    	if (searchText != null) {

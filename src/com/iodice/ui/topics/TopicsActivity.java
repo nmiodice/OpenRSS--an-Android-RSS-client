@@ -81,32 +81,35 @@ public class TopicsActivity extends ArticleActivity {
 		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivity.LIST);
 		
 		if (articleList != null && this.spinnerListItemPrimaryKeys != null) {
-			String filterTerms = this.spinnerListItemPrimaryKeys.get(position);
-			if (filterTerms == getText(R.string.all)) {
-				filterTerms = "";
-				int size = this.spinnerListItemPrimaryKeys.size();
-				
-				for (int i = 0; i < size; i++) {
-					// should skip the "all" entry
-					if (i == position)
-						continue;
-					filterTerms += spinnerListItemPrimaryKeys.get(i);
-					filterTerms += ", ";
-				}
-			}
-			// add the current search text to the filter terms as well
-			EditText searchText = (EditText)findViewById(R.id.article_search_box_text);
-			if (searchText != null) {
-				filterTerms += " ";
-				filterTerms += searchText.getText().toString();
-			}
-			
+			String filterTerms = getFilterFromSpinnerList(position);
 			MySimpleCursorAdapter adapt = (MySimpleCursorAdapter)articleList.getListAdapter();
 			adapt.getFilter().filter(filterTerms);
 		}
 		return true;
 	}
 
+	private String getFilterFromSpinnerList(int position) {
+		String filterTerms = this.spinnerListItemPrimaryKeys.get(position);
+		if (filterTerms == getText(R.string.all)) {
+			filterTerms = "";
+			int size = this.spinnerListItemPrimaryKeys.size();
+			
+			for (int i = 0; i < size; i++) {
+				// should skip the "all" entry
+				if (i == position)
+					continue;
+				filterTerms += spinnerListItemPrimaryKeys.get(i);
+				filterTerms += ", ";
+			}
+		}
+		// add the current search text to the filter terms as well
+		EditText searchText = (EditText)findViewById(R.id.article_search_box_text);
+		if (searchText != null) {
+			filterTerms += " ";
+			filterTerms += searchText.getText().toString();
+		}
+		return filterTerms;
+	}
 	@Override
 	public List<String> getSpinnerListPrimaryKeys() {
 		// populate list data
@@ -125,5 +128,17 @@ public class TopicsActivity extends ArticleActivity {
 	@Override
 	public String getSpinnerTitleText() {
 		return getText(R.string.saved_searches).toString();
+	}
+	
+	/**
+	 * Refilter the list based on the currently selected search. No need to call
+	 * the superclass because this activity filters based on something entireley
+	 * different (spinner list, not search bar)
+	 */
+	@Override
+	protected void refilterArticles() {
+		int currPos = this.getSelectedNavigationIndex();
+		// second parameter is unused
+		onSpinnerItemClick(currPos, -1);
 	}
 }
