@@ -1,11 +1,13 @@
 package com.iodice.ui.topics;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
 import android.app.FragmentManager;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.widget.EditText;
 
 import com.iodice.database.SearchesOrm;
 import com.iodice.rssreader.R;
@@ -18,6 +20,7 @@ public class TopicsActivity extends ArticleActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		this.filterListInclusive = true;
+		this.showSearchBar = false;
 		super.onCreate(savedInstanceState);
 	}
 	
@@ -39,27 +42,67 @@ public class TopicsActivity extends ArticleActivity {
 			asyncTask.setSelectionIfPossible(selection);
 		asyncTask.execute();
 	}
+	
 
+    /**
+     * Configures the current search bar to listen for text changes & trigger a
+     * query on the current list of articles. The currently selected topic is
+     * also included as a filter term
+     */
+	/* SEARCH BAR IS DISABLED
+	protected void addSearchBarListener() {
+    	EditText txtBox = (EditText)findViewById(R.id.article_search_box_text);
+    	if (this.searchBarListener != null)
+    		txtBox.removeTextChangedListener(this.searchBarListener);
+    	this.searchBarListener = new TextWatcher() {
+    	    @Override
+    	    public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
+    			FragmentManager fMan = getFragmentManager();
+    			ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivity.LIST);
+    			if (articleList != null) {
+    				MySimpleCursorAdapter adapt = (MySimpleCursorAdapter)articleList.getListAdapter();
+    				
+    				String selectedTopic = getSpinnerListPrimaryKeys().
+    						get(getSelectedNavigationIndex()); 
+    				adapt.getFilter().filter(cs + " " + selectedTopic);
+    			}
+    	    }
+    	    @Override
+    	    public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {}
+    	    @Override
+    	    public void afterTextChanged(Editable arg0) {}
+    	};
+    	txtBox.addTextChangedListener(searchBarListener);
+    }
+	*/
 	@Override
 	public boolean onSpinnerItemClick(int position, long id) {
 		FragmentManager fMan = getFragmentManager();
 		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivity.LIST);
 		
 		if (articleList != null && this.spinnerListItemPrimaryKeys != null) {
-			String filterTerm = this.spinnerListItemPrimaryKeys.get(position);
-			if (filterTerm == getText(R.string.all)) {
-				filterTerm = "";
+			String filterTerms = this.spinnerListItemPrimaryKeys.get(position);
+			if (filterTerms == getText(R.string.all)) {
+				filterTerms = "";
 				int size = this.spinnerListItemPrimaryKeys.size();
 				
 				for (int i = 0; i < size; i++) {
+					// should skip the "all" entry
 					if (i == position)
 						continue;
-					filterTerm += spinnerListItemPrimaryKeys.get(i);
-					filterTerm += ", ";
+					filterTerms += spinnerListItemPrimaryKeys.get(i);
+					filterTerms += ", ";
 				}
 			}
+			// add the current search text to the filter terms as well
+			EditText searchText = (EditText)findViewById(R.id.article_search_box_text);
+			if (searchText != null) {
+				filterTerms += " ";
+				filterTerms += searchText.getText().toString();
+			}
+			
 			MySimpleCursorAdapter adapt = (MySimpleCursorAdapter)articleList.getListAdapter();
-			adapt.getFilter().filter(filterTerm);
+			adapt.getFilter().filter(filterTerms);
 		}
 		return true;
 	}
@@ -71,19 +114,16 @@ public class TopicsActivity extends ArticleActivity {
 		ArrayList<String> items = new ArrayList<String>();
 		items.add(getString(R.string.all));
 		
-		
 		c.moveToFirst();
 		while(!c.isAfterLast()) {
 		     items.add(c.getString(c.getColumnIndex(SearchesOrm.COLUMN_SEARCH_TERM)));
 		     c.moveToNext();
 		}
-		
-//		aAdpt.setTitleText("Saved Searches");
 		return items;
 	}
 	
 	@Override
 	public String getSpinnerTitleText() {
-		return getText(R.string.saved_search_spinner_title).toString();
+		return getText(R.string.saved_searches).toString();
 	}
 }

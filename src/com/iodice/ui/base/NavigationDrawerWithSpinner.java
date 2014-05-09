@@ -97,7 +97,7 @@ implements ActionBar.OnNavigationListener {
 	 * case that it is hidden. If this did not happen, it may crash the activity
 	 * @return
 	 */
-    private int getSelectedNavigationIndex() {
+    public int getSelectedNavigationIndex() {
     	ActionBar ab = getActionBar();
     	int oldNavMode = ab.getNavigationMode();
 		ab.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);

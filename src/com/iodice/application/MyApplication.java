@@ -57,7 +57,7 @@ public class MyApplication extends Application {
 		int defaultWait = getResources().getInteger(R.integer.prefs_default_update_interval);
 		int secToWait = prefs.getInt(
 							getString(R.string.prefs_update_interval), 
-							defaultWait); 
+							defaultWait);
 		
 		// setup timer to run update schedule
 		Calendar cal = Calendar.getInstance();

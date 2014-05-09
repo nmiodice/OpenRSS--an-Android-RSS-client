@@ -255,6 +255,6 @@ implements SelectorRefreshCallback {
 
 	@Override
 	public String getSpinnerTitleText() {
-		return getText(R.string.categories_spinner_text).toString();
+		return getText(R.string.categories).toString();
 	}
 }

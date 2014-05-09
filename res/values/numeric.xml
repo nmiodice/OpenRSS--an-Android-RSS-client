@@ -16,4 +16,6 @@
     <integer name="article_description_max_length">200</integer>
     <!-- 1 hour update interval by default -->
     <integer name="prefs_default_update_interval">3600</integer>
+    <!-- load this many articles by default -->
+    <integer name="prefs_default_max_articles_to_load">1000</integer>
 </resources>

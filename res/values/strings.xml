@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <string name="app_name">OpenRSS</string>
     <string name="git_url"
+        xmlns:tools="http://schemas.android.com/tools"
         tools:ignore="TypographyDashes">
         https://github.com/nmiodice/OpenRSS--an-Android-RSS-client</string>
     
@@ -17,8 +18,6 @@
     <string name="drawer_close">Drawer close</string>
     <string name="navmenuitem_icon">List item icon</string>
     <string name="drawer_rss_section">Rss</string>
-    <string name="drawer_groups">Groups</string>
-    <string name="drawer_topics">Topics</string>
     <string name="drawer_general_section">General</string>
     <string name="drawer_about">About</string>
     <string name="drawer_github">Contribute on GitHub</string>
@@ -60,7 +59,7 @@
     <string name="action_save_group">Save as group</string>
     <string name="all">All</string>
     <string name="action_test_re_initialize">reload init data TMP!</string>
-    <string name="categories_spinner_text">Categories</string>
+    <string name="categories">Categories</string>
     
     
     
@@ -105,7 +104,7 @@
     
     <!-- Topics activity -->
     <string name = "topics">Topics</string>
-    <string name="saved_search_spinner_title">Saved searches</string>
+    <string name="saved_searches">Saved searches</string>
     
     
 </resources>

@@ -43,7 +43,8 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
 	/* controlls the behavior of the filter */
 	protected boolean filterListInclusive = false;
 	/* used to trigger list updates when the search bar text changes */
-    private TextWatcher searchBarListener = null;
+    protected TextWatcher searchBarListener = null;
+    protected boolean showSearchBar = true;
 
 	
 	/* supported callback method identifiers */
@@ -79,16 +80,25 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
 	
 	@Override
 	public int[] getViewsToHidewOnDrawerOpen() {
-		return new int[] {
-				R.id.action_article_search,
-				R.id.action_refresh,
-		};
+		if (showSearchBar) {
+			return new int[] {
+					R.id.action_article_search,
+					R.id.action_refresh,
+			};
+		} else {
+			return new int[] {
+					R.id.action_refresh,
+			};			
+		}
 	}
-	
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.articles, menu);
+        if (!showSearchBar) {
+            getMenuInflater().inflate(R.menu.articles_without_search, menu);
+        } else {
+            getMenuInflater().inflate(R.menu.articles_with_search, menu);
+        }
         return true;
     }
     
@@ -137,7 +147,10 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
      * Configures the current search bar to listen for text changes & trigger a
      * query on the current list of articles
      */
-    private void addSearchBarListener() {
+    protected void addSearchBarListener() {
+    	if (!showSearchBar)
+    		return;
+    	
     	EditText txtBox = (EditText)findViewById(R.id.article_search_box_text);
     	if (this.searchBarListener != null)
     		txtBox.removeTextChangedListener(this.searchBarListener);
@@ -164,6 +177,8 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
      * TODO: comment effectively
      */
     private void addSearchBarAnimation() {
+    	if (!showSearchBar)
+    		return;
     	FragmentManager fMan = getFragmentManager();
 		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivity.LIST);
 		if (articleList == null)
@@ -221,15 +236,20 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
     }
     
     private void setupSearchBar() {
-    	addSearchBarListener();
+    	if (showSearchBar)
+    		addSearchBarListener();
     }
     
     public void clearSearchText(View v) {
+    	if (!showSearchBar)
+    		return;
         EditText t = (EditText)findViewById(R.id.article_search_box_text);
         t.setText("");
     }
     
     public void saveSearchText(View v) {
+    	if (!showSearchBar)
+    		return;
         EditText t = (EditText)findViewById(R.id.article_search_box_text);
         String tText = t.getText().toString();
         
@@ -267,6 +287,8 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
                 return true;
                 
             case R.id.action_article_search:
+            	if (!showSearchBar)
+            		return false;
             	addSearchBarAnimation();
             	View v = findViewById(R.id.article_search_box_container);
             	if (v.getVisibility() == View.GONE) {
@@ -355,6 +377,7 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
 	 */
 	private void refilterArticles() {
     	EditText searchText = (EditText)findViewById(R.id.article_search_box_text);
+    	
     	if (searchText != null) {
     		searchText.setText(searchText.getText().toString());
     	}

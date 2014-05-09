@@ -41,8 +41,8 @@ extends AbstractNavDrawerActivity {
      * and indicates its position in the navigation drawer list
      */
     private static final int RSS = 0;
-    private static final int GROUPS = 1;
-    private static final int TOPICS = 2;
+    private static final int CATEGORIES = 1;
+    private static final int SAVED_SEARCHES = 2;
     private static final int GENERAL = 3;
     private static final int SETTINGS = 4;
     private static final int ABOUT = 5;
@@ -91,8 +91,8 @@ extends AbstractNavDrawerActivity {
 		Log.i(TAG, "Getting nav drawer config");
         NavDrawerItem[] menu = new NavDrawerItem[] {
     		NavMenuSection.create(RSS, getString(R.string.drawer_rss_section)),
-    		NavMenuItem.create(GROUPS, getString(R.string.drawer_groups), R.drawable.news, false, this),
-    		NavMenuItem.create(TOPICS, getString(R.string.drawer_topics), R.drawable.topics, false, this),
+    		NavMenuItem.create(CATEGORIES, getString(R.string.categories), R.drawable.news, false, this),
+    		NavMenuItem.create(SAVED_SEARCHES, getString(R.string.saved_searches), R.drawable.topics, false, this),
     		
     		NavMenuSection.create(GENERAL, getString(R.string.drawer_general_section)),
     		NavMenuItem.create(SETTINGS, getString(R.string.drawer_settings), R.drawable.settings, false, this),
@@ -159,12 +159,12 @@ extends AbstractNavDrawerActivity {
 			return;
 		
 		switch (id) {
-			case GROUPS:
+			case CATEGORIES:
 				intent = new Intent(this, FeedActivity.class);
 				intent.putExtra(SELECTED_DRAWER_POSITION_KEY, id);
 				break;
 				
-			case TOPICS:
+			case SAVED_SEARCHES:
 				// start topics activity in an intent because it requires
 				// a DB query for all RSS feeds
 				StartTopicsActivity asyncTask = new StartTopicsActivity(this, id);

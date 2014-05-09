@@ -6,7 +6,9 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -41,8 +43,8 @@ public class ArticleList extends AnimatedEntryList {
 	private List<String> columnsToFilterOn = Arrays.asList(new String[] {
 			ArticleOrm.COLUMN_TITLE,
 			ArticleOrm.COLUMN_DESCRIPTION,
-			ArticleOrm.COLUMN_PARENT_URL,
-			ArticleOrm.COLUMN_URL,
+			//ArticleOrm.COLUMN_PARENT_URL,
+			//ArticleOrm.COLUMN_URL,
 			});
 	
 	// If true, filtering will be based on 'include if any term matches.' If false,
@@ -175,8 +177,20 @@ public class ArticleList extends AnimatedEntryList {
 		    R.id.rss_description,
 		    R.id.rss_published_date
 		};
+		
+		// TODO: replace this w/ preferences interface
+		SharedPreferences prefs = getActivity().getSharedPreferences(
+				getString(R.string.prefs), 
+				Context.MODE_PRIVATE);
+		int defaultMax = getResources().getInteger(
+				R.integer.prefs_default_max_articles_to_load);
+		int articlesToLoad = prefs.getInt(
+							getString(R.string.prefs_update_interval), 
+							defaultMax);
 
-		cursor = ArticleOrm.selectWhereParentLinkIs(getActivity().getApplicationContext(), this.articleURLList);
+		cursor = ArticleOrm.selectWhereParentLinkIs(getActivity().getApplicationContext(), 
+				this.articleURLList, 
+				articlesToLoad);
 		Log.i(TAG, "" + cursor.getCount() + " articles loaded");
 
 		// if there isnt any data, attempt a web query one time and then fail to load
@@ -221,13 +235,23 @@ public class ArticleList extends AnimatedEntryList {
 		return new FilterQueryProvider() {
 			public Cursor runQuery(CharSequence constraint) {
 				setFilterTerms(constraint.toString());
-				// passing in true as the last parameter makes it so that if any term matches
-				// it will be added as a result, false makes it so every term needs to match
+				
+				// TODO: replace this w/ preferences interface
+				SharedPreferences prefs = getActivity().getSharedPreferences(
+						getString(R.string.prefs), 
+						Context.MODE_PRIVATE);
+				int defaultMax = getResources().getInteger(
+						R.integer.prefs_default_max_articles_to_load);
+				int articlesToLoad = prefs.getInt(
+									getString(R.string.prefs_update_interval), 
+									defaultMax);
+				
 				Cursor c = ArticleOrm.selectWhereParentLinkIsAndContains(getActivity(), 
 						articleURLList, 
 						filterTerms, 
 						columnsToFilterOn,
-						filterInclusive);
+						filterInclusive,
+						articlesToLoad);
 				Log.i(TAG, "cursor = " + c);
 				Log.i(TAG, "filterTerms = " + filterTerms.toString());
 				return c;

@@ -111,7 +111,7 @@ public class ArticleOrm extends BaseOrm {
         return values;
     }
     
-    public static Cursor selectWhereParentLinkIs(Context context, List<String> links) {
+    public static Cursor selectWhereParentLinkIs(Context context, List<String> links, int max) {
 	    SQLiteDatabase database = BaseOrm.getReadableDatabase(context);
 	    String sql = "SELECT rowid _id,* FROM " + ArticleOrm.TABLE_NAME + 
 	    				" WHERE " + ArticleOrm.COLUMN_PARENT_URL + " IN(";
@@ -127,7 +127,8 @@ public class ArticleOrm extends BaseOrm {
 	    		sql += ")";
 	    }
 	    // always order by date
-	    sql += " ORDER BY DATETIME(" + ArticleOrm.COLUMN_PUBLISHED_DATE + ") DESC";	    
+	    sql += " ORDER BY DATETIME(" + ArticleOrm.COLUMN_PUBLISHED_DATE + ") DESC";	  
+	    sql += " LIMIT " + max;
 	    Cursor cursor = database.rawQuery(sql, null);
 	    return cursor;
     }
@@ -138,7 +139,8 @@ public class ArticleOrm extends BaseOrm {
 													    		List<String> links, 
 													    		List<String> filterTerms, 
 													    		List<String> columnsToFilterOn,
-													    		boolean inclusive) {
+													    		boolean inclusive,
+													    		int max) {
 	    SQLiteDatabase database = BaseOrm.getReadableDatabase(context);
     	String sql = "SELECT rowid _id,* FROM " + ArticleOrm.TABLE_NAME + 
 				" WHERE " + ArticleOrm.COLUMN_PARENT_URL + " IN(";
@@ -179,6 +181,7 @@ public class ArticleOrm extends BaseOrm {
 		}
 		// always order by date
 		sql += " ORDER BY DATETIME(" + ArticleOrm.COLUMN_PUBLISHED_DATE + ") DESC";
+		sql += " LIMIT " + max;
 		Log.i(TAG, "Ecexuting sql: " + sql);
 		Cursor cursor = database.rawQuery(sql, null);
 		return cursor;
