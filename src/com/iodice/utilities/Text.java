@@ -9,13 +9,14 @@ import java.util.Locale;
 import org.jsoup.Jsoup;
 
 import android.database.DatabaseUtils;
-import android.util.Log;
 
 public class Text {
 	
 	public static String removeHTMLAndStrip(String s) {
 		s = Jsoup.parse(s).text();
 		s = s.trim();
+		// removes the unicode 'no-break' space
+		s = s.replaceAll("\\u00A0", "");
 		return s;
 	}
 	
@@ -44,31 +45,23 @@ public class Text {
 		List<String> strings = Arrays.asList(s.split(" "));
 		int size = strings.size();
 		
-		String w;
+		String word;
 		String output = "";
 		
 		for (int i = 0; i < size; i++) {
 			if (i != 0)
 				output += " ";
-
-			w = strings.get(i);
+			word = strings.get(i);
 			
-			Log.i("TEXT", "i = " + i);
-			Log.i("TEXT", "output = " + output);
-			Log.i("TEXT", "w = " + w);
-			Log.i("TEXT", "output = " + output);
-			Log.i("TEXT", "\n\n");
-			Log.i("TEXT", "\n\n");
-			
-			if (w.length() == 0)
+			if (word.length() == 0)
 				continue;
-			if (w.length() == 1)
-				w = w.toUpperCase(Locale.getDefault());
+			if (word.length() == 1)
+				word = word.toUpperCase(Locale.getDefault());
 			else {
-				w = w.substring(0, 1).toUpperCase(Locale.getDefault()) 
-						+ w.substring(1).toLowerCase(Locale.getDefault());
+				word = word.substring(0, 1).toUpperCase(Locale.getDefault()) 
+						+ word.substring(1);
 			}
-			output += w;
+			output += word;
 		}
 		return output;
 	}
