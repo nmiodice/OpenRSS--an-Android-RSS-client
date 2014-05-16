@@ -4,18 +4,28 @@ package com.iodice.ui.topics;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.ActionBar.OnNavigationListener;
+import android.app.AlertDialog;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.widget.EditText;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.iodice.database.SearchesOrm;
 import com.iodice.rssreader.R;
 import com.iodice.ui.articles.ArticleActivity;
 import com.iodice.ui.articles.ArticleList;
 import com.iodice.ui.base.CabMultiselectList.MySimpleCursorAdapter;
+import com.iodice.utilities.ConfirmDeleteDialog;
 
 public class TopicsActivity extends ArticleActivity {
+	
+	private final static int CALLBACK_DELETE_CURRENT_SPINNER_ITEM = 20;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +53,69 @@ public class TopicsActivity extends ArticleActivity {
 		asyncTask.execute();
 	}
 	
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.articles_with_spinner_filter, menu);
+        return true;
+    }
+    
+	@Override
+	/**
+	 * Handle a callback event, or pass to parent.
+	 */
+	public void handleCallbackEvent(int n, Object obj) {
+		switch (n) {
+			case TopicsActivity.CALLBACK_DELETE_CURRENT_SPINNER_ITEM:
+				this.deleteSelectedSpinnerItem();
+				return;
+			default:
+				super.handleCallbackEvent(n, obj);
+		}
+	}
+	
+	@Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+		boolean wasHandled = super.onOptionsItemSelected(item);
+		if (wasHandled)
+			return wasHandled;
+		
+		switch (item.getItemId()) {
+			// delete the current selected key
+			case R.id.action_delete_searches:
+				int currentKeyIdx = getSelectedNavigationIndex();
+				String currentKey = getSpinnerListPrimaryKeys().get(currentKeyIdx);
+				String all = this.getString(R.string.all);
+				
+				if (!currentKey.equals(all)) {
+			    	AlertDialog alertDialog = ConfirmDeleteDialog.getDeleteDialog(this, 
+	    					this,
+	    					TopicsActivity.CALLBACK_DELETE_CURRENT_SPINNER_ITEM, 
+	    					null);
+			    	alertDialog.show();
+				} else {
+					CharSequence text = this.getText(R.string.cannot_delete_all);
+					int duration = Toast.LENGTH_SHORT;
+					Toast toast = Toast.makeText(this, text, duration);
+					toast.show();
+				}
 
+				return true;
+			default:
+				return false;
+		}
+	}
+	
+	private void deleteSelectedSpinnerItem() {
+		int currentKeyIdx = getSelectedNavigationIndex();
+		String currentKey = getSpinnerListPrimaryKeys().get(currentKeyIdx);
+		
+		DeleteSavedSearchAndRepopulate asyncTask = new DeleteSavedSearchAndRepopulate();
+		asyncTask.setOnNavigationListener(this);
+		asyncTask.setPrimaryKeyToDelete(currentKey);
+		asyncTask.execute();
+	}
+	
     /**
      * Configures the current search bar to listen for text changes & trigger a
      * query on the current list of articles. The currently selected topic is
@@ -76,12 +148,19 @@ public class TopicsActivity extends ArticleActivity {
     }
 	*/
 	@Override
-	public boolean onSpinnerItemClick(int position, long id) {
+	public boolean onSpinnerItemClick(int position, long id) {		
 		FragmentManager fMan = getFragmentManager();
 		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivity.LIST);
 		
 		if (articleList != null && this.spinnerListItemPrimaryKeys != null) {
 			String filterTerms = getFilterFromSpinnerList(position);
+			
+			// give a bogus query if there is nothing asked for, otherwise the
+			// list will show every article
+			// TODO: improve on the logic to accomplish the described goal
+			if (filterTerms.equals(""))
+				filterTerms = "abcdefghijklmnopqrstuvwqyz";
+			
 			MySimpleCursorAdapter adapt = (MySimpleCursorAdapter)articleList.getListAdapter();
 			adapt.getFilter().filter(filterTerms);
 		}
@@ -102,21 +181,26 @@ public class TopicsActivity extends ArticleActivity {
 				filterTerms += ", ";
 			}
 		}
+		/*
 		// add the current search text to the filter terms as well
 		EditText searchText = (EditText)findViewById(R.id.article_search_box_text);
 		if (searchText != null) {
 			filterTerms += " ";
 			filterTerms += searchText.getText().toString();
-		}
+		} 
+		*/
 		return filterTerms;
 	}
+	
+	/**
+	 * Requery the database for current spinner list keys
+	 */
 	@Override
 	public List<String> getSpinnerListPrimaryKeys() {
 		// populate list data
 		Cursor c = SearchesOrm.selectAll(getApplicationContext());
 		ArrayList<String> items = new ArrayList<String>();
 		items.add(getString(R.string.all));
-		
 		c.moveToFirst();
 		while(!c.isAfterLast()) {
 		     items.add(c.getString(c.getColumnIndex(SearchesOrm.COLUMN_SEARCH_TERM)));
@@ -140,5 +224,70 @@ public class TopicsActivity extends ArticleActivity {
 		int currPos = this.getSelectedNavigationIndex();
 		// second parameter is unused
 		onSpinnerItemClick(currPos, -1);
+	}
+	
+	/**
+	 * A simple async task that will delete a saved search and then repopulate the
+	 * spinner with the current list
+	 * 
+	 * @author Nicholas M. Iodice
+	 *
+	 */
+	public class DeleteSavedSearchAndRepopulate extends AsyncTask<Void, Void, Void> {
+
+		private OnNavigationListener listener = null;
+		private String deleteKey = null;
+		private String redrawWith = null;
+		private Context context = null;
+		
+		public void setOnNavigationListener(OnNavigationListener listener) {
+			this.listener = listener;
+		}
+		
+		public void setContext(Context context) {
+			this.context = context;
+		}
+		
+		/**
+		 * Delete the specified key
+		 * @param key
+		 */
+		public void setPrimaryKeyToDelete(String key) {
+			this.deleteKey = key;
+		}
+		
+		/**
+		 * Redraw the spinner with this key selected (if possible)
+		 * @param key
+		 */
+		public void setRedrawKey(String key) {
+			this.redrawWith = key;
+		}
+		
+		// process db request in background thread
+		@Override
+		protected Void doInBackground(Void... params) {
+			if (deleteKey == null)
+				return null;
+			SearchesOrm.deleteSearchesWhereNameIs(deleteKey, context);
+			return null;
+		}
+		
+	    /**
+	     * Redraw the spinner via a new async task
+	     */
+		@Override
+		protected void onPostExecute(Void param) {
+			// if listener == null, the activity has ended
+			if (listener == null)
+				return;
+			
+			PopulateActionBarSpinner asyncTask = new PopulateActionBarSpinner();
+			asyncTask.setOnNavigationListener(listener);
+			if (redrawWith != null)
+				asyncTask.setSelectionIfPossible(redrawWith);
+			asyncTask.execute();
+		}
+	
 	}
 }

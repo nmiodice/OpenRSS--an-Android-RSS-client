@@ -162,6 +162,10 @@ extends AbstractNavDrawerActivity {
 			case CATEGORIES:
 				intent = new Intent(this, FeedActivity.class);
 				intent.putExtra(SELECTED_DRAWER_POSITION_KEY, id);
+				//intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); 
+				intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+				//intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK); 
+				//intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				break;
 				
 			case SAVED_SEARCHES:
@@ -238,6 +242,11 @@ extends AbstractNavDrawerActivity {
 			}
 		    intent.putStringArrayListExtra(urlListKey, urlList);
 		    intent.putExtra(SELECTED_DRAWER_POSITION_KEY, this.id);
+
+			//intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); 
+			intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+		    //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK); 
+			//intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		    return intent;
 		}
 		

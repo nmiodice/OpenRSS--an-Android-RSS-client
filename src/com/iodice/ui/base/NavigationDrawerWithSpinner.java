@@ -95,7 +95,7 @@ implements ActionBar.OnNavigationListener {
 	/**
 	 * Get the spinner's selected index. This wrapper will temporarly enable it in the
 	 * case that it is hidden. If this did not happen, it may crash the activity
-	 * @return
+	 * @return Position of currently selected spinner list item
 	 */
     public int getSelectedNavigationIndex() {
     	ActionBar ab = getActionBar();
@@ -109,7 +109,6 @@ implements ActionBar.OnNavigationListener {
 	/**
 	 * Set the spinner's selected index. This wrapper will temporarly enable it in the
 	 * case that it is hidden. If this did not happen, it may crash the activity
-	 * @return
 	 */
     private void setSelectedNavigationIndex(int i) {
     	ActionBar ab = getActionBar();

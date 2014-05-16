@@ -23,6 +23,7 @@ import com.iodice.rssreader.R;
 import com.iodice.ui.articles.ArticleActivity;
 import com.iodice.ui.base.AnimatedEntryList;
 import com.iodice.utilities.Callback;
+import com.iodice.utilities.ConfirmDeleteDialog;
 import com.iodice.utilities.SelectorRefreshCallback;
 
 

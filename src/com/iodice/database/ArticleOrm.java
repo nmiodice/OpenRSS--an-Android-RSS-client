@@ -17,7 +17,6 @@ public class ArticleOrm extends BaseOrm {
 
 	private static final String TAG = "rssOrm";
 	private static final String TABLE_NAME = "articles";
-    private static final String COMMA_SEP = ", ";
     
     private static final String COLUMN_URL_TYPE = "TEXT PRIMARY KEY";
     public static final String COLUMN_URL = "url";

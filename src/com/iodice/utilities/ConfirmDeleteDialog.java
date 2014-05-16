@@ -1,19 +1,16 @@
-package com.iodice.ui.feeds;
-
-import java.util.List;
+package com.iodice.utilities;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 
 import com.iodice.rssreader.R;
-import com.iodice.utilities.Callback;
 
 public class ConfirmDeleteDialog {
 	public static AlertDialog getDeleteDialog(Context context, 
 			final Callback callbackInterface, 
 			final int callbackFunctionIdentifer,
-			final List<String> selectedUrlList) {		
+			final Object callbackData) {		
 
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
 		alertDialogBuilder
@@ -21,7 +18,7 @@ public class ConfirmDeleteDialog {
 		.setCancelable(false)
 		.setPositiveButton(context.getString(R.string.yes), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog,int id) {
-				callbackInterface.handleCallbackEvent(callbackFunctionIdentifer, selectedUrlList);
+				callbackInterface.handleCallbackEvent(callbackFunctionIdentifer, callbackData);
 			}
 		  })
 		.setNegativeButton(context.getString(R.string.cancel), new DialogInterface.OnClickListener() {

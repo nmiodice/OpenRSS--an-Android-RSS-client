@@ -1,7 +1,5 @@
 package com.iodice.database;
 
-import com.iodice.rssreader.R;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -10,24 +8,21 @@ import android.database.sqlite.SQLiteException;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.iodice.rssreader.R;
+
 public class SearchesOrm extends BaseOrm {
 
-	private static final String TAG = "SavedSearchesOrm";
+	private static final String TAG = "SearchesOrm";
 	
 	private static final String TABLE_NAME = "savedsearches";
-    private static final String COMMA_SEP = ", ";
     
     private static final String COLUMN_SEARCH_TERM_TYPE = "TEXT PRIMARY KEY";
     public static final String COLUMN_SEARCH_TERM = "search_term";
     
-    private static final String COLUMN_NAME_TYPE = "TEXT";
-    public static final String COLUMN_NAME = "name";
-    
     
     public static final String SQL_CREATE_TABLE =
     		"CREATE TABLE " + TABLE_NAME + " (" +
-    			COLUMN_SEARCH_TERM + " " + COLUMN_SEARCH_TERM_TYPE + COMMA_SEP +
-    			COLUMN_NAME + " " + COLUMN_NAME_TYPE +
+    			COLUMN_SEARCH_TERM + " " + COLUMN_SEARCH_TERM_TYPE +
    			")";
     
     public static final String SQL_DROP_TABLE =
@@ -72,7 +67,6 @@ public class SearchesOrm extends BaseOrm {
     
     private static ContentValues searchToContentValues(SearchData search) {
         ContentValues values = new ContentValues();
-        values.put(SearchesOrm.COLUMN_NAME, search.getName());
         values.put(SearchesOrm.COLUMN_SEARCH_TERM, search.getSearchTerm());
         return values;
     }
@@ -81,20 +75,22 @@ public class SearchesOrm extends BaseOrm {
     	SQLiteDatabase database = BaseOrm.getReadableDatabase(context);
 	    String sql = "SELECT rowid _id,* FROM " + SearchesOrm.TABLE_NAME;
 
-	    // always order by date
-	    sql += " ORDER BY " + SearchesOrm.COLUMN_NAME;	    
+	    sql += " ORDER BY " + SearchesOrm.COLUMN_SEARCH_TERM;	    
 	    Cursor cursor = database.rawQuery(sql, null);
 	    return cursor;
     }
     
-    public static void deleteSearchesWhereNameIs(String name, Context context) {
+    public static void deleteSearchesWhereNameIs(String searchTerm, Context context) {
 	    SQLiteDatabase database = BaseOrm.getWritableDatabase(context);
 	    	    
-	    database.beginTransaction();
-	    Log.i(TAG, "DELETING!");
-	    int id = database.delete(SearchesOrm.TABLE_NAME, SearchesOrm.COLUMN_NAME + " = ?", new String[] {name});
-	    Log.i(TAG, "i = " + id + " :: name = " + name);
-	    database.setTransactionSuccessful();
-	    database.endTransaction();
+		WriteLockManager.beginWriteTransaction(database);
+		try {
+			int id = database.delete(SearchesOrm.TABLE_NAME, SearchesOrm.COLUMN_SEARCH_TERM + " = ?", new String[]{searchTerm});
+			Log.i(TAG, "num deleted = " + id + " :: searchTerm = " + searchTerm);
+			WriteLockManager.setWriteTransactionSuccessfull(database);
+			WriteLockManager.endWriteTransaction(database);
+		} catch (Exception e) {
+			WriteLockManager.endWriteTransaction(database);
+		}
     }
 }

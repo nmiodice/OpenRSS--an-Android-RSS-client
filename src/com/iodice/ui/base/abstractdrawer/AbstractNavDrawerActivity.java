@@ -134,7 +134,7 @@ public abstract class AbstractNavDrawerActivity extends FragmentActivity {
     
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if ( navConf.getActionMenuItemsToHideWhenDrawerOpen() != null ) {
+        if (navConf.getActionMenuItemsToHideWhenDrawerOpen() != null ) {
             boolean drawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
             for(int iItem : navConf.getActionMenuItemsToHideWhenDrawerOpen()) {
                 menu.findItem(iItem).setVisible(!drawerOpen);

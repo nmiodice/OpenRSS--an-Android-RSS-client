@@ -6,6 +6,7 @@ import android.util.Log;
 
 public class BaseOrm {
 	private static SQLiteDatabase db = null;
+    protected static final String COMMA_SEP = ", ";
 	
 	
     public static SQLiteDatabase getWritableDatabase(Context context) {
@@ -64,7 +65,8 @@ public class BaseOrm {
     		isInWriteMode = true;
     		if (milliWait > 0)
     			Log.w(TAG,  "DB write lock time = " + milliWait + " milliseconds");
-    		db.beginTransaction();
+    		//db.beginTransaction();
+    		db.beginTransactionNonExclusive();
     	}
     	
     	public static void setWriteTransactionSuccessfull(SQLiteDatabase db) {

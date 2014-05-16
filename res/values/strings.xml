@@ -106,6 +106,7 @@
     
     <!-- Topics activity -->
     <string name="saved_searches">Saved searches</string>
+    <string name="cannot_delete_all">Cannot delete this search</string>
     
     
 </resources>

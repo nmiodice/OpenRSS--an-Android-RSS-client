@@ -88,17 +88,13 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
 		} else {
 			return new int[] {
 					R.id.action_refresh,
+					R.id.action_delete_searches,
 			};			
 		}
 	}
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        if (!showSearchBar) {
-            getMenuInflater().inflate(R.menu.articles_without_search, menu);
-        } else {
-            getMenuInflater().inflate(R.menu.articles_with_search, menu);
-        }
+    	getMenuInflater().inflate(R.menu.articles_with_searchbar_filter, menu);
         return true;
     }
     
@@ -254,7 +250,6 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
         
         SearchData sd = new SearchData();
         sd.setSearchTerm(tText);
-        sd.setName("name");
         SearchesOrm.insertSearch(sd, this);
     }
     

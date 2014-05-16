@@ -18,7 +18,6 @@ import com.iodice.services.ArticleUpdateService;
 public class FeedOrm extends BaseOrm {
 	private static final String TAG = "feedsOrm";
 	private static final String TABLE_NAME = "feeds";
-    private static final String COMMA_SEP = ", ";
     
     private static final String COLUMN_NAME_TYPE = "TEXT PRIMARY KEY NOT NULL";
     public static final String COLUMN_NAME = "name";
@@ -267,7 +266,6 @@ public class FeedOrm extends BaseOrm {
     private static class categories extends BaseOrm {
     	private static final String TAG = "categories";
     	public static final String TABLE_NAME = "feed_categories";
-        private static final String COMMA_SEP = ", ";
         
         private static final String COLUMN_ID_TYPE = "INTEGER PRIMARY KEY";
         public static final String COLUMN_ID = "id";
@@ -341,7 +339,6 @@ public class FeedOrm extends BaseOrm {
     private static class categoryFeedMap extends BaseOrm {
     	private static final String TAG = "categoryFeedMap";
     	public static final String TABLE_NAME = "feed_and_categories";
-        private static final String COMMA_SEP = ", ";
         
         private static final String COLUMN_URL_TYPE = "TEXT";
         public static final String COLUMN_URL = "url";

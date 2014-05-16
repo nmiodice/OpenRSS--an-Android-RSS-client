@@ -94,19 +94,20 @@ public final class R {
         public static final int topics_light=0x7f020027;
     }
     public static final class id {
-        public static final int action_add_feed=0x7f0b0025;
+        public static final int action_add_feed=0x7f0b0026;
         public static final int action_article_search=0x7f0b0023;
         public static final int action_clear_search_term=0x7f0b0003;
+        public static final int action_delete_searches=0x7f0b0025;
         public static final int action_deselect_all=0x7f0b0022;
-        public static final int action_load_selected=0x7f0b0029;
+        public static final int action_load_selected=0x7f0b002a;
         public static final int action_refresh=0x7f0b0024;
-        public static final int action_remove_selected=0x7f0b0028;
-        public static final int action_save_group=0x7f0b002a;
+        public static final int action_remove_selected=0x7f0b0029;
+        public static final int action_save_group=0x7f0b002b;
         public static final int action_save_search_term=0x7f0b0004;
         public static final int action_select_all=0x7f0b0020;
-        public static final int action_settings=0x7f0b0026;
+        public static final int action_settings=0x7f0b0027;
         public static final int action_share_selected=0x7f0b0021;
-        public static final int action_test_re_initialize=0x7f0b0027;
+        public static final int action_test_re_initialize=0x7f0b0028;
         public static final int add_feed_categories=0x7f0b0015;
         public static final int add_feed_name=0x7f0b0012;
         public static final int add_feed_new_category=0x7f0b0014;
@@ -172,8 +173,8 @@ public final class R {
     }
     public static final class menu {
         public static final int articles_cab=0x7f0a0000;
-        public static final int articles_with_search=0x7f0a0001;
-        public static final int articles_without_search=0x7f0a0002;
+        public static final int articles_with_searchbar_filter=0x7f0a0001;
+        public static final int articles_with_spinner_filter=0x7f0a0002;
         public static final int empty=0x7f0a0003;
         public static final int feeds=0x7f0a0004;
         public static final int feeds_cab=0x7f0a0005;
@@ -213,6 +214,7 @@ public final class R {
         public static final int author=0x7f080016;
         public static final int button_getrss=0x7f08003b;
         public static final int cancel=0x7f080020;
+        public static final int cannot_delete_all=0x7f08004e;
         public static final int categories=0x7f08002b;
         /**  Connectivity 
          */
