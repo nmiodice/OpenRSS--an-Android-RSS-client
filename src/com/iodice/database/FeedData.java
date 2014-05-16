@@ -2,7 +2,8 @@ package com.iodice.database;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+
+import com.iodice.utilities.Text;
 
 public class FeedData {
 	private String url = new String();
@@ -22,8 +23,7 @@ public class FeedData {
 		if (s == null)
 			return;
 		
-		if (s.length() > 0)
-			s = s.substring(0,1).toUpperCase(Locale.US) + s.substring(1);
+		s = Text.toFirstLetterUppercase(s);
 		this.name = s;
 	}
 	public String getName() {

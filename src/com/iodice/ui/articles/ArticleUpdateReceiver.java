@@ -18,6 +18,6 @@ public class ArticleUpdateReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		Callback callbackInterface = (Callback) context;
-		callbackInterface.handleCallbackEvent(ArticleActivity.CALLBACK_REDRAW_WITH_CACHED_DATA, null);
+		callbackInterface.handleCallbackEvent(ArticleActivityByUrl.CALLBACK_REDRAW_WITH_CACHED_DATA, null);
 	}
 }

@@ -45,7 +45,7 @@ public class MyApplication extends Application {
 			editor.putBoolean(getString(R.string.prefs_first_run), false);
 			editor.commit();
 		}
-		//startArticleUpdateService(context);
+		startArticleUpdateService(context);
 	}
 	
 	private void startArticleUpdateService(Context context) {
@@ -67,8 +67,6 @@ public class MyApplication extends Application {
 		AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
 		// Start every 30 seconds
 		alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), secToWait*1000, pintent);
-		
-		
 		Log.i(TAG, "started article update service");
 	}
 	
@@ -119,9 +117,7 @@ public class MyApplication extends Application {
 		rssFeeds.add(new FeedData("Food.com", food, "http://www.food.com/rss?"));
 		rssFeeds.add(new FeedData("All Recipes", food, "http://rss.allrecipes.com/daily.aspx?hubID=84"));
 		rssFeeds.add(new FeedData("TechCrunch", tech, "http://feeds.feedburner.com/TechCrunch/"));
-
-			
-
+		
 		FeedOrm.saveFeeds(rssFeeds, context);
 	}
 }

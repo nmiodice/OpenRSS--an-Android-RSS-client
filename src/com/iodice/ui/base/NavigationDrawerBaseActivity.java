@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import com.iodice.database.FeedOrm;
 import com.iodice.rssreader.R;
+import com.iodice.ui.articles.ArticleActivityByTopic;
+import com.iodice.ui.articles.ArticleActivityByUrl;
 import com.iodice.ui.base.abstractdrawer.AbstractNavDrawerActivity;
 import com.iodice.ui.base.abstractdrawer.NavDrawerActivityConfiguration;
 import com.iodice.ui.base.abstractdrawer.NavDrawerAdapter;
@@ -21,7 +23,6 @@ import com.iodice.ui.base.abstractdrawer.NavDrawerItem;
 import com.iodice.ui.base.abstractdrawer.NavMenuItem;
 import com.iodice.ui.base.abstractdrawer.NavMenuSection;
 import com.iodice.ui.feeds.FeedActivity;
-import com.iodice.ui.topics.TopicsActivity;
 
 /**
  * @author Nicholas M. Iodice
@@ -228,8 +229,8 @@ extends AbstractNavDrawerActivity {
 		
 		// process db request in background thread
 		protected Intent doInBackground(Void... arg0) {
-			String urlListKey = getResources().getString(R.string.rss_url_intent);
-			Intent intent = new Intent(context, TopicsActivity.class);
+			String urlListKey = ArticleActivityByUrl.INTENT_EXTRA_URL_LIST;
+			Intent intent = new Intent(context, ArticleActivityByTopic.class);
 			ArrayList<String> urlList = new ArrayList<String>();
 			Cursor cursor = FeedOrm.selectAll(context);
 			

@@ -36,7 +36,7 @@
         </activity>
         
         <activity
-            android:name="com.iodice.ui.topics.TopicsActivity"
+            android:name="com.iodice.ui.articles.ArticleActivityByTopic"
             android:label="@string/app_name" >
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -45,7 +45,7 @@
         </activity>        
                 
         <activity
-            android:name="com.iodice.ui.articles.ArticleActivity"
+            android:name="com.iodice.ui.articles.ArticleActivityByUrl"
             android:label="@string/app_name"
             android:parentActivityName="com.iodice.ui.feeds.FeedActivity" >
             

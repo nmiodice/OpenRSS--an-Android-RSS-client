@@ -1,4 +1,4 @@
-package com.iodice.ui.topics;
+package com.iodice.ui.articles;
 
 
 import java.util.ArrayList;
@@ -17,12 +17,10 @@ import android.widget.Toast;
 
 import com.iodice.database.SearchesOrm;
 import com.iodice.rssreader.R;
-import com.iodice.ui.articles.ArticleActivity;
-import com.iodice.ui.articles.ArticleList;
 import com.iodice.ui.base.CabMultiselectList.MySimpleCursorAdapter;
 import com.iodice.utilities.ConfirmDeleteDialog;
 
-public class TopicsActivity extends ArticleActivity {
+public class ArticleActivityByTopic extends ArticleActivityByUrl {
 	
 	private final static int CALLBACK_DELETE_CURRENT_SPINNER_ITEM = 20;
 	
@@ -66,7 +64,7 @@ public class TopicsActivity extends ArticleActivity {
 	 */
 	public void handleCallbackEvent(int n, Object obj) {
 		switch (n) {
-			case TopicsActivity.CALLBACK_DELETE_CURRENT_SPINNER_ITEM:
+			case ArticleActivityByTopic.CALLBACK_DELETE_CURRENT_SPINNER_ITEM:
 				this.deleteSelectedSpinnerItem();
 				return;
 			default:
@@ -90,7 +88,7 @@ public class TopicsActivity extends ArticleActivity {
 				if (!currentKey.equals(all)) {
 			    	AlertDialog alertDialog = ConfirmDeleteDialog.getDeleteDialog(this, 
 	    					this,
-	    					TopicsActivity.CALLBACK_DELETE_CURRENT_SPINNER_ITEM, 
+	    					ArticleActivityByTopic.CALLBACK_DELETE_CURRENT_SPINNER_ITEM, 
 	    					null);
 			    	alertDialog.show();
 				} else {
@@ -150,7 +148,7 @@ public class TopicsActivity extends ArticleActivity {
 	@Override
 	public boolean onSpinnerItemClick(int position, long id) {		
 		FragmentManager fMan = getFragmentManager();
-		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivity.LIST);
+		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivityByUrl.LIST);
 		
 		if (articleList != null && this.spinnerListItemPrimaryKeys != null) {
 			String filterTerms = getFilterFromSpinnerList(position);

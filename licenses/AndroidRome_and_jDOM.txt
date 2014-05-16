@@ -1,0 +1,5 @@
+The license for this library can be found on the project's homepage:
+	https://code.google.com/p/android-rome-feed-reader/
+
+Specifically, this library is licensed under "Artistic License/GPL," details of which can be found here:
+	http://dev.perl.org/licenses/

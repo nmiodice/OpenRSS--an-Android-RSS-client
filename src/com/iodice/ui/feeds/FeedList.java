@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 import com.iodice.database.FeedOrm;
 import com.iodice.rssreader.R;
-import com.iodice.ui.articles.ArticleActivity;
+import com.iodice.ui.articles.ArticleActivityByUrl;
 import com.iodice.ui.base.AnimatedEntryList;
 import com.iodice.utilities.Callback;
 import com.iodice.utilities.ConfirmDeleteDialog;
@@ -36,24 +36,36 @@ public class FeedList extends AnimatedEntryList implements Callback {
     
 	@Override
 	public void onSingleItemClick(View view) {
-		Intent intent = new Intent(getActivity(), ArticleActivity.class);
-		String key = getResources().getString(R.string.rss_url_intent);
+		Intent intent = new Intent(getActivity(), ArticleActivityByUrl.class);
+		String feedUrlKey = ArticleActivityByUrl.INTENT_EXTRA_URL_LIST;
+		String feedNameKey = ArticleActivityByUrl.INTENT_EXTRA__FEED_NAME_LIST;
 		
-		List<String> rssFeeds = new ArrayList<String>();
+		ArrayList<String> feedUrls = new ArrayList<String>();
+		ArrayList<String> feedNames = new ArrayList<String>();
+		
 		TextView innerView = (TextView)view.findViewById(R.id.feed_url);
-		rssFeeds.add(innerView.getText().toString());
+		feedUrls.add(innerView.getText().toString());
+		
+		innerView = (TextView)view.findViewById(R.id.feed_name);
+		feedNames.add(innerView.getText().toString());
 
-	    intent.putStringArrayListExtra(key, (ArrayList<String>) rssFeeds);
+	    intent.putStringArrayListExtra(feedUrlKey, feedUrls);
+	    intent.putStringArrayListExtra(feedNameKey, feedNames);
+
 		startActivity(intent);		
 	}
 	
 
 	@Override
 	public void cabMultiselectPrimaryAction() {
-		Intent intent = new Intent(getActivity(), ArticleActivity.class);
-		String key = getResources().getString(R.string.rss_url_intent);
-		List<String> selectedUrlList = this.getSelectedUrls();    
-        int size = selectedUrlList.size();
+		Intent intent = new Intent(getActivity(), ArticleActivityByUrl.class);
+		String feedUrlKey = ArticleActivityByUrl.INTENT_EXTRA_URL_LIST;
+		String feedNameKey = ArticleActivityByUrl.INTENT_EXTRA__FEED_NAME_LIST;
+
+		ArrayList<String> selectedFeedUrls = (ArrayList<String>)this.getSelectedUrlData(FeedOrm.COLUMN_URL);
+		ArrayList<String> selectedFeedNames = (ArrayList<String>)this.getSelectedUrlData(FeedOrm.COLUMN_NAME);
+		
+        int size = selectedFeedUrls.size();
         
         if (size == 0) {
 			Toast.makeText(getActivity().getApplicationContext(), getResources().getText(R.string.no_selections).toString(),  Toast.LENGTH_SHORT).show();
@@ -61,7 +73,9 @@ public class FeedList extends AnimatedEntryList implements Callback {
         }
         
         // step 2. load the list
-	    intent.putStringArrayListExtra(key, (ArrayList<String>) selectedUrlList);
+	    intent.putStringArrayListExtra(feedUrlKey, (ArrayList<String>) selectedFeedUrls);
+	    intent.putStringArrayListExtra(feedNameKey, selectedFeedNames);
+
 		startActivity(intent);
     }
 	
@@ -85,7 +99,7 @@ public class FeedList extends AnimatedEntryList implements Callback {
 	        case R.id.action_remove_selected:
 	        	if (selectedListItems.isEmpty())
 	        		return false;
-	        	deleteFeedsWithUrls(this.getSelectedUrls());
+	        	deleteFeedsWithUrls(this.getSelectedUrlData(FeedOrm.COLUMN_URL));
 	            mode.finish();
 	        	return true; 
 	        case R.id.action_save_group:
@@ -112,21 +126,21 @@ public class FeedList extends AnimatedEntryList implements Callback {
     }
     
     private void saveSelectedAsGroup() {
-    	List<String> selectedUrls = this.getSelectedUrls();
+    	List<String> selectedUrls = this.getSelectedUrlData(FeedOrm.COLUMN_URL);
 		AlertDialog.Builder alert = AddNewGroupingDialog.getAddDialog(selectedUrls,
 				getActivity(),
 				(SelectorRefreshCallback)getActivity());
 		alert.show();
     }
     
-    private List<String> getSelectedUrls() {
-    	ArrayList<String> selectedUrlList = new ArrayList<String>();
+    private List<String> getSelectedUrlData(String columnName) {
+    	ArrayList<String> urlDataList = new ArrayList<String>();
     	ListView v = getListView();
         int vCnt = v.getCount();
         Cursor c;
         
     	if (this.isInActionMode == false)
-    		return selectedUrlList;
+    		return urlDataList;
 
         
         // step 1. Loop through cursor and add links associated with selected row elements
@@ -136,9 +150,9 @@ public class FeedList extends AnimatedEntryList implements Callback {
         	if (c == null) {
         		Log.e(TAG, "Error: Cursor element is null: should never happen!");
         	} else if (this.selectedListItems.contains(i))
-        		selectedUrlList.add(c.getString(c.getColumnIndex(FeedOrm.COLUMN_URL)));
+        		urlDataList.add(c.getString(c.getColumnIndex(columnName)));
         }
-    	return selectedUrlList;
+    	return urlDataList;
     }
     
     
@@ -249,7 +263,7 @@ public class FeedList extends AnimatedEntryList implements Callback {
 			// query for selected URLs only if not set explicitly. This should only happen
 			// when the task is called from the main UI thread
 			if (this.selectedUrlList == null)
-				selectedUrlList = getSelectedUrls();
+				selectedUrlList = getSelectedUrlData(FeedOrm.COLUMN_URL);
 	        context = getListView().getContext();	        
 		}
 		

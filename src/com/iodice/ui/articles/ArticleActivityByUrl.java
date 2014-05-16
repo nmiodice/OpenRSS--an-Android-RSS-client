@@ -28,12 +28,9 @@ import com.iodice.rssreader.R;
 import com.iodice.services.ArticleUpdateService;
 import com.iodice.ui.base.CabMultiselectList.MySimpleCursorAdapter;
 import com.iodice.ui.base.NavigationDrawerWithSpinner;
-import com.iodice.ui.topics.TopicsActivity;
 import com.iodice.utilities.ListRefreshCallback;
 
-
-
-public class ArticleActivity extends NavigationDrawerWithSpinner implements ListRefreshCallback {
+public class ArticleActivityByUrl extends NavigationDrawerWithSpinner implements ListRefreshCallback {
 	private static final String TAG = "ArticleActivity";
 	protected static final String LIST = "LIST";
 	private static final String SEARCH_KEY = "SEARCH_KEY";
@@ -45,13 +42,14 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
 	/* used to trigger list updates when the search bar text changes */
     protected TextWatcher searchBarListener = null;
     protected boolean showSearchBar = true;
+    
+    public static final String INTENT_EXTRA_URL_LIST = "url list";
+    public static final String INTENT_EXTRA__FEED_NAME_LIST = "feed name list";
 
 	
 	/* supported callback method identifiers */
 	public static final int CALLBACK_REDRAW_WITH_CACHED_DATA = 0;
 	public static final int CALLBACK_UPDATE_WITH_WEB_QUERY = 1;
-
-
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,11 +58,63 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
 		// these URLs correspond to the parent source URL (as opposed to 
 		// URLs to individual articles
 		Intent intent = getIntent();
-		List<String> urlList = intent.getStringArrayListExtra(
-				getResources().getString(R.string.rss_url_intent));
+		List<String> urlList = 
+				intent.getStringArrayListExtra(ArticleActivityByUrl.INTENT_EXTRA_URL_LIST);
+		List<String> feedNameList = 
+				intent.getStringArrayListExtra(ArticleActivityByUrl.INTENT_EXTRA__FEED_NAME_LIST);
 		
 		displayArticleList(urlList);
+		updateActionbarText(feedNameList);
+		
 		setupSearchBar();
+	}
+	
+	private void displayArticleList(List<String> urlList) {
+		if (urlList == null) {
+			throw new NullPointerException();
+		}
+		// add fragment to apropriate layout item
+		FragmentTransaction fTrans;
+		FragmentManager fMan = getFragmentManager();
+				
+		// fragContainer is null until something is added to it
+		if (fMan.findFragmentByTag(ArticleActivityByUrl.LIST) == null) {			
+			ArticleList list = new ArticleList();
+			list.setFilterInclusive(filterListInclusive);
+			list.setFeeds(urlList);
+			fTrans = fMan.beginTransaction();
+			fTrans.add(R.id.rss_fragment_container, list, ArticleActivityByUrl.LIST);
+			fTrans.commit();
+		}
+	}
+	
+	/**
+	 * If a list of feed names is provided, change the actionbar text to include some
+	 * information about the loaded feeds. If the list is not provided, the default
+	 * text will remain
+	 * 
+	 * @param feedNameList A list of feed names, used to populate the actionbar text
+	 */
+	private void updateActionbarText(List<String> feedNameList) {
+		if (feedNameList == null)
+			return;
+		String newTitle = "";
+		int size = feedNameList.size();
+		
+		switch (size) {
+			case 0:
+				return;
+			case 1:
+				newTitle += feedNameList.get(0);
+				break;
+			default:
+				newTitle += feedNameList.get(0) + " ";
+				newTitle += getText(R.string.and_x_more);
+				newTitle = String.format(newTitle, size - 1);
+				break;
+				
+		}
+		this.getActionBar().setTitle(newTitle);
 	}
 	
 	@Override
@@ -114,9 +164,9 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
 
     	if (sContainer != null) {
 	    	if (sContainer.getVisibility() == View.VISIBLE)
-	    		outState.putBoolean(ArticleActivity.SEARCH_KEY, true);
+	    		outState.putBoolean(ArticleActivityByUrl.SEARCH_KEY, true);
 	    	if (sText != null)
-	    		outState.putString(ArticleActivity.SEARCH_TEXT_KEY, sText.getText().toString());
+	    		outState.putString(ArticleActivityByUrl.SEARCH_TEXT_KEY, sText.getText().toString());
     	}
     	super.onSaveInstanceState(outState);
     }
@@ -125,14 +175,14 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
     	if (savedInstanceState != null) {
     		View sContainer = this.findViewById(R.id.article_search_box_container);
     		if (sContainer != null) {
-	    		boolean wasSearchVisible = savedInstanceState.getBoolean(ArticleActivity.SEARCH_KEY);
+	    		boolean wasSearchVisible = savedInstanceState.getBoolean(ArticleActivityByUrl.SEARCH_KEY);
 	    		if (wasSearchVisible == true)
 	    			sContainer.setVisibility(View.VISIBLE);	
     		}
     		
     		EditText sText = (EditText) this.findViewById(R.id.article_search_box_text);
     		if (sText != null) {
-	    		String oldSearchTerm = savedInstanceState.getString(ArticleActivity.SEARCH_TEXT_KEY);
+	    		String oldSearchTerm = savedInstanceState.getString(ArticleActivityByUrl.SEARCH_TEXT_KEY);
 	    		sText.setText(oldSearchTerm);
     		}
     	}
@@ -154,7 +204,7 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
     	    @Override
     	    public void onTextChanged(CharSequence cs, int arg1, int arg2, int arg3) {
     			FragmentManager fMan = getFragmentManager();
-    			ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivity.LIST);
+    			ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivityByUrl.LIST);
     			if (articleList != null) {
     				MySimpleCursorAdapter adapt = (MySimpleCursorAdapter)articleList.getListAdapter();
     				adapt.getFilter().filter(cs);
@@ -176,7 +226,7 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
     	if (!showSearchBar)
     		return;
     	FragmentManager fMan = getFragmentManager();
-		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivity.LIST);
+		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivityByUrl.LIST);
 		if (articleList == null)
 			return;
 		ListView lv = articleList.getListView();
@@ -266,7 +316,7 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
 	
 	private void updateCurrentListWithWebQuery() {
 		FragmentManager fMan = getFragmentManager();
-		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivity.LIST);
+		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivityByUrl.LIST);
 		if (articleList != null)
 			articleList.setLoadState(true);
 		this.queryWebForNewListData(articleList.getArticleURLList());
@@ -297,26 +347,6 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
                 return super.onOptionsItemSelected(item);
         }
     }
-	
-	private void displayArticleList(List<String> urlList) {
-		if (urlList == null) {
-			throw new NullPointerException();
-		}
-		// add fragment to apropriate layout item
-		FragmentTransaction fTrans;
-		FragmentManager fMan = getFragmentManager();
-				
-		// fragContainer is null until something is added to it
-		if (fMan.findFragmentByTag(ArticleActivity.LIST) == null) {			
-			ArticleList list = new ArticleList();
-			list.setFilterInclusive(filterListInclusive);
-			list.setFeeds(urlList);
-			fTrans = fMan.beginTransaction();
-			fTrans.add(R.id.rss_fragment_container, list, ArticleActivity.LIST);
-			fTrans.commit();
-			//fMan.executePendingTransactions();
-		}
-	}
 
 	// helper method to lock screen orientation. Should call unlockScreenOrientation
 	// shortly after making this to avoid a UI lock in one orientation.
@@ -348,7 +378,7 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
 	
 	private void redrawActiveArticleListWithCachedData() {
 		FragmentManager fMan = getFragmentManager();
-		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivity.LIST);
+		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivityByUrl.LIST);
 		
 		// fragContainer is null until something is added to it
 		if (articleList != null) {
@@ -384,11 +414,11 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
 	 */
 	public void handleCallbackEvent(int n, Object obj) {
 		switch (n) {
-			case ArticleActivity.CALLBACK_REDRAW_WITH_CACHED_DATA:
+			case ArticleActivityByUrl.CALLBACK_REDRAW_WITH_CACHED_DATA:
 				this.redrawActiveArticleListWithCachedData();
 				this.refilterArticles();
 				return;
-			case ArticleActivity.CALLBACK_UPDATE_WITH_WEB_QUERY:
+			case ArticleActivityByUrl.CALLBACK_UPDATE_WITH_WEB_QUERY:
 				this.updateCurrentListWithWebQuery();
 				return;
 			default:
@@ -399,7 +429,7 @@ public class ArticleActivity extends NavigationDrawerWithSpinner implements List
 
 	@Override
 	public void refreshCurrentList() {
-		this.handleCallbackEvent(TopicsActivity.CALLBACK_REDRAW_WITH_CACHED_DATA, null);
+		this.handleCallbackEvent(ArticleActivityByTopic.CALLBACK_REDRAW_WITH_CACHED_DATA, null);
 	}
 
 	

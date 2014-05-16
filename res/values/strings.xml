@@ -51,7 +51,6 @@
     <string name="web_query_failed">Failed to load data for feed: </string>
     
     <!-- Feed Activity -->
-    <string name="rss_url_intent">URL_INTENT</string>
     <string name="action_load_selected">Load</string>
     <string name="action_select_all">Select all</string>
     <string name="action_deselect_all">Deselect all</string>
@@ -79,7 +78,7 @@
     <string name="add_feed_grouping_message">Select groups and/or enter new groups</string>
     
     <!-- Delete feeds -->
-    <string name="delete_title">This cannot be undone. Continue?</string>
+    <string name="delete_title">You can\'t undo this. Continue?</string>
     
     <!-- RSS -->
     <string name="title_activity_rss">RSS Feed</string>
@@ -103,10 +102,11 @@
     <string name="saved_search_is_empty">Cannot save an empty search</string>
     <string name="tile_font_heavy">fonts/RobotoSlab-Regular.ttf</string>
     <string name="tile_font_light">fonts/RobotoSlab-Light.ttf</string>
+    <string name="and_x_more">and %1$d more</string>
     
     <!-- Topics activity -->
     <string name="saved_searches">Saved searches</string>
-    <string name="cannot_delete_all">Cannot delete this search</string>
+    <string name="cannot_delete_all">This search cannot be deleted</string>
     
     
 </resources>

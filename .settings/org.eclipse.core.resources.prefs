@@ -1,5 +1,5 @@
 eclipse.preferences.version=1
 encoding//src/com/iodice/database/FeedOrm.java=UTF-8
 encoding//src/com/iodice/services/ArticleUpdateService.java=UTF-8
-encoding//src/com/iodice/ui/articles/ArticleActivity.java=UTF-8
+encoding//src/com/iodice/ui/articles/ArticleActivityByUrl.java=UTF-8
 encoding//src/com/iodice/utilities/Sys.java=UTF-8
