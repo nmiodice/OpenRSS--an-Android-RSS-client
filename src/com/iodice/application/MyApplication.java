@@ -19,6 +19,7 @@ import android.util.Log;
 
 import com.iodice.database.FeedData;
 import com.iodice.database.FeedOrm;
+import com.iodice.database.SharedPrefsHelper;
 import com.iodice.services.ArticleUpdateService;
 
 public class MyApplication extends Application {
@@ -31,19 +32,12 @@ public class MyApplication extends Application {
 	}
 	
 	private void initializeApplication(Context context) {
-		SharedPreferences prefs = context.getSharedPreferences(
-										getString(R.string.prefs), 
-										Context.MODE_PRIVATE);
-		// should only default to true on the first run
-		boolean firstRun = prefs.getBoolean(getString(R.string.prefs_first_run), true);
+		boolean firstRun = SharedPrefsHelper.getIsFirstRun(this);
 		
 		if (firstRun == true) {
 			initDefaultFeeds(context);
 			
-			// update first preference to false
-			SharedPreferences.Editor editor = prefs.edit();
-			editor.putBoolean(getString(R.string.prefs_first_run), false);
-			editor.commit();
+			SharedPrefsHelper.setIsFirstRun(this, false);
 		}
 		startArticleUpdateService(context);
 	}

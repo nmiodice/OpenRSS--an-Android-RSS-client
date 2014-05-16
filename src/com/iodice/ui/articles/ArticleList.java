@@ -6,9 +6,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -24,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.iodice.database.ArticleOrm;
+import com.iodice.database.SharedPrefsHelper;
 import com.iodice.rssreader.R;
 import com.iodice.ui.base.AnimatedEntryList;
 import com.iodice.utilities.ListRefreshCallback;
@@ -178,19 +177,11 @@ public class ArticleList extends AnimatedEntryList {
 		    R.id.rss_published_date
 		};
 		
-		// TODO: replace this w/ preferences interface
-		SharedPreferences prefs = getActivity().getSharedPreferences(
-				getString(R.string.prefs), 
-				Context.MODE_PRIVATE);
-		int defaultMax = getResources().getInteger(
-				R.integer.prefs_default_max_articles_to_load);
-		int articlesToLoad = prefs.getInt(
-							getString(R.string.prefs_update_interval), 
-							defaultMax);
+		int maxArticles = SharedPrefsHelper.getNumArticlesToLoad(getActivity());
 
 		cursor = ArticleOrm.selectWhereParentLinkIs(getActivity().getApplicationContext(), 
 				this.articleURLList, 
-				articlesToLoad);
+				maxArticles);
 		Log.i(TAG, "" + cursor.getCount() + " articles loaded");
 
 		// if there isnt any data, attempt a web query one time and then fail to load
@@ -236,22 +227,13 @@ public class ArticleList extends AnimatedEntryList {
 			public Cursor runQuery(CharSequence constraint) {
 				setFilterTerms(constraint.toString());
 				
-				// TODO: replace this w/ preferences interface
-				SharedPreferences prefs = getActivity().getSharedPreferences(
-						getString(R.string.prefs), 
-						Context.MODE_PRIVATE);
-				int defaultMax = getResources().getInteger(
-						R.integer.prefs_default_max_articles_to_load);
-				int articlesToLoad = prefs.getInt(
-									getString(R.string.prefs_update_interval), 
-									defaultMax);
-				
+				int maxArticles = SharedPrefsHelper.getNumArticlesToLoad(getActivity());
 				Cursor c = ArticleOrm.selectWhereParentLinkIsAndContains(getActivity(), 
 						articleURLList, 
 						filterTerms, 
 						columnsToFilterOn,
 						filterInclusive,
-						articlesToLoad);
+						maxArticles);
 				Log.i(TAG, "cursor = " + c);
 				Log.i(TAG, "filterTerms = " + filterTerms.toString());
 				return c;
