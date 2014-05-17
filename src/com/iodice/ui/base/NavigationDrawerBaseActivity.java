@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.iodice.application.SettingsActivity;
 import com.iodice.database.FeedOrm;
 import com.iodice.rssreader.R;
 import com.iodice.ui.articles.ArticleActivityByTopic;
@@ -41,14 +42,14 @@ extends AbstractNavDrawerActivity {
     /* Navigation drawer indices. Each entry must have an index that is sequential
      * and indicates its position in the navigation drawer list
      */
-    private static final int RSS = 0;
-    private static final int CATEGORIES = 1;
-    private static final int SAVED_SEARCHES = 2;
-    private static final int GENERAL = 3;
-    private static final int SETTINGS = 4;
-    private static final int ABOUT = 5;
-    private static final int GITHUB = 6;
-    private static final int EXIT = 7;
+    protected static final int DRAWER_RSS = 0;
+    protected static final int DRAWER_CATEGORIES = 1;
+    protected static final int DRAWER_SAVED_SEARCHES = 2;
+    protected static final int DRAWER_GENERAL = 3;
+    protected static final int DRAWER_SETTINGS = 4;
+    protected static final int DRAWER_ABOUT = 5;
+    protected static final int DRAWER_GITHUB = 6;
+    protected static final int DRAWER_EXIT = 7;
     
     private int DEFAULT_SELECTED_POSITION = 1;
     private int SELECTED_DRAWER_POSITION = -1;
@@ -91,15 +92,15 @@ extends AbstractNavDrawerActivity {
 	protected NavDrawerActivityConfiguration getNavDrawerConfiguration() {
 		Log.i(TAG, "Getting nav drawer config");
         NavDrawerItem[] menu = new NavDrawerItem[] {
-    		NavMenuSection.create(RSS, getString(R.string.drawer_rss_section)),
-    		NavMenuItem.create(CATEGORIES, getString(R.string.categories), R.drawable.news, false, this),
-    		NavMenuItem.create(SAVED_SEARCHES, getString(R.string.saved_searches), R.drawable.topics, false, this),
+    		NavMenuSection.create(DRAWER_RSS, getString(R.string.drawer_rss_section)),
+    		NavMenuItem.create(DRAWER_CATEGORIES, getString(R.string.categories), R.drawable.news, false, this),
+    		NavMenuItem.create(DRAWER_SAVED_SEARCHES, getString(R.string.saved_searches), R.drawable.topics, false, this),
     		
-    		NavMenuSection.create(GENERAL, getString(R.string.drawer_general_section)),
-    		NavMenuItem.create(SETTINGS, getString(R.string.drawer_settings), R.drawable.settings, false, this),
-    		NavMenuItem.create(ABOUT, getString(R.string.drawer_about), R.drawable.info, false, this),
-    		NavMenuItem.create(GITHUB, getString(R.string.drawer_github), R.drawable.github, false, this),
-    		NavMenuItem.create(EXIT, getString(R.string.drawer_exit), R.drawable.exit, false, this),
+    		NavMenuSection.create(DRAWER_GENERAL, getString(R.string.drawer_general_section)),
+    		NavMenuItem.create(DRAWER_SETTINGS, getString(R.string.drawer_settings), R.drawable.settings, false, this),
+    		NavMenuItem.create(DRAWER_ABOUT, getString(R.string.drawer_about), R.drawable.info, false, this),
+    		NavMenuItem.create(DRAWER_GITHUB, getString(R.string.drawer_github), R.drawable.github, false, this),
+    		NavMenuItem.create(DRAWER_EXIT, getString(R.string.drawer_exit), R.drawable.exit, false, this),
         };
         
         NavDrawerActivityConfiguration activityConfiguration = new NavDrawerActivityConfiguration();
@@ -140,7 +141,7 @@ extends AbstractNavDrawerActivity {
 			try {
 				startActivity(intent);
 			} catch (ActivityNotFoundException e) {
-				Toast.makeText(getApplicationContext(), R.string.no_browser,  Toast.LENGTH_LONG).show();
+				Toast.makeText(getApplicationContext(), R.string.no_installed_app,  Toast.LENGTH_LONG).show();
 				e.printStackTrace();
 			} catch (Exception e) {
 				e.getMessage();
@@ -160,31 +161,32 @@ extends AbstractNavDrawerActivity {
 			return;
 		
 		switch (id) {
-			case CATEGORIES:
+			case DRAWER_CATEGORIES:
 				intent = new Intent(this, FeedActivity.class);
 				intent.putExtra(SELECTED_DRAWER_POSITION_KEY, id);
 				//intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 				break;
 				
-			case SAVED_SEARCHES:
+			case DRAWER_SAVED_SEARCHES:
 				// start topics activity in an intent because it requires
 				// a DB query for all RSS feeds
 				StartTopicsActivity asyncTask = new StartTopicsActivity(this, id);
 				asyncTask.execute();
 				return;
 				
-			case SETTINGS:
+			case DRAWER_SETTINGS:
+				intent = new Intent(this, SettingsActivity.class);
+				break;
+				
+			case DRAWER_ABOUT:
 				return;
 				
-			case ABOUT:
-				return;
-				
-			case GITHUB:
+			case DRAWER_GITHUB:
 				String feedURL = getString(R.string.git_url);
 				intent = new Intent(Intent.ACTION_VIEW, Uri.parse(feedURL));
 				break;
 				
-			case EXIT:
+			case DRAWER_EXIT:
 				intent = new Intent(Intent.ACTION_MAIN);
 				intent.addCategory(Intent.CATEGORY_HOME);
 				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

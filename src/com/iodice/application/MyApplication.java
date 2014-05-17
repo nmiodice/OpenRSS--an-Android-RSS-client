@@ -8,21 +8,25 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import com.iodice.rssreader.R;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.iodice.database.FeedData;
 import com.iodice.database.FeedOrm;
-import com.iodice.database.SharedPrefsHelper;
+import com.iodice.rssreader.R;
 import com.iodice.services.ArticleUpdateService;
+import com.iodice.ui.base.AnimatedEntryList;
 
-public class MyApplication extends Application {
+public class MyApplication 
+extends Application
+implements OnSharedPreferenceChangeListener {
 	private static String TAG = "ApplicationSuperclass";
 	
 	@Override
@@ -31,37 +35,70 @@ public class MyApplication extends Application {
 		initializeApplication(getApplicationContext());
 	}
 	
+	/**
+	 * Setup a preference change listener so the application can react to
+	 * user preference modifications
+	 */
+	private void registerPreferenceChangeListener() {
+		SharedPreferences preferences = PreferenceManager
+                .getDefaultSharedPreferences(this);
+		preferences.registerOnSharedPreferenceChangeListener(this);
+	}
+	
+	/**
+	 * Runs startup logic, such as starting services and populating default data
+	 * @param context
+	 */
 	private void initializeApplication(Context context) {
 		boolean firstRun = SharedPrefsHelper.getIsFirstRun(this);
 		
+		/* or else our poor user wont have any fun test data to look at! */
 		if (firstRun == true) {
 			initDefaultFeeds(context);
-			
 			SharedPrefsHelper.setIsFirstRun(this, false);
 		}
 		startArticleUpdateService(context);
+		registerPreferenceChangeListener();
 	}
 	
-	private void startArticleUpdateService(Context context) {
-		
-		// get default update frequency
-		SharedPreferences prefs = context.getSharedPreferences(
-				getString(R.string.prefs), 
-				Context.MODE_PRIVATE);
-		int defaultWait = getResources().getInteger(R.integer.prefs_default_update_interval);
-		int secToWait = prefs.getInt(
-							getString(R.string.prefs_update_interval), 
-							defaultWait);
-		
-		// setup timer to run update schedule
-		Calendar cal = Calendar.getInstance();
+	/**
+	 * Returns an intent that can be run via an alarm schedule
+	 * @param context
+	 * @return
+	 */
+	private PendingIntent getArticleUpdateServicePendingIntent(Context context) {
 		Intent intent = new Intent(this, ArticleUpdateService.class);
 		PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
-
+		return pintent;
+	}
+	
+	/**
+	 * Begin background updates according to the current user preferences
+	 * @param context
+	 */
+	private void startArticleUpdateService(Context context) {
+		boolean autoUpdate = SharedPrefsHelper.getUpdateInBackground(context);
+		if (!autoUpdate)
+			return;
+		
+		int hoursToWait = SharedPrefsHelper.getArticleUpdateFrequency(context);
+		Calendar cal = Calendar.getInstance();
+		PendingIntent pIntent = getArticleUpdateServicePendingIntent(context);
+		
+		// setup timer to run update schedule
 		AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-		// Start every 30 seconds
-		alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), secToWait*1000, pintent);
-		Log.i(TAG, "started article update service");
+		alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), hoursToWait*60*60*1000, pIntent);
+		
+		Log.i(TAG, "started article update service w/ update frequency = " + hoursToWait + " hours");
+	}
+	/**
+	 * This is useful to invoke if the preference driving the update frequency is modified
+	 * @param context
+	 */
+	private void cancelArticleUpdateService(Context context) {
+		PendingIntent pIntent = getArticleUpdateServicePendingIntent(context);
+		AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+		alarm.cancel(pIntent);
 	}
 	
 	// TODO: after testing, make this private. Being used to add a repopulate menu item for testing
@@ -113,5 +150,25 @@ public class MyApplication extends Application {
 		rssFeeds.add(new FeedData("TechCrunch", tech, "http://feeds.feedburner.com/TechCrunch/"));
 		
 		FeedOrm.saveFeeds(rssFeeds, context);
+	}
+
+	@Override
+	/**
+	 * Reacts to changes in user preferences
+	 */
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+			String key) {
+		/* the article update service is not reactive to this change,
+		 * so we can just manually restart it
+		 */
+		if (key.equals(getString(R.string.prefs_update_frequency)) ||
+				key.equals(getString(R.string.prefs_update_in_background))) {
+			cancelArticleUpdateService(this);
+			startArticleUpdateService(this);
+		} else if (key.equals(getString(R.string.prefs_enable_animation))) {
+			boolean animate = SharedPrefsHelper.getEnableAnimations(this);
+			AnimatedEntryList.setAnimationEnabled(animate);
+		}
+		
 	}
 }

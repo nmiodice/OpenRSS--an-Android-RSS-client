@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory 
+        android:title="@string/prefs_network_settings"
+        android:key="@string/prefs_network_settings">
+        
+	    <CheckBoxPreference
+	        android:key="@string/prefs_update_in_background"
+	        android:title="@string/prefs_update_in_background"
+	        android:defaultValue="true" />
+	    
+	    <ListPreference
+	        android:dependency="@string/prefs_update_in_background"
+	        android:key="@string/prefs_update_frequency"
+	        android:title="@string/prefs_update_frequency"
+	        android:dialogTitle="@string/prefs_update_frequency"
+	        
+	        android:entries="@array/pref_update_frequency_entries"
+	        android:entryValues="@array/pref_update_frequency_values"
+	        android:defaultValue="@string/prefs_default_update_frequency"/>
+	    
+	</PreferenceCategory>
+
+    <PreferenceCategory 
+        android:title="@string/prefs_article_settings"
+        android:key="@string/prefs_article_settings">
+	    
+		<CheckBoxPreference
+	        android:key="@string/prefs_enable_animation"
+	        android:title="@string/prefs_enable_animation"
+	        android:defaultValue="true" />
+	    
+	    <ListPreference
+	        android:key="@string/prefs_articles_to_load"
+	        android:title="@string/prefs_articles_to_load"
+	        android:dialogTitle="@string/prefs_articles_to_load"
+	        
+	        android:entries="@array/prefs_articles_to_load_entries"
+	        android:entryValues="@array/prefs_articles_to_load_values"
+	        android:defaultValue="@string/prefs_default_articles_to_load"/>
+	    
+	</PreferenceCategory>
+    
+    
+    
+</PreferenceScreen>

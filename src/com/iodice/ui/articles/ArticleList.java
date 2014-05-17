@@ -21,8 +21,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.iodice.application.SharedPrefsHelper;
 import com.iodice.database.ArticleOrm;
-import com.iodice.database.SharedPrefsHelper;
 import com.iodice.rssreader.R;
 import com.iodice.ui.base.AnimatedEntryList;
 import com.iodice.utilities.ListRefreshCallback;
@@ -103,7 +103,7 @@ public class ArticleList extends AnimatedEntryList {
 			browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(feedURL));
 			startActivity(browserIntent);
 		} catch (ActivityNotFoundException e) {
-			Toast.makeText(getActivity().getApplicationContext(), R.string.no_browser,  Toast.LENGTH_LONG).show();
+			Toast.makeText(getActivity().getApplicationContext(), R.string.no_installed_app,  Toast.LENGTH_LONG).show();
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.getMessage();

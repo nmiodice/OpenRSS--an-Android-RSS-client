@@ -7,7 +7,7 @@
         tools:ignore="TypographyDashes">
         https://github.com/nmiodice/OpenRSS--an-Android-RSS-client</string>
     
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Preferences</string>
     <string name="hello_world">Hello world!</string>
     <string name="empty_string">No content</string>
     <string name="action_reload">Reload</string>
@@ -23,13 +23,7 @@
     <string name="drawer_github">Contribute on GitHub</string>
     <string name="drawer_settings">Settings</string>
     <string name="drawer_exit">Exit</string>
-   
-    
-    <!-- Shared preference identifiers -->
-	<string name="prefs">User preferences</string>
-    <string name="prefs_first_run">First time running application</string>
-    <string name="prefs_update_interval">Background article update interval</string>
-    
+       
     <!-- ID strings & generic identifiers -->
     <string name="scroll_position">SCROLL_POSITION</string>
     <string name="url_list">URL_LIST</string>
@@ -45,6 +39,8 @@
     <string name="ok">OK</string>
     <string name="yes">Yes</string>
     <string name="cancel">Cancel</string>
+    <string name="no_installed_app">No application can handle this request&#8230;</string>
+    
     
     <!-- Connectivity -->
     <string name="connection_failed">Connection failed&#8230;</string>
@@ -89,7 +85,6 @@
     <string name="no_results">No articles found. Connection may have failed&#8230;</string>
     <string name="partial_results">Some feeds failed to load&#8230;</string>
     <string name="rss_author_by">Article by</string>
-    <string name="no_browser">No application can handle this request&#8230; Please install a webbrowser</string>
     <string name="action_share_selected">Share</string>
     <string name="action_refresh">Refresh</string>
     <string name="article_share_subject">Articles sent from my mobile RSS reader</string>
@@ -107,6 +102,23 @@
     <!-- Topics activity -->
     <string name="saved_searches">Saved searches</string>
     <string name="cannot_delete_all">This search cannot be deleted</string>
+    
+    <!-- User preferences -->
+	<string name="prefs">User preferences</string>
+	<string name="prefs_first_run">First time running application</string>
+    <string name="prefs_update_in_background">Refresh in background</string>
+    
+    <string name="prefs_update_frequency">Refresh interval</string>
+    <string name="prefs_default_update_frequency">4</string>
+    
+    <string name="prefs_articles_to_load">Max articles to load</string>
+    <string name="prefs_default_articles_to_load">500</string>
+    
+    <string name="prefs_enable_animation">Enable animations</string>
+    
+    <!-- Preference display categories -->
+	<string name="prefs_network_settings">Network</string>
+    <string name="prefs_article_settings">Articles</string>
     
     
 </resources>

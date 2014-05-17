@@ -18,12 +18,16 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 
+import com.iodice.application.SharedPrefsHelper;
 import com.iodice.rssreader.R;
 
 
-public abstract class AnimatedEntryList extends CabMultiselectList {
+public abstract class AnimatedEntryList 
+extends CabMultiselectList {
 	private int lastPosition = -1;
 	private boolean isScrolling = false;
+	/* controlled by shared preferences */
+	private static boolean animate = true;
 	
 	/**
 	 * Called in order to detect if the view is currently scrolling. This prevents unwanted animations
@@ -33,6 +37,9 @@ public abstract class AnimatedEntryList extends CabMultiselectList {
 	@Override
 	public void onViewCreated (View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		boolean animate = SharedPrefsHelper.getEnableAnimations(getActivity());
+		setAnimationEnabled(animate);
+		
 		getListView().setOnScrollListener(new OnScrollListener() {
 			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
 		    }
@@ -53,7 +60,10 @@ public abstract class AnimatedEntryList extends CabMultiselectList {
     @Override
     public View onListElementRedraw(int position, View convertView, ViewGroup parent) {
 		View v = super.onListElementRedraw(position, convertView, parent);
-		if (v != null && isScrolling == true && convertView.getVisibility() == View.VISIBLE) {
+		if (v != null 
+				&& isScrolling == true 
+				&& animate == true
+				&& convertView.getVisibility() == View.VISIBLE) {
 			Animation animation = AnimationUtils.loadAnimation(getActivity(), 
 					(position > lastPosition) ? R.animator.up_from_bottom : R.animator.down_from_top);
 			animation.setInterpolator(new DecelerateInterpolator());
@@ -63,5 +73,8 @@ public abstract class AnimatedEntryList extends CabMultiselectList {
 		
     	return v;
     }
-
+    
+    public static void setAnimationEnabled(boolean b) {
+    	AnimatedEntryList.animate = b;
+    }
 }

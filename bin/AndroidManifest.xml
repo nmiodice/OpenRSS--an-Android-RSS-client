@@ -55,9 +55,19 @@
                 android:value="com.iodice.ui.Activity_Main" />
         </activity>
         
-        <service 
-            android:enabled="true"
+		<activity
+            android:name="com.iodice.application.SettingsActivity"
+            android:label="@string/app_name"
+            android:parentActivityName="com.iodice.ui.feeds.FeedActivity" >
+			<meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.iodice.ui.Activity_Main" />
+            >
+        </activity>
+        
+        <service
             android:name="com.iodice.services.ArticleUpdateService"
+            android:enabled="true"
             android:exported="false" />
         
         
