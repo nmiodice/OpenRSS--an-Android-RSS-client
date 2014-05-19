@@ -21,6 +21,7 @@ import android.util.Log;
 import com.iodice.database.FeedData;
 import com.iodice.database.FeedOrm;
 import com.iodice.rssreader.R;
+import com.iodice.services.ArticleDeleteService;
 import com.iodice.services.ArticleUpdateService;
 import com.iodice.ui.base.AnimatedEntryList;
 
@@ -58,6 +59,7 @@ implements OnSharedPreferenceChangeListener {
 			SharedPrefsHelper.setIsFirstRun(this, false);
 		}
 		startArticleUpdateService(context);
+		startArticleDeleteService(context);
 		registerPreferenceChangeListener();
 	}
 	
@@ -102,6 +104,35 @@ implements OnSharedPreferenceChangeListener {
 	 */
 	private void cancelArticleUpdateService(Context context) {
 		PendingIntent pIntent = getArticleUpdateServicePendingIntent(context);
+		AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+		alarm.cancel(pIntent);
+	}
+	
+	PendingIntent getArticleDeleteServicePendingIntent(Context context) {
+		Intent intent = new Intent(this, ArticleDeleteService.class);
+		PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
+		return pintent;
+	}
+	/**
+	 * Start a background service to purge old articles
+	 * @param context
+	 */
+	private void startArticleDeleteService(Context context) {
+		PendingIntent pIntent = getArticleDeleteServicePendingIntent(context);
+		Calendar cal = Calendar.getInstance();
+		AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+		/* run once a day */
+		alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 24*60*60*1000, pIntent);
+		
+		Log.i(TAG, "started article delete service");
+	}
+	
+	/**
+	 * Invoked when the system preference for this changes
+	 * @param context
+	 */
+	private void cancelArticleDeleteService(Context context) {
+		PendingIntent pIntent = getArticleDeleteServicePendingIntent(context);
 		AlarmManager alarm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
 		alarm.cancel(pIntent);
 	}
@@ -173,6 +204,9 @@ implements OnSharedPreferenceChangeListener {
 		} else if (key.equals(getString(R.string.prefs_enable_animation))) {
 			boolean animate = SharedPrefsHelper.getEnableAnimations(this);
 			AnimatedEntryList.setAnimationEnabled(animate);
+		} else if (key.equals(getString(R.string.prefs_days_to_keep_articles))) {
+			cancelArticleDeleteService(this);
+			startArticleDeleteService(this);
 		}
 		
 	}

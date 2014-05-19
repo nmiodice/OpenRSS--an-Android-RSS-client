@@ -52,7 +52,12 @@ implements OnSharedPreferenceChangeListener {
 		super.onResume();
 		registerPreferenceChangeListener();
 	}
-	
+	/*
+	@Override
+	public void onStop() {
+		super.onStop();
+		unregisterPreferenceChangeListener();
+	}*/
 	/**
 	 * Setup a preference change listener so the application can react to
 	 * user preference modifications
@@ -71,7 +76,7 @@ implements OnSharedPreferenceChangeListener {
 		Activity a = getActivity();
 		SharedPreferences preferences = PreferenceManager
                 .getDefaultSharedPreferences(a);
-		preferences.registerOnSharedPreferenceChangeListener(this);
+		preferences.unregisterOnSharedPreferenceChangeListener(this);
 	}
 
 	@Override

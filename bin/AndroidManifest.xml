@@ -70,7 +70,10 @@
             android:enabled="true"
             android:exported="false" />
         
-        
+        <service
+            android:name="com.iodice.services.ArticleDeleteService"
+            android:enabled="true"
+            android:exported="false" />        
     </application>
 
 </manifest>

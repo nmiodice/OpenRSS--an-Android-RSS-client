@@ -188,12 +188,27 @@ public class ArticleOrm extends BaseOrm {
     
     public static void deleteArticlesWhereLinkIs(String url, Context context) {
     	SQLiteDatabase database = BaseOrm.getReadableDatabase(context);
-	    	    
-	    database.beginTransaction();
+	    
+    	
+    	WriteLockManager.beginWriteTransaction(database);
 	    Log.i(TAG, "DELETING!");
 	    int id = database.delete(ArticleOrm.TABLE_NAME, ArticleOrm.COLUMN_PARENT_URL + " = ?", new String[] {url});
 	    Log.i(TAG, "i = " + id + " :: url = " + url);
-	    database.setTransactionSuccessful();
-	    database.endTransaction();
+    	WriteLockManager.setWriteTransactionSuccessfull(database);
+    	WriteLockManager.endWriteTransaction(database);
+    }
+    
+    public static void deleteArticlesOlderThan(Context context, int daysOld) {
+    	SQLiteDatabase database = BaseOrm.getReadableDatabase(context);
+    	WriteLockManager.beginWriteTransaction(database);
+    	
+    	String sql = "DELETE FROM " + ArticleOrm.TABLE_NAME + 
+    			" WHERE DATETIME(" + ArticleOrm.COLUMN_PUBLISHED_DATE + ")" +
+    			" < date('now','-" + daysOld + " day')";	
+    	database.execSQL(sql);
+    	Log.i(TAG,  "Deleted articles older than " + daysOld + " days");
+    	
+    	WriteLockManager.setWriteTransactionSuccessfull(database);
+    	WriteLockManager.endWriteTransaction(database);
     }
 }

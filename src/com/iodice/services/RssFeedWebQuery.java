@@ -3,6 +3,7 @@ package com.iodice.services;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -13,6 +14,7 @@ import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.Syn
 import com.google.code.rome.android.repackaged.com.sun.syndication.feed.synd.SyndFeed;
 import com.google.code.rome.android.repackaged.com.sun.syndication.io.SyndFeedInput;
 import com.google.code.rome.android.repackaged.com.sun.syndication.io.XmlReader;
+import com.iodice.application.SharedPrefsHelper;
 import com.iodice.database.ArticleData;
 import com.iodice.utilities.Sys;
 import com.iodice.utilities.Text;
@@ -94,15 +96,35 @@ public class RssFeedWebQuery implements Callable<List<ArticleData>> {
 		
 		for (int i = 0; i < numEntries; i++) {
 			tmpArticle = syndEntryToArticleData(entries.get(i));
-			results.add(tmpArticle);
+			if (tmpArticle != null)
+				results.add(tmpArticle);
 		}
 		
 		return results;
 	}
 	
+	/**
+	 * Returns article data, or null if it should not be added to the database
+	 * @param entry
+	 * @return null if the article is too old to add to the database, based off
+	 * of the current user preference
+	 */
 	private ArticleData syndEntryToArticleData(SyndEntry entry) {
 		ArticleData article = new ArticleData();
 		String tmpStr;
+		
+	    if (entry.getPublishedDate() != null) {
+	    	int maxDaysOld = SharedPrefsHelper.getDaysToKeepArticles(context);
+	    	long DAY_IN_MS = 1000 * 60 * 60 * 24;
+	    	Date limit = new Date(System.currentTimeMillis() - (maxDaysOld * DAY_IN_MS));
+	    	
+	    	Date pubDate = entry.getPublishedDate();
+	    	if (pubDate.before(limit))
+	    		return null;
+	    	
+	    	tmpStr = Text.removeHTMLAndStrip(pubDate.toString());
+	    	article.setPublishedDate(tmpStr);
+	    }
 		
 		if (entry.getTitle() != null) {
 			tmpStr = Text.removeHTMLAndStrip(entry.getTitle());
@@ -118,11 +140,6 @@ public class RssFeedWebQuery implements Callable<List<ArticleData>> {
 			tmpStr = Text.removeHTMLAndStrip(entry.getDescription().getValue());
 			article.setDescription(tmpStr);
 		}
-	    
-	    if (entry.getPublishedDate() != null) {
-	    	tmpStr = Text.removeHTMLAndStrip(entry.getPublishedDate().toString());
-	    	article.setPublishedDate(tmpStr);
-	    }
 	    
 	    if (entry.getLink() != null) {
 	    	tmpStr = Text.removeHTMLAndStrip(entry.getLink());
