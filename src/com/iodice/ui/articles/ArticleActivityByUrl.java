@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -378,16 +379,22 @@ implements ListRefreshCallback {
 	    Log.i(TAG, "Screen orientation unlocked");
 	}
 	
-	private void redrawActiveArticleListWithCachedData() {
+	private void redrawActiveArticleListWithCachedData(boolean keepScrollState) {
 		FragmentManager fMan = getFragmentManager();
 		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivityByUrl.LIST);
 		
 		// fragContainer is null until something is added to it
 		if (articleList != null) {
+			if (keepScrollState) {
+				/* doesnt modify scroll position */
+				Cursor cursor = articleList.getUpdatedQuery();
+				articleList.replaceCurrentData(cursor);
+			} else {
+				/* modifies scroll position */
+				articleList.setUpAdapter();
+				articleList.redrawListView();
+			}
 			articleList.setLoadState(false);
-
-			articleList.setUpAdapter();
-			articleList.redrawListView();
 			// load state may have been set to true if the list was requested to update
 			// its data from the web
 		}
@@ -417,8 +424,11 @@ implements ListRefreshCallback {
 	public void handleCallbackEvent(int n, Object obj) {
 		switch (n) {
 			case ArticleActivityByUrl.CALLBACK_REDRAW_WITH_CACHED_DATA:
-				this.redrawActiveArticleListWithCachedData();
+				Boolean keepScrollPos = (Boolean) obj;
+				this.redrawActiveArticleListWithCachedData(keepScrollPos);
 				this.refilterArticles();
+				
+				
 				return;
 			case ArticleActivityByUrl.CALLBACK_UPDATE_WITH_WEB_QUERY:
 				this.updateCurrentListWithWebQuery();
@@ -430,8 +440,8 @@ implements ListRefreshCallback {
 	
 
 	@Override
-	public void refreshCurrentList() {
-		this.handleCallbackEvent(ArticleActivityByTopic.CALLBACK_REDRAW_WITH_CACHED_DATA, null);
+	public void refreshCurrentList(boolean keepPosition) {
+		this.handleCallbackEvent(ArticleActivityByTopic.CALLBACK_REDRAW_WITH_CACHED_DATA, keepPosition);
 	}
 
 	

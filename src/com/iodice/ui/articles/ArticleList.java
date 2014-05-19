@@ -177,11 +177,7 @@ public class ArticleList extends AnimatedEntryList {
 		    R.id.rss_published_date
 		};
 		
-		int maxArticles = SharedPrefsHelper.getNumArticlesToLoad(getActivity());
-
-		cursor = ArticleOrm.selectWhereParentLinkIs(getActivity().getApplicationContext(), 
-				this.articleURLList, 
-				maxArticles);
+		cursor = getUpdatedQuery();
 		Log.i(TAG, "" + cursor.getCount() + " articles loaded");
 
 		// if there isnt any data, attempt a web query one time and then fail to load
@@ -193,7 +189,7 @@ public class ArticleList extends AnimatedEntryList {
 		if (cursor.getCount() == 0 && this.loadFailCount == 0) {
 			this.loadFailCount++;
 			ListRefreshCallback callbackInterface = (ListRefreshCallback) getActivity();
-			callbackInterface.refreshCurrentList();
+			callbackInterface.refreshCurrentList(false);
 		} else {
 			// create the adapter using the cursor pointing to the desired data 
 			// as well as the layout information
@@ -205,6 +201,19 @@ public class ArticleList extends AnimatedEntryList {
 			adapt.setFilterQueryProvider(getFilterQueryProvider());
 		}
 	}
+	
+	/**
+	 * Get an up-to-date query according to the current data set
+	 * @return
+	 */
+	public Cursor getUpdatedQuery() {
+		int maxArticles = SharedPrefsHelper.getNumArticlesToLoad(getActivity());
+		Cursor cursor = ArticleOrm.selectWhereParentLinkIs(getActivity().getApplicationContext(), 
+				this.articleURLList, 
+				maxArticles);
+		return cursor;
+	}
+	
 	protected int getListItemLayoutID() {
 		return R.layout.article_list_row;
 	}
@@ -360,6 +369,6 @@ public class ArticleList extends AnimatedEntryList {
 			ArticleOrm.deleteArticlesWhereArticleLinkIs(link, getActivity());
 		}
 		ListRefreshCallback callbackInterface = (ListRefreshCallback) getActivity();
-		callbackInterface.refreshCurrentList();
+		callbackInterface.refreshCurrentList(true);
 	}
 }
