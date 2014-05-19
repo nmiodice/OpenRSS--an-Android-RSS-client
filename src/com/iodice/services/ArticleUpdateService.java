@@ -17,26 +17,40 @@ import android.database.Cursor;
 import com.iodice.database.ArticleData;
 import com.iodice.database.ArticleOrm;
 import com.iodice.database.FeedOrm;
-import com.iodice.network.RssFeedWebQuery;
-import com.iodice.ui.articles.ArticleUpdateReceiver;
 
 public class ArticleUpdateService extends IntentService {
 	
+	public static final String HANDLE_ARTICLE_REFRESH = "HANDLE_ARTICLE_REFRESH";
+	public static final String ACTION_REFRESH_DATA = "ACTION_REFRESH_DATA";
+	public static final String MAX_WORKER_THREADS = "MAX_WORKER_THREADS";
+	public static final String UPDATE_ARTICLES_ACTION = "UPDATE_ARTICLES";	
 	private final static String URL_LIST = "URL_LIST";
+	
 
-	/* a public callin that will handle setting up the general use case for this service, updating all
-	 * RSS links in the database indefinitely. A second parameter, which can optionally be null, corresponds
-	 * to a function number handled by the Callback interface. If this value is not null, a broadcast
-	 * intent will be made and it will include the callbackFunctionNumber, which can be called'
-	 * by the BroadcastReceiver as defined by the user
+	/**
+	 * A public callin that will handle setting up the general use case for this service, updating all
+	 * RSS links in the database indefinitely
+	 * 
+	 * @param context
+	 * @param urlList The list of URLs to update, or null to update all lists
+	 * @param callbackFunctionNumber A callback function number included with the resulting braodcast
+	 * intent, or null if no such number should be included
+	 * @param maxWorkerThreads The maximum number of worker threads to use, or null to use one worker
+	 * for each URL. Limiting the number of worker threads can reduce system load.
 	 */
-	public static void startUpdatingAllFeeds(Context context, List<String> urlList, Integer callbackFunctionNumber) {
+	public static void startUpdatingAllFeeds(Context context, 
+			List<String> urlList, 
+			Integer callbackFunctionNumber,
+			Integer maxWorkerThreads) {
 		Intent intent = new Intent(context, ArticleUpdateService.class);
 		if (callbackFunctionNumber != null)
-			intent.putExtra(ArticleUpdateReceiver.HANDLE_ARTICLE_REFRESH, callbackFunctionNumber);
+			intent.putExtra(ArticleUpdateService.HANDLE_ARTICLE_REFRESH, callbackFunctionNumber);
 
 		if (urlList != null)
 			intent.putStringArrayListExtra(ArticleUpdateService.URL_LIST, (ArrayList<String>)urlList);
+		
+		if (maxWorkerThreads != null)
+			intent.putExtra(ArticleUpdateService.MAX_WORKER_THREADS, maxWorkerThreads);
 		
 		context.getApplicationContext().startService(intent);
 	}
@@ -62,28 +76,33 @@ public class ArticleUpdateService extends IntentService {
 	 * 
 	 * 	Identifier = ArticleUpdateService.URL_LIST --> a list of URLs to query new data for. If
 	 * 		it is not included, all URLs in the database are queried for
+	 * 
+	 * 	Identifier = ArticleUpdateService.MAX_WORKER_THREADS --> an integer limit used as a maximum
+	 * 		number of worker jobs used to query web data. This can be done in order 
+	 * 		to limit system load
 	 */
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		try {
 			List<String> links = intent.getStringArrayListExtra(ArticleUpdateService.URL_LIST);
+			int maxWorkerThreads = intent.getIntExtra(ArticleUpdateService.MAX_WORKER_THREADS, -1);
 			
 			if (links == null)
 				links = queryDatabaseForFeedLinks();
 			
-			queryWebForArticles(links);
+			queryWebForArticles(links, maxWorkerThreads);
 			broadcastFinishedStatus(intent);
 		} catch (Exception e) {}
 	}
 	
 	private void broadcastFinishedStatus(Intent callingIntent) {
 		Intent broadcastIntent = new Intent();
-		broadcastIntent.setAction(ArticleUpdateReceiver.ACTION_REFRESH_DATA);
+		broadcastIntent.setAction(ArticleUpdateService.ACTION_REFRESH_DATA);
 		broadcastIntent.addCategory(Intent.CATEGORY_DEFAULT);
 		
-		int callbackFunctionNumber = callingIntent.getIntExtra(ArticleUpdateReceiver.HANDLE_ARTICLE_REFRESH, -1);
+		int callbackFunctionNumber = callingIntent.getIntExtra(ArticleUpdateService.HANDLE_ARTICLE_REFRESH, -1);
 		if (callbackFunctionNumber != -1) {
-			broadcastIntent.putExtra(ArticleUpdateReceiver.HANDLE_ARTICLE_REFRESH, callbackFunctionNumber);
+			broadcastIntent.putExtra(ArticleUpdateService.HANDLE_ARTICLE_REFRESH, callbackFunctionNumber);
 		}
 		
 		sendBroadcast(broadcastIntent);
@@ -108,23 +127,23 @@ public class ArticleUpdateService extends IntentService {
 		ArticleOrm.insertArticles(getApplication().getApplicationContext(), articles);
 	}
 	
-	private void queryWebForArticles(List<String> links) {
-		threadedArticleRequest(links);
-
+	private void queryWebForArticles(List<String> links, int maxWorkerThreads) {
+		threadedArticleRequest(links, maxWorkerThreads);
 	}
 	
 	
 	/* executes a web request for each URL and saves the content to the database
 	 */
-	private void threadedArticleRequest(List<String> links) {
+	private void threadedArticleRequest(List<String> links, int maxWorkerThreads) {
 		/* a worker thread that queries a URL for articles */
 		Callable<List<ArticleData>> worker;
-		int numLinks;
+		int numLinks = links.size();
 		
-		numLinks = links.size();
+		if (maxWorkerThreads <= 0)
+			maxWorkerThreads = numLinks;
 		
 		// the executor and pool are used so that a return value can be obtained from the thread.Call() method
-		ExecutorService executor = Executors.newFixedThreadPool(numLinks);
+		ExecutorService executor = Executors.newFixedThreadPool(maxWorkerThreads);
 		CompletionService<List<ArticleData>> pool = new ExecutorCompletionService<List<ArticleData>>(executor);
 		
 		for (int i = 0; i < numLinks; i++) {
@@ -149,25 +168,3 @@ public class ArticleUpdateService extends IntentService {
 		}
     }
 }
-
-
-/*
-private void showLoadFailedMessage() {
-	if (this.context != null) {
-		Handler handler = new Handler();
-		handler.post(new Runnable() {
-		    public void run() {
-				CharSequence text = context.getText(R.string.web_query_failed) + url;
-				Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
-				toast.show();
-		    }
-		 });
-		
-		 
-
-	} else {
-		Log.e(TAG, "Context is null, but should not be. Failed to show failure to query web message.");
-	}
-
-}
-*/

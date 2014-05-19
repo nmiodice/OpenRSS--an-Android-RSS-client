@@ -72,7 +72,7 @@ public class FeedOrm extends BaseOrm {
 		// handle web queries asynchronously. Note, the application context is used here
 		// because the calling context may have been null (due to change in activity, etc...).
 		// in that case, the updates will start to fail (or just not happen at all)
-		ArticleUpdateService.startUpdatingAllFeeds(applicationContext, urlListToUpdate, null);
+		ArticleUpdateService.startUpdatingAllFeeds(applicationContext, urlListToUpdate, null, null);
 	}
 
     private static void insertFeed(FeedData feed, SQLiteDatabase database) throws SQLiteException {

@@ -305,13 +305,13 @@ public class ArticleActivityByUrl extends NavigationDrawerWithSpinner implements
     
 	public void queryWebForNewListData(List<String> urlList) {
 		// sets up the intent filter to catch the refresh initiated by the caller
-        IntentFilter filter = new IntentFilter(ArticleUpdateReceiver.ACTION_REFRESH_DATA);
+        IntentFilter filter = new IntentFilter(ArticleUpdateService.ACTION_REFRESH_DATA);
         filter.addCategory(Intent.CATEGORY_DEFAULT);
         receiver = new ArticleUpdateReceiver();
         this.registerReceiver(receiver, filter);
         
         // calls the service with relevant parameter information
-        ArticleUpdateService.startUpdatingAllFeeds(this, urlList, 0);
+        ArticleUpdateService.startUpdatingAllFeeds(this, urlList, 0, null);
 	}
 	
 	private void updateCurrentListWithWebQuery() {

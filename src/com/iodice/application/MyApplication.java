@@ -68,6 +68,11 @@ implements OnSharedPreferenceChangeListener {
 	 */
 	private PendingIntent getArticleUpdateServicePendingIntent(Context context) {
 		Intent intent = new Intent(this, ArticleUpdateService.class);
+		intent.putExtra(ArticleUpdateService.MAX_WORKER_THREADS, 2);
+		/* set the action, otherwise the extras will not be sent when
+		 * the intent is wrapper inside the pending intent
+		 */
+		intent.setAction(ArticleUpdateService.UPDATE_ARTICLES_ACTION);
 		PendingIntent pintent = PendingIntent.getService(this, 0, intent, 0);
 		return pintent;
 	}

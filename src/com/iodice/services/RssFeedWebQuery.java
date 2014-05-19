@@ -1,4 +1,4 @@
-package com.iodice.network;
+package com.iodice.services;
 
 import java.net.URL;
 import java.net.URLConnection;

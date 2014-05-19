@@ -148,7 +148,7 @@ implements SelectorRefreshCallback {
 			// requests that data!
 			ArrayList<String> urlList = new ArrayList<String>();
 			urlList.add(newFeed.getURL());
-			ArticleUpdateService.startUpdatingAllFeeds(this, urlList, null);
+			ArticleUpdateService.startUpdatingAllFeeds(this, urlList, null, null);
 			
 			this.handleCallbackEvent(FeedActivity.CALLBACK_REPOPULATE_DATA_AND_REFRESH_CATEGORY_SELECTOR, null);
 			return;
