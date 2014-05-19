@@ -53,6 +53,10 @@
 		<item name="android:paddingBottom">12dp</item> <!-- takes into account visual play introduced by drop shadow -->     
     </style>
     
+    <style name="SettingsTheme" parent="ActivityBase">
+		<item name="android:fontFamily">sans-serif-light"</item>
+	</style>
+    
     
     <!-- Empty text -->
     <style name="Text">

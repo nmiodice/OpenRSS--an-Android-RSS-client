@@ -107,14 +107,21 @@
 	<string name="prefs">User preferences</string>
 	<string name="prefs_first_run">First time running application</string>
     <string name="prefs_update_in_background">Refresh in background</string>
+    <string name="prefs_articles_to_load_setting_text">Loading %1$d articles at most</string>
+    <string name="prefs_hide_read_articles">Hide read articles</string>
     
     <string name="prefs_update_frequency">Refresh interval</string>
     <string name="prefs_default_update_frequency">4</string>
     
     <string name="prefs_articles_to_load">Max articles to load</string>
     <string name="prefs_default_articles_to_load">500</string>
-    
+    <string name="prefs_update_frequency_setting_text">Updating every %1$d hours</string>
     <string name="prefs_enable_animation">Enable animations</string>
+
+    <string name="prefs_days_to_keep_articles">Days to keep</string>
+    <string name="prefs_default_days_to_keep_articles">10</string>
+    <string name="prefs_days_to_keep_articles_text">Deleting articles older than %1$d days</string>
+    
     
     <!-- Preference display categories -->
 	<string name="prefs_network_settings">Network</string>

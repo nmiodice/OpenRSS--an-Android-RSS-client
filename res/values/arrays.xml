@@ -32,5 +32,20 @@
         <item>1000</item>
         <item>2000</item>
     </string-array>
+ 
+    <string-array name="prefs_days_to_keep_articles_entries">
+        <item>1 day</item>
+        <item>5 days</item>
+        <item>10 days</item>
+        <item>20 days</item>
+        <item>30 days</item>
+    </string-array>
+    <string-array name="prefs_days_to_keep_articles_values">
+        <item>1</item>
+        <item>5</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+	</string-array>
             
 </resources>

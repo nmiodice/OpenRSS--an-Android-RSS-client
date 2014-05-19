@@ -2,12 +2,14 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory 
         android:title="@string/prefs_network_settings"
-        android:key="@string/prefs_network_settings">
+        android:key="@string/prefs_network_settings"
+        >
         
 	    <CheckBoxPreference
 	        android:key="@string/prefs_update_in_background"
 	        android:title="@string/prefs_update_in_background"
-	        android:defaultValue="true" />
+	        android:defaultValue="true" 
+	        />
 	    
 	    <ListPreference
 	        android:dependency="@string/prefs_update_in_background"
@@ -29,7 +31,12 @@
 	        android:key="@string/prefs_enable_animation"
 	        android:title="@string/prefs_enable_animation"
 	        android:defaultValue="true" />
-	    
+
+		<CheckBoxPreference
+	        android:key="@string/prefs_hide_read_articles"
+	        android:title="@string/prefs_hide_read_articles"
+	        android:defaultValue="true" />
+			    
 	    <ListPreference
 	        android:key="@string/prefs_articles_to_load"
 	        android:title="@string/prefs_articles_to_load"
@@ -38,7 +45,16 @@
 	        android:entries="@array/prefs_articles_to_load_entries"
 	        android:entryValues="@array/prefs_articles_to_load_values"
 	        android:defaultValue="@string/prefs_default_articles_to_load"/>
-	    
+
+	   <ListPreference
+	        android:key="@string/prefs_days_to_keep_articles"
+	        android:title="@string/prefs_days_to_keep_articles"
+	        android:dialogTitle="@string/prefs_days_to_keep_articles"
+	        
+	        android:entries="@array/prefs_days_to_keep_articles_entries"
+	        android:entryValues="@array/prefs_days_to_keep_articles_values"
+	        android:defaultValue="@string/prefs_default_days_to_keep_articles"/>
+	       
 	</PreferenceCategory>
     
     

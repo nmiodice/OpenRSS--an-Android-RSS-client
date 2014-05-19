@@ -17,6 +17,8 @@ public final class R {
         public static final int pref_update_frequency_values=0x7f060001;
         public static final int prefs_articles_to_load_entries=0x7f060002;
         public static final int prefs_articles_to_load_values=0x7f060003;
+        public static final int prefs_days_to_keep_articles_entries=0x7f060004;
+        public static final int prefs_days_to_keep_articles_values=0x7f060005;
     }
     public static final class attr {
     }
@@ -255,16 +257,22 @@ public final class R {
         /**  User preferences 
          */
         public static final int prefs=0x7f0a004c;
-        public static final int prefs_article_settings=0x7f0a0055;
-        public static final int prefs_articles_to_load=0x7f0a0051;
-        public static final int prefs_default_articles_to_load=0x7f0a0052;
-        public static final int prefs_default_update_frequency=0x7f0a0050;
-        public static final int prefs_enable_animation=0x7f0a0053;
+        public static final int prefs_article_settings=0x7f0a005b;
+        public static final int prefs_articles_to_load=0x7f0a0053;
+        public static final int prefs_articles_to_load_setting_text=0x7f0a004f;
+        public static final int prefs_days_to_keep_articles=0x7f0a0057;
+        public static final int prefs_days_to_keep_articles_text=0x7f0a0059;
+        public static final int prefs_default_articles_to_load=0x7f0a0054;
+        public static final int prefs_default_days_to_keep_articles=0x7f0a0058;
+        public static final int prefs_default_update_frequency=0x7f0a0052;
+        public static final int prefs_enable_animation=0x7f0a0056;
         public static final int prefs_first_run=0x7f0a004d;
+        public static final int prefs_hide_read_articles=0x7f0a0050;
         /**  Preference display categories 
          */
-        public static final int prefs_network_settings=0x7f0a0054;
-        public static final int prefs_update_frequency=0x7f0a004f;
+        public static final int prefs_network_settings=0x7f0a005a;
+        public static final int prefs_update_frequency=0x7f0a0051;
+        public static final int prefs_update_frequency_setting_text=0x7f0a0055;
         public static final int prefs_update_in_background=0x7f0a004e;
         public static final int publishedDate=0x7f0a0016;
         public static final int rss_author_by=0x7f0a003c;
@@ -326,20 +334,21 @@ public final class R {
         public static final int ArticleTileContainer=0x7f0b0004;
         /**  Header text 
          */
-        public static final int Header=0x7f0b000a;
-        public static final int Spinner_Large_Text=0x7f0b0008;
-        public static final int Spinner_Small_Text=0x7f0b0009;
+        public static final int Header=0x7f0b000b;
+        public static final int SettingsTheme=0x7f0b0006;
+        public static final int Spinner_Large_Text=0x7f0b0009;
+        public static final int Spinner_Small_Text=0x7f0b000a;
         /**  Sub-header text 
          */
-        public static final int Subheader=0x7f0b000b;
-        public static final int Subheader_small=0x7f0b000c;
+        public static final int Subheader=0x7f0b000c;
+        public static final int Subheader_small=0x7f0b000d;
         /**  Temporary messages, such as 'Loading new content' 
          */
-        public static final int Temporary_message=0x7f0b000d;
+        public static final int Temporary_message=0x7f0b000e;
         /**  Empty text 
          */
-        public static final int Text=0x7f0b0006;
-        public static final int UserInput=0x7f0b0007;
+        public static final int Text=0x7f0b0007;
+        public static final int UserInput=0x7f0b0008;
         public static final int home_category_spinner_style=0x7f0b0002;
         /**  Tile 
  takes into account visual play introduced by drop shadow 

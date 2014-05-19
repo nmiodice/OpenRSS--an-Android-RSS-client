@@ -68,5 +68,14 @@ public class SharedPrefsHelper {
 				getString(R.string.prefs_update_frequency), defaultAsString);
 		return Integer.parseInt(timeAsString);
 	}
+	
+	public static int getDaysToKeepArticles(Context context) {
+		SharedPreferences prefs = getPrefs(context);
+		
+		String defaultAsString = context.getString(R.string.prefs_default_days_to_keep_articles);
+		String daysAsString = prefs.getString(context.
+				getString(R.string.prefs_days_to_keep_articles), defaultAsString);
+		return Integer.parseInt(daysAsString);
+	}
 
 }
