@@ -168,9 +168,9 @@ public class FeedList extends AnimatedEntryList implements Callback {
     		return;
     	Cursor c;
     	if (category == "*")
-    		c = FeedOrm.selectAllOrderBy(getActivity().getApplicationContext(), FeedOrm.COLUMN_NAME);
+    		c = FeedOrm.selectAllOrderBy(getActivity().getApplicationContext(), FeedOrm.COLUMN_ALPHA_NAME);
     	else
-    		c = FeedOrm.selectAllOrderByWhereCategoryIs(getActivity().getApplicationContext(), FeedOrm.COLUMN_NAME, category);
+    		c = FeedOrm.selectAllOrderByWhereCategoryIs(getActivity().getApplicationContext(), FeedOrm.COLUMN_ALPHA_NAME, category);
     	
     	/* c == null when there are no feeds with that category. Alert the UI to redraw its category selector 
     	 * and redraw what it wants upon an empty set 
@@ -181,8 +181,6 @@ public class FeedList extends AnimatedEntryList implements Callback {
     		Log.i(TAG, "callback interface");
     		return;
     	}
-    		
-    	Log.i(TAG, "replacing data set");
     	this.replaceCurrentData(c);
     }
 

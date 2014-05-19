@@ -35,11 +35,14 @@ public class Text {
 		s = s.toLowerCase(Locale.US);
 		s = s.trim();
 		s = removeHTMLAndStrip(s);
-		s = s.replaceAll("[^a-zA-Z0-9 \\.]", "");
+		s = Text.getAlphaCharsOnly(s);
 		List<String> items = Arrays.asList(s.split(delimiter));
 		return items;
 	}
-
+	
+	public static String getAlphaCharsOnly(String s) {
+		return s.replaceAll("[^a-zA-Z0-9 \\.]", "");
+	}
 	
 	public static String toFirstLetterUppercase(String s) {
 		List<String> strings = Arrays.asList(s.split(" "));

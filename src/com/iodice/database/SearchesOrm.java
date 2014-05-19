@@ -73,10 +73,11 @@ public class SearchesOrm extends BaseOrm {
     
     public static Cursor selectAll(Context context) {
     	SQLiteDatabase database = BaseOrm.getReadableDatabase(context);
+    	
 	    String sql = "SELECT rowid _id,* FROM " + SearchesOrm.TABLE_NAME;
-
 	    sql += " ORDER BY " + SearchesOrm.COLUMN_SEARCH_TERM;	    
 	    Cursor cursor = database.rawQuery(sql, null);
+	    
 	    return cursor;
     }
     

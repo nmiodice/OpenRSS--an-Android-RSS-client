@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.iodice.rssreader.R;
 import com.iodice.services.ArticleUpdateService;
+import com.iodice.utilities.Text;
 
 
 public class FeedOrm extends BaseOrm {
@@ -21,6 +22,12 @@ public class FeedOrm extends BaseOrm {
     
     private static final String COLUMN_NAME_TYPE = "TEXT PRIMARY KEY NOT NULL";
     public static final String COLUMN_NAME = "name";
+    
+    /* the same as COLUMN_NAME, but with punctuation removed so it is ideal to 
+     * sort on when you want an alphabetically sorted result
+     */
+    private static final String COLUMN_ALPHA_NAME_TYPE = "TEXT";
+    public static final String COLUMN_ALPHA_NAME = "alpha_name";
     
     private static final String COLUMN_URL_TYPE = "TEXT NOT NULL";
     public static final String COLUMN_URL = "url";
@@ -35,7 +42,8 @@ public class FeedOrm extends BaseOrm {
     		"CREATE TABLE "  + TABLE_NAME + " (" +
         		COLUMN_GROUP + " " + COLUMN_GROUP_TYPE + COMMA_SEP +
     			COLUMN_URL   + " " + COLUMN_URL_TYPE   + COMMA_SEP +
-    			COLUMN_NAME  + " " + COLUMN_NAME_TYPE  +
+    			COLUMN_NAME  + " " + COLUMN_NAME_TYPE  + COMMA_SEP +
+    			COLUMN_ALPHA_NAME + " " + COLUMN_ALPHA_NAME_TYPE +
    			")";
     
     public static final String SQL_DROP_TABLE =
@@ -144,10 +152,16 @@ public class FeedOrm extends BaseOrm {
         else
         	values.put(FeedOrm.COLUMN_URL, feed.getURL());
         
-        if (feed.getName() == null)
+        String name = feed.getName();
+        if (name == null) {
         	values.putNull(FeedOrm.COLUMN_NAME);
-        else
-        	values.put(FeedOrm.COLUMN_NAME, feed.getName());
+        	values.putNull(FeedOrm.COLUMN_ALPHA_NAME);
+        } else {
+        	
+        	values.put(FeedOrm.COLUMN_NAME, name);
+        	String alphaName = Text.getAlphaCharsOnly(name);
+        	values.put(FeedOrm.COLUMN_ALPHA_NAME, alphaName);
+        }
         
         return values;
     }
