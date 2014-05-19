@@ -186,18 +186,25 @@ public class ArticleOrm extends BaseOrm {
 		return cursor;
     }
     
-    public static void deleteArticlesWhereLinkIs(String url, Context context) {
+    public static void deleteArticlesWhereParentLinkIs(String url, Context context) {
+    	deleteArticlesWhere(context, ArticleOrm.COLUMN_PARENT_URL, url);
+    }
+    
+    public static void deleteArticlesWhereArticleLinkIs(String url, Context context) {
+    	deleteArticlesWhere(context, ArticleOrm.COLUMN_URL, url);
+    }
+    
+    private static void deleteArticlesWhere(Context context, String col, String val) {
     	SQLiteDatabase database = BaseOrm.getReadableDatabase(context);
-	    
-    	
     	WriteLockManager.beginWriteTransaction(database);
-	    Log.i(TAG, "DELETING!");
-	    int id = database.delete(ArticleOrm.TABLE_NAME, ArticleOrm.COLUMN_PARENT_URL + " = ?", new String[] {url});
-	    Log.i(TAG, "i = " + id + " :: url = " + url);
+
+	    int id = database.delete(ArticleOrm.TABLE_NAME, col + " = ?", new String[] {val});
+	    Log.i(TAG, "i = " + id + " :: value = " + val);
     	WriteLockManager.setWriteTransactionSuccessfull(database);
     	WriteLockManager.endWriteTransaction(database);
     }
-    
+
+
     public static void deleteArticlesOlderThan(Context context, int daysOld) {
     	SQLiteDatabase database = BaseOrm.getReadableDatabase(context);
     	WriteLockManager.beginWriteTransaction(database);

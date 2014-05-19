@@ -17,9 +17,12 @@ import android.view.animation.AnimationUtils;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.BaseAdapter;
 
 import com.iodice.application.SharedPrefsHelper;
 import com.iodice.rssreader.R;
+import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.SwipeDismissAdapter;
+import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.SwipeOnScrollListener;
 
 
 public abstract class AnimatedEntryList 
@@ -39,23 +42,35 @@ extends CabMultiselectList {
 		super.onViewCreated(view, savedInstanceState);
 		boolean animate = SharedPrefsHelper.getEnableAnimations(getActivity());
 		setAnimationEnabled(animate);
-		
-		getListView().setOnScrollListener(new OnScrollListener() {
-			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-		    }
-			
+	}
+	
+	private SwipeOnScrollListener getScrollListener() {
+    	return new SwipeOnScrollListener() {
 		    public void onScrollStateChanged(AbsListView view, int scrollState) {
+		    	super.onScrollStateChanged(view, scrollState);
 		    	if(scrollState == OnScrollListener.SCROLL_STATE_IDLE)
 		        	isScrolling = false;
 		    	else
 		        	isScrolling = true;
 		    }
-		});
-		
+		};
 	}
+	
+	@Override
+	/**
+	 * Sets up a swipe dismiss adapter & a suitable scroll listener to be
+	 * used for animating entry/exit to the screen
+	 */
+    protected void setSwipeDismissAdapter() {
+    	BaseAdapter mAdapter = (BaseAdapter) this.getListAdapter();
+    	SwipeOnScrollListener scrollListener = getScrollListener();
+        SwipeDismissAdapter adapter = new SwipeDismissAdapter(mAdapter, this, scrollListener);
+        adapter.setAbsListView(getListView());
+        getListView().setAdapter(adapter);
+    }
 
-	/*
-	 * Handles animation
+	/**
+	 * Handles animation from top/bottom of the screen
 	 */
     @Override
     public View onListElementRedraw(int position, View convertView, ViewGroup parent) {
@@ -77,4 +92,5 @@ extends CabMultiselectList {
     public static void setAnimationEnabled(boolean b) {
     	AnimatedEntryList.animate = b;
     }
+
 }

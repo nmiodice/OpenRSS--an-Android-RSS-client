@@ -21,6 +21,103 @@ public final class R {
         public static final int prefs_days_to_keep_articles_values=0x7f060005;
     }
     public static final class attr {
+        /** <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>reveal</code></td><td>0</td><td></td></tr>
+<tr><td><code>dismiss</code></td><td>1</td><td></td></tr>
+<tr><td><code>choice</code></td><td>2</td><td></td></tr>
+</table>
+         */
+        public static final int swipeActionLeft=0x7f010008;
+        /** <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>reveal</code></td><td>0</td><td></td></tr>
+<tr><td><code>dismiss</code></td><td>1</td><td></td></tr>
+<tr><td><code>choice</code></td><td>2</td><td></td></tr>
+</table>
+         */
+        public static final int swipeActionRight=0x7f010009;
+        /** <p>Must be an integer value, such as "<code>100</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int swipeAnimationTime=0x7f010001;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int swipeBackView=0x7f010006;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int swipeCloseAllItemsWhenMoveList=0x7f010004;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int swipeDrawableChecked=0x7f01000a;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int swipeDrawableUnchecked=0x7f01000b;
+        /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+         */
+        public static final int swipeFrontView=0x7f010005;
+        /** <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>none</code></td><td>0</td><td></td></tr>
+<tr><td><code>both</code></td><td>1</td><td></td></tr>
+<tr><td><code>right</code></td><td>2</td><td></td></tr>
+<tr><td><code>left</code></td><td>3</td><td></td></tr>
+</table>
+         */
+        public static final int swipeMode=0x7f010007;
+        /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int swipeOffsetLeft=0x7f010002;
+        /** <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int swipeOffsetRight=0x7f010003;
+        /** <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+         */
+        public static final int swipeOpenOnLongPress=0x7f010000;
     }
     public static final class color {
         public static final int article_search_background=0x7f070012;
@@ -102,50 +199,57 @@ public final class R {
         public static final int topics_light=0x7f020027;
     }
     public static final class id {
-        public static final int action_add_feed=0x7f0d0026;
-        public static final int action_article_search=0x7f0d0023;
-        public static final int action_clear_search_term=0x7f0d0003;
-        public static final int action_delete_searches=0x7f0d0025;
-        public static final int action_deselect_all=0x7f0d0022;
-        public static final int action_load_selected=0x7f0d002a;
-        public static final int action_refresh=0x7f0d0024;
-        public static final int action_remove_selected=0x7f0d0029;
-        public static final int action_save_group=0x7f0d002b;
-        public static final int action_save_search_term=0x7f0d0004;
-        public static final int action_select_all=0x7f0d0020;
-        public static final int action_settings=0x7f0d0027;
-        public static final int action_share_selected=0x7f0d0021;
-        public static final int action_test_re_initialize=0x7f0d0028;
-        public static final int add_feed_categories=0x7f0d0015;
-        public static final int add_feed_name=0x7f0d0012;
-        public static final int add_feed_new_category=0x7f0d0014;
-        public static final int add_feed_url=0x7f0d0013;
-        public static final int article_search_box_container=0x7f0d0002;
-        public static final int article_search_box_text=0x7f0d0005;
-        public static final int category_csv_list=0x7f0d0016;
-        public static final int content_frame=0x7f0d0001;
-        public static final int drawer_layout=0x7f0d0000;
-        public static final int feed_list_container=0x7f0d0011;
-        public static final int feed_list_text_content=0x7f0d0018;
-        public static final int feed_list_view_root=0x7f0d0017;
-        public static final int feed_name=0x7f0d0019;
-        public static final int feed_url=0x7f0d001a;
-        public static final int item_checkbox=0x7f0d000a;
-        public static final int left_drawer=0x7f0d0007;
-        public static final int navmenuitem_icon=0x7f0d001b;
-        public static final int navmenuitem_label=0x7f0d001c;
-        public static final int navmenusection_label=0x7f0d001d;
-        public static final int rss_author=0x7f0d000f;
-        public static final int rss_base_url=0x7f0d000c;
-        public static final int rss_description=0x7f0d000e;
-        public static final int rss_fragment_container=0x7f0d0006;
-        public static final int rss_published_date=0x7f0d000d;
-        public static final int rss_root=0x7f0d0008;
-        public static final int rss_title=0x7f0d000b;
-        public static final int rss_url=0x7f0d0010;
-        public static final int test=0x7f0d0009;
-        public static final int text_bottom=0x7f0d001f;
-        public static final int text_top=0x7f0d001e;
+        public static final int action_add_feed=0x7f0c002d;
+        public static final int action_article_search=0x7f0c002a;
+        public static final int action_clear_search_term=0x7f0c000a;
+        public static final int action_delete_searches=0x7f0c002c;
+        public static final int action_deselect_all=0x7f0c0029;
+        public static final int action_load_selected=0x7f0c0031;
+        public static final int action_refresh=0x7f0c002b;
+        public static final int action_remove_selected=0x7f0c0030;
+        public static final int action_save_group=0x7f0c0032;
+        public static final int action_save_search_term=0x7f0c000b;
+        public static final int action_select_all=0x7f0c0027;
+        public static final int action_settings=0x7f0c002e;
+        public static final int action_share_selected=0x7f0c0028;
+        public static final int action_test_re_initialize=0x7f0c002f;
+        public static final int add_feed_categories=0x7f0c001c;
+        public static final int add_feed_name=0x7f0c0019;
+        public static final int add_feed_new_category=0x7f0c001b;
+        public static final int add_feed_url=0x7f0c001a;
+        public static final int article_search_box_container=0x7f0c0009;
+        public static final int article_search_box_text=0x7f0c000c;
+        public static final int both=0x7f0c0001;
+        public static final int category_csv_list=0x7f0c001d;
+        public static final int choice=0x7f0c0006;
+        public static final int content_frame=0x7f0c0008;
+        public static final int dismiss=0x7f0c0005;
+        public static final int drawer_layout=0x7f0c0007;
+        public static final int feed_list_container=0x7f0c0018;
+        public static final int feed_list_text_content=0x7f0c001f;
+        public static final int feed_list_view_root=0x7f0c001e;
+        public static final int feed_name=0x7f0c0020;
+        public static final int feed_url=0x7f0c0021;
+        public static final int item_checkbox=0x7f0c0011;
+        public static final int left=0x7f0c0003;
+        public static final int left_drawer=0x7f0c000e;
+        public static final int navmenuitem_icon=0x7f0c0022;
+        public static final int navmenuitem_label=0x7f0c0023;
+        public static final int navmenusection_label=0x7f0c0024;
+        public static final int none=0x7f0c0000;
+        public static final int reveal=0x7f0c0004;
+        public static final int right=0x7f0c0002;
+        public static final int rss_author=0x7f0c0016;
+        public static final int rss_base_url=0x7f0c0013;
+        public static final int rss_description=0x7f0c0015;
+        public static final int rss_fragment_container=0x7f0c000d;
+        public static final int rss_published_date=0x7f0c0014;
+        public static final int rss_root=0x7f0c000f;
+        public static final int rss_title=0x7f0c0012;
+        public static final int rss_url=0x7f0c0017;
+        public static final int test=0x7f0c0010;
+        public static final int text_bottom=0x7f0c0026;
+        public static final int text_top=0x7f0c0025;
     }
     public static final class integer {
         public static final int animate_duration_base=0x7f090001;
@@ -172,17 +276,19 @@ public final class R {
         public static final int feed_add_new_feed=0x7f030003;
         public static final int feed_add_new_grouping=0x7f030004;
         public static final int feed_list_row=0x7f030005;
-        public static final int navdrawer_item=0x7f030006;
-        public static final int navdrawer_section=0x7f030007;
-        public static final int two_line_spinner_list_item=0x7f030008;
+        public static final int list_view_base=0x7f030006;
+        public static final int navdrawer_item=0x7f030007;
+        public static final int navdrawer_section=0x7f030008;
+        public static final int null_item=0x7f030009;
+        public static final int two_line_spinner_list_item=0x7f03000a;
     }
     public static final class menu {
-        public static final int articles_cab=0x7f0c0000;
-        public static final int articles_with_searchbar_filter=0x7f0c0001;
-        public static final int articles_with_spinner_filter=0x7f0c0002;
-        public static final int empty=0x7f0c0003;
-        public static final int feeds=0x7f0c0004;
-        public static final int feeds_cab=0x7f0c0005;
+        public static final int articles_cab=0x7f0d0000;
+        public static final int articles_with_searchbar_filter=0x7f0d0001;
+        public static final int articles_with_spinner_filter=0x7f0d0002;
+        public static final int empty=0x7f0d0003;
+        public static final int feeds=0x7f0d0004;
+        public static final int feeds_cab=0x7f0d0005;
     }
     public static final class string {
         /**  Add new feed 
@@ -358,4 +464,212 @@ public final class R {
     public static final class xml {
         public static final int preferences=0x7f050000;
     }
+    public static final class styleable {
+        /** Attributes that can be used with a SwipeListView.
+           <p>Includes the following attributes:</p>
+           <table>
+           <colgroup align="left" />
+           <colgroup align="left" />
+           <tr><th>Attribute</th><th>Description</th></tr>
+           <tr><td><code>{@link #SwipeListView_swipeActionLeft com.iodice.rssreader:swipeActionLeft}</code></td><td></td></tr>
+           <tr><td><code>{@link #SwipeListView_swipeActionRight com.iodice.rssreader:swipeActionRight}</code></td><td></td></tr>
+           <tr><td><code>{@link #SwipeListView_swipeAnimationTime com.iodice.rssreader:swipeAnimationTime}</code></td><td></td></tr>
+           <tr><td><code>{@link #SwipeListView_swipeBackView com.iodice.rssreader:swipeBackView}</code></td><td></td></tr>
+           <tr><td><code>{@link #SwipeListView_swipeCloseAllItemsWhenMoveList com.iodice.rssreader:swipeCloseAllItemsWhenMoveList}</code></td><td></td></tr>
+           <tr><td><code>{@link #SwipeListView_swipeDrawableChecked com.iodice.rssreader:swipeDrawableChecked}</code></td><td></td></tr>
+           <tr><td><code>{@link #SwipeListView_swipeDrawableUnchecked com.iodice.rssreader:swipeDrawableUnchecked}</code></td><td></td></tr>
+           <tr><td><code>{@link #SwipeListView_swipeFrontView com.iodice.rssreader:swipeFrontView}</code></td><td></td></tr>
+           <tr><td><code>{@link #SwipeListView_swipeMode com.iodice.rssreader:swipeMode}</code></td><td></td></tr>
+           <tr><td><code>{@link #SwipeListView_swipeOffsetLeft com.iodice.rssreader:swipeOffsetLeft}</code></td><td></td></tr>
+           <tr><td><code>{@link #SwipeListView_swipeOffsetRight com.iodice.rssreader:swipeOffsetRight}</code></td><td></td></tr>
+           <tr><td><code>{@link #SwipeListView_swipeOpenOnLongPress com.iodice.rssreader:swipeOpenOnLongPress}</code></td><td></td></tr>
+           </table>
+           @see #SwipeListView_swipeActionLeft
+           @see #SwipeListView_swipeActionRight
+           @see #SwipeListView_swipeAnimationTime
+           @see #SwipeListView_swipeBackView
+           @see #SwipeListView_swipeCloseAllItemsWhenMoveList
+           @see #SwipeListView_swipeDrawableChecked
+           @see #SwipeListView_swipeDrawableUnchecked
+           @see #SwipeListView_swipeFrontView
+           @see #SwipeListView_swipeMode
+           @see #SwipeListView_swipeOffsetLeft
+           @see #SwipeListView_swipeOffsetRight
+           @see #SwipeListView_swipeOpenOnLongPress
+         */
+        public static final int[] SwipeListView = {
+            0x7f010000, 0x7f010001, 0x7f010002, 0x7f010003,
+            0x7f010004, 0x7f010005, 0x7f010006, 0x7f010007,
+            0x7f010008, 0x7f010009, 0x7f01000a, 0x7f01000b
+        };
+        /**
+          <p>This symbol is the offset where the {@link com.iodice.rssreader.R.attr#swipeActionLeft}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>reveal</code></td><td>0</td><td></td></tr>
+<tr><td><code>dismiss</code></td><td>1</td><td></td></tr>
+<tr><td><code>choice</code></td><td>2</td><td></td></tr>
+</table>
+          @attr name com.iodice.rssreader:swipeActionLeft
+        */
+        public static final int SwipeListView_swipeActionLeft = 8;
+        /**
+          <p>This symbol is the offset where the {@link com.iodice.rssreader.R.attr#swipeActionRight}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>reveal</code></td><td>0</td><td></td></tr>
+<tr><td><code>dismiss</code></td><td>1</td><td></td></tr>
+<tr><td><code>choice</code></td><td>2</td><td></td></tr>
+</table>
+          @attr name com.iodice.rssreader:swipeActionRight
+        */
+        public static final int SwipeListView_swipeActionRight = 9;
+        /**
+          <p>This symbol is the offset where the {@link com.iodice.rssreader.R.attr#swipeAnimationTime}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be an integer value, such as "<code>100</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.iodice.rssreader:swipeAnimationTime
+        */
+        public static final int SwipeListView_swipeAnimationTime = 1;
+        /**
+          <p>This symbol is the offset where the {@link com.iodice.rssreader.R.attr#swipeBackView}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name com.iodice.rssreader:swipeBackView
+        */
+        public static final int SwipeListView_swipeBackView = 6;
+        /**
+          <p>This symbol is the offset where the {@link com.iodice.rssreader.R.attr#swipeCloseAllItemsWhenMoveList}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.iodice.rssreader:swipeCloseAllItemsWhenMoveList
+        */
+        public static final int SwipeListView_swipeCloseAllItemsWhenMoveList = 4;
+        /**
+          <p>This symbol is the offset where the {@link com.iodice.rssreader.R.attr#swipeDrawableChecked}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name com.iodice.rssreader:swipeDrawableChecked
+        */
+        public static final int SwipeListView_swipeDrawableChecked = 10;
+        /**
+          <p>This symbol is the offset where the {@link com.iodice.rssreader.R.attr#swipeDrawableUnchecked}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name com.iodice.rssreader:swipeDrawableUnchecked
+        */
+        public static final int SwipeListView_swipeDrawableUnchecked = 11;
+        /**
+          <p>This symbol is the offset where the {@link com.iodice.rssreader.R.attr#swipeFrontView}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
+or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>".
+          @attr name com.iodice.rssreader:swipeFrontView
+        */
+        public static final int SwipeListView_swipeFrontView = 5;
+        /**
+          <p>This symbol is the offset where the {@link com.iodice.rssreader.R.attr#swipeMode}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be one of the following constant values.</p>
+<table>
+<colgroup align="left" />
+<colgroup align="left" />
+<colgroup align="left" />
+<tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td><code>none</code></td><td>0</td><td></td></tr>
+<tr><td><code>both</code></td><td>1</td><td></td></tr>
+<tr><td><code>right</code></td><td>2</td><td></td></tr>
+<tr><td><code>left</code></td><td>3</td><td></td></tr>
+</table>
+          @attr name com.iodice.rssreader:swipeMode
+        */
+        public static final int SwipeListView_swipeMode = 7;
+        /**
+          <p>This symbol is the offset where the {@link com.iodice.rssreader.R.attr#swipeOffsetLeft}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.iodice.rssreader:swipeOffsetLeft
+        */
+        public static final int SwipeListView_swipeOffsetLeft = 2;
+        /**
+          <p>This symbol is the offset where the {@link com.iodice.rssreader.R.attr#swipeOffsetRight}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be a dimension value, which is a floating point number appended with a unit such as "<code>14.5sp</code>".
+Available units are: px (pixels), dp (density-independent pixels), sp (scaled pixels based on preferred font size),
+in (inches), mm (millimeters).
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.iodice.rssreader:swipeOffsetRight
+        */
+        public static final int SwipeListView_swipeOffsetRight = 3;
+        /**
+          <p>This symbol is the offset where the {@link com.iodice.rssreader.R.attr#swipeOpenOnLongPress}
+          attribute's value can be found in the {@link #SwipeListView} array.
+
+
+          <p>Must be a boolean value, either "<code>true</code>" or "<code>false</code>".
+<p>This may also be a reference to a resource (in the form
+"<code>@[<i>package</i>:]<i>type</i>:<i>name</i></code>") or
+theme attribute (in the form
+"<code>?[<i>package</i>:][<i>type</i>:]<i>name</i></code>")
+containing a value of this type.
+          @attr name com.iodice.rssreader:swipeOpenOnLongPress
+        */
+        public static final int SwipeListView_swipeOpenOnLongPress = 0;
+    };
 }

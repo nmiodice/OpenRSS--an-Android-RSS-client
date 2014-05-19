@@ -236,6 +236,10 @@ public class FeedList extends AnimatedEntryList implements Callback {
 		}
 	}
 	
+	protected int getListItemLayoutID() {
+		return R.layout.feed_list_row;
+	}
+	
 	
 	
 	
@@ -311,7 +315,7 @@ public class FeedList extends AnimatedEntryList implements Callback {
 		// process db request in background thread
 		protected Cursor doInBackground(Void... arg0) {
 			Cursor cursor;		
-			cursor = FeedOrm.selectAllOrderBy(getActivity().getApplicationContext(), FeedOrm.COLUMN_NAME);
+			cursor = FeedOrm.selectAllOrderBy(getActivity().getApplicationContext(), FeedOrm.COLUMN_ALPHA_NAME);
 			return cursor;
 		}
 		
@@ -329,8 +333,20 @@ public class FeedList extends AnimatedEntryList implements Callback {
 			};
 			// create the adapter using the cursor pointing to the desired data 
 			// as well as the layout information
-			setAdapter(cursor, columns, to, R.layout.feed_list_row);
+			setAdapter(cursor, columns, to, getListItemLayoutID());
 		}
 	}
+	protected void onItemSwiped(List<Integer> removed) {
+		int numRemoved = removed.size();
+		MySimpleCursorAdapter adapt = (MySimpleCursorAdapter)getListAdapter();
 
+		for (int i = 0; i < numRemoved; i++) {
+			View v = adapt.getView(removed.get(i), null, null);
+			v.setVisibility(View.GONE);
+			String link = ((TextView)v.findViewById(R.id.feed_url)).getText().toString();
+			FeedOrm.deleteFeedWithLink(link, getActivity());
+		}
+		SelectorRefreshCallback callbackInterface = (SelectorRefreshCallback) getActivity();
+		callbackInterface.refreshCurrentSelectorMaintainSelection();
+	}
 }

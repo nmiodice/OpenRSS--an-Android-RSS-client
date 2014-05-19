@@ -249,7 +249,7 @@ public class FeedOrm extends BaseOrm {
 	    database.setTransactionSuccessful();
 	    database.endTransaction();
 	  	
-	  	ArticleOrm.deleteArticlesWhereLinkIs(url, context);
+	  	ArticleOrm.deleteArticlesWhereParentLinkIs(url, context);
     }
     
     

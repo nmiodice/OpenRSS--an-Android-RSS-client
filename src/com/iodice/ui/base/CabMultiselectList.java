@@ -1,6 +1,7 @@
 package com.iodice.ui.base;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.app.ListFragment;
 import android.content.Context;
@@ -16,11 +17,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.MultiChoiceModeListener;
+import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import com.iodice.rssreader.R;
+import com.nhaarman.listviewanimations.itemmanipulation.OnDismissCallback;
+import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.SwipeDismissAdapter;
 
 /**
  * This class provides a simple abstraction of a listview that include support for a 
@@ -42,12 +46,16 @@ import com.iodice.rssreader.R;
  * @author Nicholas M. Iodice
  *
  */
-public abstract class CabMultiselectList extends ListFragment {
+public abstract class CabMultiselectList 
+extends ListFragment
+implements OnDismissCallback {
 	private final String TAG = "List_Base";
 
 	protected ArrayList<Integer> selectedListItems = new ArrayList<Integer>();
+	protected ArrayList<Integer> hiddenListItems = new ArrayList<Integer>();
 	protected boolean isInActionMode = false;
 	
+	abstract protected void onItemSwiped(List<Integer> removed);
 	/**
 	 * The action taken out when a single list item is clicked while the
 	 * contextual action bar is not visible
@@ -86,7 +94,13 @@ public abstract class CabMultiselectList extends ListFragment {
      * @return The menu layout ID to be used while the contextual action bar is active
      */
     abstract public int cabGetMenuLayoutId();
-
+    
+    /**
+     * 
+     * @return The row layout ID for a list item
+     */
+    abstract protected int getListItemLayoutID();
+    
     @Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
@@ -131,7 +145,27 @@ public abstract class CabMultiselectList extends ListFragment {
 				    cursor, 
 				    columns, 
 				    to));
+		setSwipeDismissAdapter();
 	}
+	
+    protected void setSwipeDismissAdapter() {
+    	BaseAdapter mAdapter = (BaseAdapter) this.getListAdapter();
+        SwipeDismissAdapter adapter = new SwipeDismissAdapter(mAdapter, this);
+        adapter.setAbsListView(getListView());
+        getListView().setAdapter(adapter);
+    }
+    
+    /**
+     * Called in response to a list item being dismissed. This call forwards
+     * the dismissed positions to the subclass
+     */
+    public void onDismiss(AbsListView listView, int[] reverseSortedPositions) {
+		ArrayList<Integer> removed = new ArrayList<Integer>();
+		int length = reverseSortedPositions.length;
+		for (int i = 0; i < length; i++)
+			removed.add(reverseSortedPositions[i]);		
+        onItemSwiped(removed);
+    }
 	
 	/**
 	 * Select all the list elements, or if all of them are already selected,
@@ -197,6 +231,7 @@ public abstract class CabMultiselectList extends ListFragment {
     // this logic is applied to each list row whenever the list needs to be re-drawn. It tracks whether or not
     // a row should have its checkboxes visible and/or checked
     public View onListElementRedraw(int position, View view, ViewGroup parent) {
+
     	CheckBox bx = (CheckBox) view.findViewById(R.id.item_checkbox);
 		if (isInActionMode) {
 	    	bx.setVisibility(View.VISIBLE);
@@ -211,7 +246,8 @@ public abstract class CabMultiselectList extends ListFragment {
 	    	bx.setChecked(false);
 	    	bx.setVisibility(View.GONE);
 	    }
-		return view;
+		
+    	return view;
     }
 	
 	/** 
@@ -366,5 +402,6 @@ public abstract class CabMultiselectList extends ListFragment {
 			View v = super.getView(position, convertView, parent);
 	    	return onListElementRedraw(position, v, parent);
 		}
+
 	}
 }

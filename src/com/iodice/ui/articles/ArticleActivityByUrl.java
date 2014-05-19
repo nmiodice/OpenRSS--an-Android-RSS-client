@@ -30,7 +30,9 @@ import com.iodice.ui.base.CabMultiselectList.MySimpleCursorAdapter;
 import com.iodice.ui.base.NavigationDrawerWithSpinner;
 import com.iodice.utilities.ListRefreshCallback;
 
-public class ArticleActivityByUrl extends NavigationDrawerWithSpinner implements ListRefreshCallback {
+public class ArticleActivityByUrl 
+extends NavigationDrawerWithSpinner 
+implements ListRefreshCallback {
 	private static final String TAG = "ArticleActivity";
 	protected static final String LIST = "LIST";
 	private static final String SEARCH_KEY = "SEARCH_KEY";

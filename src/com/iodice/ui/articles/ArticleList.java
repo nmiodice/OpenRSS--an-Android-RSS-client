@@ -197,13 +197,16 @@ public class ArticleList extends AnimatedEntryList {
 		} else {
 			// create the adapter using the cursor pointing to the desired data 
 			// as well as the layout information
-			setAdapter(cursor, columns, to, R.layout.article_list_row);
+			setAdapter(cursor, columns, to, getListItemLayoutID());
 			MySimpleCursorAdapter adapt = (MySimpleCursorAdapter) this.getListAdapter();
 			
 			// set up the filter callback so that filtering can be handled asynchronously
 			Log.i(TAG, "Setting query provider");
 			adapt.setFilterQueryProvider(getFilterQueryProvider());
 		}
+	}
+	protected int getListItemLayoutID() {
+		return R.layout.article_list_row;
 	}
 	
 	/**
@@ -244,7 +247,11 @@ public class ArticleList extends AnimatedEntryList {
 	@Override
 	public View onListElementRedraw(int position, View convertView,
 			ViewGroup parent) {
-		View v = convertView;
+		// important to always call the parent, as it takes care of redrawing the checkboxes accurately
+		// when in action mode
+		View v = super.onListElementRedraw(position, convertView, parent);
+		if (hiddenListItems.contains(position))
+			return v;
 		
 		// the headline font is different. Lazy loading is ideal here because
 		// this instance can be shared. This allows the animation to not get
@@ -302,9 +309,6 @@ public class ArticleList extends AnimatedEntryList {
 		else
 			tmp.setVisibility(View.VISIBLE);
 
-		// important to always call the parent, as it takes care of redrawing the checkboxes accurately
-		// when in action mode
-		v = super.onListElementRedraw(position, convertView, parent);
 		return v;
 	}
 	
@@ -343,5 +347,19 @@ public class ArticleList extends AnimatedEntryList {
 	
 	public final List<String> getArticleURLList() {
 		return this.articleURLList;
+	}
+	
+	protected void onItemSwiped(List<Integer> removed) {
+		int numRemoved = removed.size();
+		MySimpleCursorAdapter adapt = (MySimpleCursorAdapter)getListAdapter();
+		
+		for (int i = 0; i < numRemoved; i++) {
+			View v = adapt.getView(removed.get(i), null, null);
+			v.setVisibility(View.GONE);
+			String link = ((TextView)v.findViewById(R.id.rss_url)).getText().toString();
+			ArticleOrm.deleteArticlesWhereArticleLinkIs(link, getActivity());
+		}
+		ListRefreshCallback callbackInterface = (ListRefreshCallback) getActivity();
+		callbackInterface.refreshCurrentList();
 	}
 }

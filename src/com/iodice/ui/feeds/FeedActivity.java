@@ -252,6 +252,10 @@ implements SelectorRefreshCallback {
 	public void refreshCurrentSelector() {
 		this.handleCallbackEvent(CALLBACK_REFRESH_CATEGORY_SELECTOR, null);
 	}
+	@Override
+	public void refreshCurrentSelectorMaintainSelection() {
+		this.handleCallbackEvent(CALLBACK_REPOPULATE_DATA_AND_REFRESH_CATEGORY_SELECTOR, null);
+	}
 
 	@Override
 	public String getSpinnerTitleText() {
