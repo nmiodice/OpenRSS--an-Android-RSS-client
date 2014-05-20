@@ -290,18 +290,21 @@ implements OnDismissCallback {
 		    	MenuInflater inflater = mode.getMenuInflater();
 		    	inflater.inflate(contextualMenuView, menu);
 
-		    	ListView v = getListView();
-		        int vCnt = v.getCount();
+		    	ListView listView = getListView();
+		        int vCnt = listView.getCount();
 		        View child;
 		        CheckBox bx;
+		        
+		        SwipeDismissAdapter adapt = (SwipeDismissAdapter)listView.getAdapter();
+		        adapt.disallowSwipe();
 		        
 		        isInActionMode = true;
 		        
 		        for (int i = 0; i < vCnt; i++) {
-		        	child = v.getChildAt(i);
+		        	child = listView.getChildAt(i);
 		        	if (child == null)
 		        		continue;
-		        	v.setSelected(true);
+		        	listView.setSelected(true);
 		        	bx = (CheckBox) child.findViewById(R.id.item_checkbox);
 		        	bx.setVisibility(View.VISIBLE);
 		        	bx.setChecked(false);
@@ -342,6 +345,9 @@ implements OnDismissCallback {
 		        // clear out selected items
 		        selectedListItems.clear();
 		        isInActionMode = false;
+		        ListView listView = getListView();
+		        SwipeDismissAdapter adapt = (SwipeDismissAdapter)listView.getAdapter();
+		        adapt.allowSwipe();
 		    }
 		    @Override
 	        // Here you can perform updates to the CAB due to
