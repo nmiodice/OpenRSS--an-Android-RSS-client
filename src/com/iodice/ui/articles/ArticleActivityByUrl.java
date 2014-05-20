@@ -1,5 +1,6 @@
 package com.iodice.ui.articles;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.FragmentManager;
@@ -38,6 +39,7 @@ implements ListRefreshCallback {
 	protected static final String LIST = "LIST";
 	private static final String SEARCH_KEY = "SEARCH_KEY";
 	private static final String SEARCH_TEXT_KEY = "SEARCH_TEXT_KEY";
+	private static final String ACTIONBAR_TEXT = "ACTIONBAR_TEXT";
 	/* receives notice from the article update service and triggers a data refresh */
 	ArticleUpdateReceiver receiver; 
 	/* controlls the behavior of the filter */
@@ -57,14 +59,20 @@ implements ListRefreshCallback {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		ArrayList<String> feedNameList;
 		
 		// these URLs correspond to the parent source URL (as opposed to 
 		// URLs to individual articles
 		Intent intent = getIntent();
 		List<String> urlList = 
 				intent.getStringArrayListExtra(ArticleActivityByUrl.INTENT_EXTRA_URL_LIST);
-		List<String> feedNameList = 
-				intent.getStringArrayListExtra(ArticleActivityByUrl.INTENT_EXTRA__FEED_NAME_LIST);
+		feedNameList = intent
+				.getStringArrayListExtra(ArticleActivityByUrl.INTENT_EXTRA__FEED_NAME_LIST);
+		if (feedNameList == null || feedNameList.size() == 0) {
+			feedNameList = new ArrayList<String>();
+			feedNameList.add(savedInstanceState.getString(ACTIONBAR_TEXT));
+			Log.e(TAG, "Could not retrieve actionbar text from intent");
+		}
 		
 		displayArticleList(urlList);
 		updateActionbarText(feedNameList);
@@ -171,6 +179,8 @@ implements ListRefreshCallback {
 	    	if (sText != null)
 	    		outState.putString(ArticleActivityByUrl.SEARCH_TEXT_KEY, sText.getText().toString());
     	}
+    	outState.putString(ACTIONBAR_TEXT, getActionBar().getTitle().toString());
+    	Log.i(TAG, "saving");
     	super.onSaveInstanceState(outState);
     }
     @Override

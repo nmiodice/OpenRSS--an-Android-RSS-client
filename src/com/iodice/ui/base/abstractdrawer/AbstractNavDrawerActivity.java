@@ -77,6 +77,7 @@ public abstract class AbstractNavDrawerActivity extends FragmentActivity {
             }
 
             public void onDrawerOpened(View drawerView) {
+            	mTitle = getActionBar().getTitle();
                 getActionBar().setTitle(mDrawerTitle);
                 invalidateOptionsMenu();
                 ORIGINAL_NAVIGATION_MODE = getActionBar().getNavigationMode();
