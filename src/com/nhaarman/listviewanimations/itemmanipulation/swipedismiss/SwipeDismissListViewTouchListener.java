@@ -73,13 +73,15 @@ public class SwipeDismissListViewTouchListener implements SwipeOnTouchListener {
     private PendingDismissData mCurrentDismissData;
 
     private int mVirtualListCount = -1;
-
+    boolean mSwipeToggle = true;
     private boolean mDisallowSwipe;
     private boolean mIsParentHorizontalScrollContainer;
     private int mResIdOfTouchChild;
     private boolean mTouchChildTouched;
 
     private DismissableManager mDismissableManager;
+    
+    
 
     /**
      * Constructs a new swipe-to-dismiss touch listener for the given list view.
@@ -102,11 +104,20 @@ public class SwipeDismissListViewTouchListener implements SwipeOnTouchListener {
         onScroll.setTouchListener(this);
         mListView.setOnScrollListener(onScroll);
     }
-
+    /* custom call to toggle swipe on */
+    public void toggleSwipe() {
+    	this.mSwipeToggle = true;
+    }
+    /* custom call to toggle swipe off */
+    public void untoggleSwipe() {
+    	this.mSwipeToggle = false;
+    }
+    
+    /* used by nhaarman library, do not call */
     public void disallowSwipe() {
         mDisallowSwipe = true;
     }
-
+    /* used by nhaarman library, do not call */
     public void allowSwipe() {
         mDisallowSwipe = false;
     }
@@ -129,7 +140,7 @@ public class SwipeDismissListViewTouchListener implements SwipeOnTouchListener {
             mViewWidth = mListView.getWidth();
         }
         
-        if (mDisallowSwipe == true)
+        if (mSwipeToggle == false)
         	return false;
 
         switch (motionEvent.getActionMasked()) {

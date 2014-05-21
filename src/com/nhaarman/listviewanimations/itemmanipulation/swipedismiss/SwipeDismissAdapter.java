@@ -97,11 +97,12 @@ public class SwipeDismissAdapter extends BaseAdapterDecorator {
             mSwipeDismissListViewTouchListener.setTouchChild(childResId);
         }
     }
-    
-    public void allowSwipe() {
-    	mSwipeDismissListViewTouchListener.allowSwipe();
+    /* custom call to toggle swipe on */
+    public void toggleSwipe() {
+    	mSwipeDismissListViewTouchListener.toggleSwipe();
     }
-    public void disallowSwipe() {
-    	mSwipeDismissListViewTouchListener.disallowSwipe();
+    /* custom call to toggle swipe off */
+    public void untoggleSwipe() {
+    	mSwipeDismissListViewTouchListener.untoggleSwipe();
     }
 }

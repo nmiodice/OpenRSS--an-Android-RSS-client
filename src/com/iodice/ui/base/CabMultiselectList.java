@@ -296,7 +296,7 @@ implements OnDismissCallback {
 		        CheckBox bx;
 		        
 		        SwipeDismissAdapter adapt = (SwipeDismissAdapter)listView.getAdapter();
-		        adapt.disallowSwipe();
+		        adapt.untoggleSwipe();
 		        
 		        isInActionMode = true;
 		        
@@ -347,7 +347,7 @@ implements OnDismissCallback {
 		        isInActionMode = false;
 		        ListView listView = getListView();
 		        SwipeDismissAdapter adapt = (SwipeDismissAdapter)listView.getAdapter();
-		        adapt.allowSwipe();
+		        adapt.toggleSwipe();
 		    }
 		    @Override
 	        // Here you can perform updates to the CAB due to
