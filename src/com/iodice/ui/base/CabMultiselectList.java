@@ -193,6 +193,17 @@ implements OnDismissCallback {
         selectedListItems.clear();
         redrawListView();
     }
+
+	// select list item. Need to account for the the position reported being the actual list position, and
+    // getChildAt(position) returning the position relative to the list items visible on the screen.
+    /**
+     * Return the view located in the absolute position indicated by the parameter
+     * @param i
+     */
+    public View getViewAtPosition(int i) {
+    	ListView listView = getListView();
+    	return listView.getChildAt(i - listView.getFirstVisiblePosition());
+    }
     
     /**
      * Select the checkbox at the specified list position
@@ -200,12 +211,10 @@ implements OnDismissCallback {
      * visible list items
      */
     public void selectCheckBox(int position) {
-    	ListView v = getListView();
         CheckBox bx; 
 
-		// select list item. Need to account for the the position reported being the actual list position, and
-        // getChildAt(position) returning the position relative to the list items visible on the screen. 
-    	bx = (CheckBox) v.getChildAt(position - v.getFirstVisiblePosition()).findViewById(R.id.item_checkbox);
+        View viewAtPos = this.getViewAtPosition(position);
+        bx = (CheckBox)viewAtPos.findViewById(R.id.item_checkbox);
         
         if (selectedListItems.contains(position) == false) {
         	selectedListItems.add(position);

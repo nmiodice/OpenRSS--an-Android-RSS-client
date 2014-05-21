@@ -40,6 +40,9 @@ public class ArticleOrm extends BaseOrm {
     private static final String COLUMN_IS_CACHED_TYPE = "BOOLEAN";
     public static final String COLUMN_IS_CACHED = "isCached";
     
+    private static final String COLUMN_IS_READ = "isRead";
+    private static final String COLUMN_IS_READ_TYPE = "BOOLEAN NOT NULL CHECK (" + COLUMN_IS_READ + " IN (0,1))";
+    
     public static final String SQL_CREATE_TABLE =
     		"CREATE TABLE " + TABLE_NAME + " (" +
     			COLUMN_URL            + " " + COLUMN_URL_TYPE            + COMMA_SEP +
@@ -48,7 +51,8 @@ public class ArticleOrm extends BaseOrm {
                 COLUMN_DESCRIPTION    + " " + COLUMN_DESCRIPTION_TYPE    + COMMA_SEP +
                 COLUMN_TITLE          + " " + COLUMN_TITLE_TYPE          + COMMA_SEP +
                 COLUMN_PUBLISHED_DATE + " " + COLUMN_PUBLISHED_DATE_TYPE + COMMA_SEP +
-                COLUMN_IS_CACHED      + " " + COLUMN_IS_CACHED_TYPE +
+                COLUMN_IS_CACHED      + " " + COLUMN_IS_CACHED_TYPE      + COMMA_SEP + 
+                COLUMN_IS_READ         + " " + COLUMN_IS_READ_TYPE +
    			")";
     
     public static final String SQL_DROP_TABLE =
@@ -106,11 +110,15 @@ public class ArticleOrm extends BaseOrm {
         values.put(ArticleOrm.COLUMN_DESCRIPTION, article.getDescription());
         values.put(ArticleOrm.COLUMN_TITLE, article.getTitle());
         values.put(ArticleOrm.COLUMN_PUBLISHED_DATE, Text.datetimeToSQLDateString(article.getPublishedDate()));
-        values.put(ArticleOrm.COLUMN_IS_CACHED, article.getIsCached());        
+        values.put(ArticleOrm.COLUMN_IS_CACHED, article.getIsCached());
+        values.put(ArticleOrm.COLUMN_IS_READ, article.getIsRead());
         return values;
     }
     
-    public static Cursor selectWhereParentLinkIs(Context context, List<String> links, int max) {
+    public static Cursor selectWhereParentLinkIs(Context context, 
+    		List<String> links, 
+    		int max, 
+    		boolean getUnreadOnly) {
 	    SQLiteDatabase database = BaseOrm.getReadableDatabase(context);
 	    String sql = "SELECT rowid _id,* FROM " + ArticleOrm.TABLE_NAME + 
 	    				" WHERE " + ArticleOrm.COLUMN_PARENT_URL + " IN(";
@@ -125,6 +133,10 @@ public class ArticleOrm extends BaseOrm {
 	    	else
 	    		sql += ")";
 	    }
+	    // get all or get unread only
+	    if (getUnreadOnly)
+	    	sql += " AND " + COLUMN_IS_READ + " = 0";
+
 	    // always order by date
 	    sql += " ORDER BY DATETIME(" + ArticleOrm.COLUMN_PUBLISHED_DATE + ") DESC";	  
 	    sql += " LIMIT " + max;
@@ -139,7 +151,8 @@ public class ArticleOrm extends BaseOrm {
 													    		List<String> filterTerms, 
 													    		List<String> columnsToFilterOn,
 													    		boolean inclusive,
-													    		int max) {
+													    		int max,
+													    		boolean getUnreadOnly) {
 	    SQLiteDatabase database = BaseOrm.getReadableDatabase(context);
     	String sql = "SELECT rowid _id,* FROM " + ArticleOrm.TABLE_NAME + 
 				" WHERE " + ArticleOrm.COLUMN_PARENT_URL + " IN(";
@@ -178,12 +191,43 @@ public class ArticleOrm extends BaseOrm {
 			}
 			sql += " )";
 		}
+	    // get all or get unread only
+	    if (getUnreadOnly)
+	    	sql += " AND " + COLUMN_IS_READ + " = 0";
+	    
 		// always order by date
 		sql += " ORDER BY DATETIME(" + ArticleOrm.COLUMN_PUBLISHED_DATE + ") DESC";
 		sql += " LIMIT " + max;
 		Log.i(TAG, "Ecexuting sql: " + sql);
 		Cursor cursor = database.rawQuery(sql, null);
 		return cursor;
+    }
+    
+    /**
+     * Update an article's read state. Usually, if an article is read, it wont be included
+     * with a query, though this isnt always true.
+     * 
+     * @param url
+     * @param isRead
+     * @param context
+     */
+    public static void setArticleReadState(List<String> urls, boolean isRead, Context context) {
+    	int numUrls = urls.size();
+	    SQLiteDatabase database = BaseOrm.getReadableDatabase(context);
+	    String sql = "UPDATE " + ArticleOrm.TABLE_NAME + 
+	    		" SET " + ArticleOrm.COLUMN_IS_READ + "=";
+	    
+	    if (isRead)
+	    	sql += "1";
+	    else
+	    	sql += "0";
+	    sql += " WHERE " + ArticleOrm.COLUMN_URL + "='";
+    	
+    	WriteLockManager.beginWriteTransaction(database);
+    	for (int i = 0; i < numUrls; i++)
+    		database.execSQL(sql + urls.get(i) + "'");
+    	WriteLockManager.setWriteTransactionSuccessfull(database);
+    	WriteLockManager.endWriteTransaction(database);
     }
     
     public static void deleteArticlesWhereParentLinkIs(String url, Context context) {

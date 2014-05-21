@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >    
-    
+	
 	<item 
         android:id="@+id/action_delete_searches"
         android:icon="@drawable/ic_action_discard"
@@ -8,11 +8,16 @@
         android:showAsAction="always"
         />
     
-    <item
+     <item
+        android:id="@+id/action_view_read"
+        android:title="@string/action_view_read_articles"
+        android:showAsAction="never"
+        />
+     
+	<item
         android:id="@+id/action_refresh"
         android:icon="@drawable/ic_action_refresh"
         android:title="@string/action_reload"
-        android:showAsAction="always"
+        android:showAsAction="never"
         />
- 
 </menu>

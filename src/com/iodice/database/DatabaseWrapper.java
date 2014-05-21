@@ -11,7 +11,7 @@ public class DatabaseWrapper extends SQLiteOpenHelper {
     private static DatabaseWrapper sInstance;
 
     private static final String DATABASE_NAME = "RSSReader.db";
-    private static final int DATABASE_VERSION = 23;
+    private static final int DATABASE_VERSION = 24;
 
     public DatabaseWrapper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.database.Cursor;
@@ -17,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FilterQueryProvider;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,10 +27,12 @@ import com.iodice.application.SharedPrefsHelper;
 import com.iodice.database.ArticleOrm;
 import com.iodice.rssreader.R;
 import com.iodice.ui.base.AnimatedEntryList;
+import com.iodice.utilities.Callback;
+import com.iodice.utilities.ConfirmationDialog;
 import com.iodice.utilities.ListRefreshCallback;
 import com.iodice.utilities.Text;
 
-public class ArticleList extends AnimatedEntryList {
+public class ArticleList extends AnimatedEntryList implements Callback {
 	
 	private static final String TAG = "ArticleList";
 	private List<String> articleURLList;
@@ -50,6 +54,8 @@ public class ArticleList extends AnimatedEntryList {
 	// filtering will be more strict and require each term to appear
 	private boolean filterInclusive = false;
 	private static final String ARTICLE_LIST_TAG = "ARTICLE_LIST_TAG";
+	private boolean showUnreadOnly = true;
+	public static final int CALLBACK_MARK_SELECTED_AS_READ = 30;
 	
 	// this listview uses a tile layout, so the default divider isnt necessary
 	public void onViewCreated(View view, Bundle savedInstanceState) {
@@ -210,7 +216,8 @@ public class ArticleList extends AnimatedEntryList {
 		int maxArticles = SharedPrefsHelper.getNumArticlesToLoad(getActivity());
 		Cursor cursor = ArticleOrm.selectWhereParentLinkIs(getActivity().getApplicationContext(), 
 				this.articleURLList, 
-				maxArticles);
+				maxArticles,
+				showUnreadOnly);
 		return cursor;
 	}
 	
@@ -245,7 +252,8 @@ public class ArticleList extends AnimatedEntryList {
 						filterTerms, 
 						columnsToFilterOn,
 						filterInclusive,
-						maxArticles);
+						maxArticles,
+						showUnreadOnly);
 				Log.i(TAG, "cursor = " + c);
 				Log.i(TAG, "filterTerms = " + filterTerms.toString());
 				return c;
@@ -325,6 +333,26 @@ public class ArticleList extends AnimatedEntryList {
 		if (urlList != null)
 			this.articleURLList = urlList;
 	}
+	
+	public void markSelectedAsRead() {
+		ArrayList<String> selectedArticles = new ArrayList<String>();
+		int selectedPos;
+		View article;
+		TextView txt;
+		int numSelected = selectedListItems.size();
+		ListAdapter  adapt = getListAdapter();
+		
+		for (int i = 0; i < numSelected; i++) {
+			selectedPos = selectedListItems.get(i);
+			//article = getViewAtPosition(selectedPos);
+			article = adapt.getView(selectedPos, null, null);
+			//
+			txt = (TextView)article.findViewById(R.id.rss_url);
+			selectedArticles.add(txt.getText().toString());
+		}
+		
+		ArticleOrm.setArticleReadState(selectedArticles, true, getActivity());
+	}
 
 	@Override
 	public boolean cabOnMenuItemClicked(ActionMode mode,
@@ -342,6 +370,17 @@ public class ArticleList extends AnimatedEntryList {
 		    case R.id.action_share_selected:
 		    	this.cabMultiselectPrimaryAction();
 	            mode.finish();
+		    	return true;
+		    	
+		    case R.id.action_mark_as_read:
+		    	String markHidden = getActivity().getString(R.string.confirm_mark_as_read);
+		    	AlertDialog alertDialog = ConfirmationDialog.getCustomDialog(getActivity(), 
+    					this,
+    					ArticleList.CALLBACK_MARK_SELECTED_AS_READ, 
+    					mode,
+    					markHidden);
+		    	alertDialog.show();
+				
 		    	return true;
 		    	
 		    default:
@@ -366,8 +405,46 @@ public class ArticleList extends AnimatedEntryList {
 			View v = adapt.getView(removed.get(i), null, null);
 			v.setVisibility(View.GONE);
 			String link = ((TextView)v.findViewById(R.id.rss_url)).getText().toString();
-			ArticleOrm.deleteArticlesWhereArticleLinkIs(link, getActivity());
+			
+			ArrayList<String> linkList = new ArrayList<String>();
+			linkList.add(link);
+			ArticleOrm.setArticleReadState(linkList, true, getActivity());
 		}
+		ListRefreshCallback callbackInterface = (ListRefreshCallback) getActivity();
+		callbackInterface.refreshCurrentList(true);
+	}
+
+	@Override
+	public void handleCallbackEvent(int n, Object obj)
+			throws UnsupportedOperationException {
+		switch (n) {
+			case ArticleList.CALLBACK_MARK_SELECTED_AS_READ:
+		    	markSelectedAsRead();
+				ListRefreshCallback callbackInterface = (ListRefreshCallback) getActivity();
+				callbackInterface.refreshCurrentList(true);
+				
+				/* obj is not null if the callback was 
+				 * called while in contextual action mode 
+				 */
+				if (obj != null) {
+					ActionMode mode = (ActionMode)obj;
+					mode.finish();
+				}
+				break;
+		}
+		
+	}
+	
+	public boolean getIsShowingReadOnly() {
+		return showUnreadOnly;
+	}
+	/**
+	 * Toggle the list to show or hide read articles. The method call
+	 * will auto-update the current list elements
+	 * @param b
+	 */
+	public void setIsShowingReadOnly(boolean b) {
+		this.showUnreadOnly = b;
 		ListRefreshCallback callbackInterface = (ListRefreshCallback) getActivity();
 		callbackInterface.refreshCurrentList(true);
 	}

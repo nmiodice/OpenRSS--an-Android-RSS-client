@@ -13,5 +13,13 @@
         android:title="@string/action_reload"
         android:showAsAction="always"
         />
+    
+    <item
+        android:id="@+id/action_view_read"
+        android:title="@string/action_view_read_articles"
+        android:showAsAction="never"
+        />
+    
+        
  
 </menu>

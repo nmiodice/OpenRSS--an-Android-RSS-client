@@ -23,6 +23,7 @@ public class ArticleData {
 	@SuppressWarnings("unused")
 	private String baseURL = new String();
 	private boolean isCached = false;
+	private boolean isRead = false;
 	
 	public ArticleData() {
 		Calendar cal = Calendar.getInstance();
@@ -105,5 +106,13 @@ public class ArticleData {
     
     public String getParentURL() {
     	return this.ParentUrl;
+    }
+    
+    public boolean getIsRead() {
+    	return isRead;
+    }
+    
+    public void setIsRead(boolean b) {
+    	isRead = b;
     }
 }

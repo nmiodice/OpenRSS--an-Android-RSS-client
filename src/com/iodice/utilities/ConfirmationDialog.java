@@ -6,15 +6,25 @@ import android.content.DialogInterface;
 
 import com.iodice.rssreader.R;
 
-public class ConfirmDeleteDialog {
-	public static AlertDialog getDeleteDialog(Context context, 
+public class ConfirmationDialog {
+	/**
+	 * A dialog w/ custom message
+	 * @param context
+	 * @param callbackInterface
+	 * @param callbackFunctionIdentifer
+	 * @param callbackData
+	 * @param message
+	 * @return
+	 */
+	public static AlertDialog getCustomDialog(Context context, 
 			final Callback callbackInterface, 
 			final int callbackFunctionIdentifer,
-			final Object callbackData) {		
-
+			final Object callbackData,
+			final String message) {
+		
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
 		alertDialogBuilder
-		.setTitle(context.getText(R.string.delete_title))
+		.setTitle(message)
 		.setCancelable(false)
 		.setPositiveButton(context.getString(R.string.yes), new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog,int id) {
@@ -29,5 +39,25 @@ public class ConfirmDeleteDialog {
 		});
     	AlertDialog alertDialog = alertDialogBuilder.create();
 		return alertDialog;
+	}
+	
+	/**
+	 * A simple delete dialog
+	 * @param context
+	 * @param callbackInterface
+	 * @param callbackFunctionIdentifer
+	 * @param callbackData
+	 * @return
+	 */
+	public static AlertDialog getDeleteDialog(Context context, 
+			final Callback callbackInterface, 
+			final int callbackFunctionIdentifer,
+			final Object callbackData) {		
+		String delete = context.getText(R.string.delete_title).toString();
+		return ConfirmationDialog.getCustomDialog(context, 
+				callbackInterface, 
+				callbackFunctionIdentifer, 
+				callbackData, 
+				delete);
 	}
 }

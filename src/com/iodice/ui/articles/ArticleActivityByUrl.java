@@ -68,11 +68,6 @@ implements ListRefreshCallback {
 				intent.getStringArrayListExtra(ArticleActivityByUrl.INTENT_EXTRA_URL_LIST);
 		feedNameList = intent
 				.getStringArrayListExtra(ArticleActivityByUrl.INTENT_EXTRA__FEED_NAME_LIST);
-		if (feedNameList == null || feedNameList.size() == 0) {
-			feedNameList = new ArrayList<String>();
-			feedNameList.add(savedInstanceState.getString(ACTIONBAR_TEXT));
-			Log.e(TAG, "Could not retrieve actionbar text from intent");
-		}
 		
 		displayArticleList(urlList);
 		updateActionbarText(feedNameList);
@@ -355,7 +350,14 @@ implements ListRefreshCallback {
             	else
             		v.setVisibility(View.GONE);
             	return true;
-            	
+            
+            case R.id.action_view_read:
+        		FragmentManager fMan = getFragmentManager();
+        		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivityByUrl.LIST);
+        		if (articleList != null) {
+        			boolean isShowingRead = articleList.getIsShowingReadOnly();
+        			articleList.setIsShowingReadOnly(!isShowingRead);
+        		}
             default:
                 return super.onOptionsItemSelected(item);
         }

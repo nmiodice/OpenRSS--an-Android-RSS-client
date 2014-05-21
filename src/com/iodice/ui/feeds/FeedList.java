@@ -23,7 +23,7 @@ import com.iodice.rssreader.R;
 import com.iodice.ui.articles.ArticleActivityByUrl;
 import com.iodice.ui.base.AnimatedEntryList;
 import com.iodice.utilities.Callback;
-import com.iodice.utilities.ConfirmDeleteDialog;
+import com.iodice.utilities.ConfirmationDialog;
 import com.iodice.utilities.SelectorRefreshCallback;
 
 
@@ -118,7 +118,7 @@ public class FeedList extends AnimatedEntryList implements Callback {
     private void deleteFeedsWithUrls(List<String> selectedUrlList) {
     	Context context = getActivity();
     	AlertDialog alertDialog = 
-    			ConfirmDeleteDialog.getDeleteDialog(context, 
+    			ConfirmationDialog.getDeleteDialog(context, 
     					this, 
     					FeedList.CALLBACK_INITIATE_DELETE_TASK,
     					selectedUrlList);

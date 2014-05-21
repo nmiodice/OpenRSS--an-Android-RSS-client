@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.iodice.database.SearchesOrm;
 import com.iodice.rssreader.R;
 import com.iodice.ui.base.CabMultiselectList.MySimpleCursorAdapter;
-import com.iodice.utilities.ConfirmDeleteDialog;
+import com.iodice.utilities.ConfirmationDialog;
 
 public class ArticleActivityByTopic extends ArticleActivityByUrl {
 	
@@ -86,7 +86,7 @@ public class ArticleActivityByTopic extends ArticleActivityByUrl {
 				String all = this.getString(R.string.all);
 				
 				if (!currentKey.equals(all)) {
-			    	AlertDialog alertDialog = ConfirmDeleteDialog.getDeleteDialog(this, 
+			    	AlertDialog alertDialog = ConfirmationDialog.getDeleteDialog(this, 
 	    					this,
 	    					ArticleActivityByTopic.CALLBACK_DELETE_CURRENT_SPINNER_ITEM, 
 	    					null);
