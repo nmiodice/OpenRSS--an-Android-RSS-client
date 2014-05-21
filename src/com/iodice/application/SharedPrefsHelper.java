@@ -77,5 +77,13 @@ public class SharedPrefsHelper {
 				getString(R.string.prefs_days_to_keep_articles), defaultAsString);
 		return Integer.parseInt(daysAsString);
 	}
+	
+	public static boolean getHideArticlesAfterClick(Context context) {
+		SharedPreferences prefs = getPrefs(context);
+		
+		boolean hideOnClick = prefs.getBoolean(context.
+				getString(R.string.prefs_hide_articles_after_click), true);
+		return hideOnClick;
+	}
 
 }

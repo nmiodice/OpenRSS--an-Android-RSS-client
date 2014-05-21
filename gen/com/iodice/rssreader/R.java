@@ -379,7 +379,7 @@ containing a value of this type.
         public static final int prefs_default_update_frequency=0x7f0a0055;
         public static final int prefs_enable_animation=0x7f0a0059;
         public static final int prefs_first_run=0x7f0a0050;
-        public static final int prefs_hide_read_articles=0x7f0a0053;
+        public static final int prefs_hide_articles_after_click=0x7f0a0053;
         /**  Preference display categories 
          */
         public static final int prefs_network_settings=0x7f0a005d;

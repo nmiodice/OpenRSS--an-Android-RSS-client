@@ -111,9 +111,21 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 		} catch (ActivityNotFoundException e) {
 			Toast.makeText(getActivity().getApplicationContext(), R.string.no_installed_app,  Toast.LENGTH_LONG).show();
 			e.printStackTrace();
+			return;
 		} catch (Exception e) {
 			e.getMessage();
 			e.printStackTrace();
+			return;
+		}
+		
+		/* if the system is configured to hide articles after reading them, do it here */
+		boolean hideOnClick = SharedPrefsHelper.getHideArticlesAfterClick(getActivity());
+		if (hideOnClick) {
+			ArrayList<String> linkList = new ArrayList<String>();
+			linkList.add(feedURL);
+			ArticleOrm.setArticleReadState(linkList, true, getActivity());
+			ListRefreshCallback callbackInterface = (ListRefreshCallback) getActivity();
+			callbackInterface.refreshCurrentList(true);
 		}
 	}
 
