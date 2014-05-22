@@ -16,7 +16,7 @@
     
     <item
         android:id="@+id/action_view_read"
-        android:title="@string/action_view_read_articles"
+        android:title="@string/action_show_read_articles"
         android:showAsAction="never"
         />
     

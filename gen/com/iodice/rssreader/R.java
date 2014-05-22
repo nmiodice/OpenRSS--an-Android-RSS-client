@@ -297,24 +297,25 @@ containing a value of this type.
         /**  Add new feed 
          */
         public static final int action_add=0x7f0a0029;
-        public static final int action_article_search=0x7f0a0044;
-        public static final int action_article_search_hint=0x7f0a0043;
-        public static final int action_clear_search_term=0x7f0a0045;
+        public static final int action_article_search=0x7f0a0045;
+        public static final int action_article_search_hint=0x7f0a0044;
+        public static final int action_clear_search_term=0x7f0a0046;
         public static final int action_deselect_all=0x7f0a0023;
+        public static final int action_hide_read_articles=0x7f0a0040;
         /**  Feed Activity 
          */
         public static final int action_load_selected=0x7f0a0021;
         public static final int action_mark_all_as_read=0x7f0a003d;
-        public static final int action_refresh=0x7f0a0041;
+        public static final int action_refresh=0x7f0a0042;
         public static final int action_reload=0x7f0a0005;
         public static final int action_remove_selected=0x7f0a0024;
         public static final int action_save_group=0x7f0a0025;
-        public static final int action_save_search_term=0x7f0a0046;
+        public static final int action_save_search_term=0x7f0a0047;
         public static final int action_select_all=0x7f0a0022;
         public static final int action_settings=0x7f0a0002;
-        public static final int action_share_selected=0x7f0a0040;
+        public static final int action_share_selected=0x7f0a0041;
+        public static final int action_show_read_articles=0x7f0a003f;
         public static final int action_test_re_initialize=0x7f0a0027;
-        public static final int action_view_read_articles=0x7f0a003f;
         public static final int add_feed_fail_message=0x7f0a002f;
         public static final int add_feed_grouping_message=0x7f0a0033;
         public static final int add_feed_grouping_title=0x7f0a0032;
@@ -327,13 +328,13 @@ containing a value of this type.
          */
         public static final int add_new_category=0x7f0a0031;
         public static final int all=0x7f0a0026;
-        public static final int and_x_more=0x7f0a004c;
+        public static final int and_x_more=0x7f0a004d;
         public static final int app_name=0x7f0a0000;
-        public static final int article_share_subject=0x7f0a0042;
+        public static final int article_share_subject=0x7f0a0043;
         public static final int author=0x7f0a0013;
         public static final int button_getrss=0x7f0a0038;
         public static final int cancel=0x7f0a001d;
-        public static final int cannot_delete_all=0x7f0a004e;
+        public static final int cannot_delete_all=0x7f0a004f;
         public static final int categories=0x7f0a0028;
         public static final int confirm_mark_as_read=0x7f0a003e;
         /**  Connectivity 
@@ -368,41 +369,41 @@ containing a value of this type.
         public static final int partial_results=0x7f0a003b;
         /**  User preferences 
          */
-        public static final int prefs=0x7f0a004f;
-        public static final int prefs_article_settings=0x7f0a005e;
-        public static final int prefs_articles_to_load=0x7f0a0056;
-        public static final int prefs_articles_to_load_setting_text=0x7f0a0052;
-        public static final int prefs_days_to_keep_articles=0x7f0a005a;
-        public static final int prefs_days_to_keep_articles_text=0x7f0a005c;
-        public static final int prefs_default_articles_to_load=0x7f0a0057;
-        public static final int prefs_default_days_to_keep_articles=0x7f0a005b;
-        public static final int prefs_default_update_frequency=0x7f0a0055;
-        public static final int prefs_enable_animation=0x7f0a0059;
-        public static final int prefs_first_run=0x7f0a0050;
-        public static final int prefs_hide_articles_after_click=0x7f0a0053;
+        public static final int prefs=0x7f0a0050;
+        public static final int prefs_article_settings=0x7f0a005f;
+        public static final int prefs_articles_to_load=0x7f0a0057;
+        public static final int prefs_articles_to_load_setting_text=0x7f0a0053;
+        public static final int prefs_days_to_keep_articles=0x7f0a005b;
+        public static final int prefs_days_to_keep_articles_text=0x7f0a005d;
+        public static final int prefs_default_articles_to_load=0x7f0a0058;
+        public static final int prefs_default_days_to_keep_articles=0x7f0a005c;
+        public static final int prefs_default_update_frequency=0x7f0a0056;
+        public static final int prefs_enable_animation=0x7f0a005a;
+        public static final int prefs_first_run=0x7f0a0051;
+        public static final int prefs_hide_articles_after_click=0x7f0a0054;
         /**  Preference display categories 
          */
-        public static final int prefs_network_settings=0x7f0a005d;
-        public static final int prefs_update_frequency=0x7f0a0054;
-        public static final int prefs_update_frequency_setting_text=0x7f0a0058;
-        public static final int prefs_update_in_background=0x7f0a0051;
+        public static final int prefs_network_settings=0x7f0a005e;
+        public static final int prefs_update_frequency=0x7f0a0055;
+        public static final int prefs_update_frequency_setting_text=0x7f0a0059;
+        public static final int prefs_update_in_background=0x7f0a0052;
         public static final int publishedDate=0x7f0a0016;
         public static final int rss_author_by=0x7f0a003c;
         public static final int rss_button_fetch=0x7f0a0037;
         public static final int rss_feed_header=0x7f0a0036;
         public static final int rss_update_async_task=0x7f0a0018;
-        public static final int saved_search_already_exists=0x7f0a0047;
-        public static final int saved_search_is_empty=0x7f0a0049;
-        public static final int saved_search_success=0x7f0a0048;
+        public static final int saved_search_already_exists=0x7f0a0048;
+        public static final int saved_search_is_empty=0x7f0a004a;
+        public static final int saved_search_success=0x7f0a0049;
         /**  Topics activity 
          */
-        public static final int saved_searches=0x7f0a004d;
+        public static final int saved_searches=0x7f0a004e;
         /**  ID strings & generic identifiers 
          */
         public static final int scroll_position=0x7f0a0010;
         public static final int share=0x7f0a001a;
-        public static final int tile_font_heavy=0x7f0a004a;
-        public static final int tile_font_light=0x7f0a004b;
+        public static final int tile_font_heavy=0x7f0a004b;
+        public static final int tile_font_light=0x7f0a004c;
         public static final int title=0x7f0a0015;
         /**  RSS 
          */

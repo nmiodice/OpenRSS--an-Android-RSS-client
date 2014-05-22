@@ -32,6 +32,8 @@ public class FeedList extends AnimatedEntryList implements Callback {
 	
 	private final String TAG = "Feed_List";
 	private static final int CALLBACK_INITIATE_DELETE_TASK = 0;
+	/* used internally to process a swipe event after confirmation */
+	private static final int CALLBACK_PROCESS_ON_SWIPE = 1;
     
     
 	@Override
@@ -230,7 +232,23 @@ public class FeedList extends AnimatedEntryList implements Callback {
 				task.setSelectedUrlList(toDelete);
 				task.execute();
 				return;
-			
+			/* called internally the the onswipe handler */
+			case FeedList.CALLBACK_PROCESS_ON_SWIPE:
+				@SuppressWarnings("unchecked")
+				List<Integer> removed = (List<Integer>)obj;
+				int numRemoved = removed.size();
+				MySimpleCursorAdapter adapt = (MySimpleCursorAdapter)getListAdapter();
+
+				for (int i = 0; i < numRemoved; i++) {
+					View v = adapt.getView(removed.get(i), null, null);
+					v.setVisibility(View.GONE);
+					String link = ((TextView)v.findViewById(R.id.feed_url)).getText().toString();
+					FeedOrm.deleteFeedWithLink(link, getActivity());
+				}
+				SelectorRefreshCallback callbackInterface = (SelectorRefreshCallback) getActivity();
+				callbackInterface.refreshCurrentSelectorMaintainSelection();
+				break;
+				
 			default:
 				throw new UnsupportedOperationException();
 		}
@@ -337,16 +355,13 @@ public class FeedList extends AnimatedEntryList implements Callback {
 		}
 	}
 	protected void onItemSwiped(List<Integer> removed) {
-		int numRemoved = removed.size();
-		MySimpleCursorAdapter adapt = (MySimpleCursorAdapter)getListAdapter();
-
-		for (int i = 0; i < numRemoved; i++) {
-			View v = adapt.getView(removed.get(i), null, null);
-			v.setVisibility(View.GONE);
-			String link = ((TextView)v.findViewById(R.id.feed_url)).getText().toString();
-			FeedOrm.deleteFeedWithLink(link, getActivity());
-		}
-		SelectorRefreshCallback callbackInterface = (SelectorRefreshCallback) getActivity();
-		callbackInterface.refreshCurrentSelectorMaintainSelection();
+		if (false) {
+		AlertDialog alert = ConfirmationDialog.getDeleteDialog(getActivity(), 
+				this, 
+				FeedList.CALLBACK_PROCESS_ON_SWIPE, 
+				removed);
+		alert.show();
+		} else
+			this.handleCallbackEvent(FeedList.CALLBACK_PROCESS_ON_SWIPE, removed);
 	}
 }

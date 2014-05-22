@@ -352,11 +352,19 @@ implements ListRefreshCallback {
             	return true;
             
             case R.id.action_view_read:
+            	Log.i(TAG, "afasdfasf");
         		FragmentManager fMan = getFragmentManager();
         		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivityByUrl.LIST);
+        		/* toggle show unread & update the menu text accordingly */
         		if (articleList != null) {
-        			boolean isShowingRead = articleList.getIsShowingReadOnly();
-        			articleList.setIsShowingReadOnly(!isShowingRead);
+        			boolean isShowingUnreadOnly = articleList.getShowUnreadOnly();
+        			isShowingUnreadOnly = !isShowingUnreadOnly;
+        			articleList.setShowUnreadOnly(isShowingUnreadOnly);
+        			
+        			String hideReadMsg = getString(R.string.action_hide_read_articles);
+        			String showReadMsg = getString(R.string.action_show_read_articles);
+        			String properDisplay = (isShowingUnreadOnly) ? showReadMsg : hideReadMsg;
+        			item.setTitle(properDisplay);
         		}
             default:
                 return super.onOptionsItemSelected(item);
@@ -439,9 +447,8 @@ implements ListRefreshCallback {
 				Boolean keepScrollPos = (Boolean) obj;
 				this.redrawActiveArticleListWithCachedData(keepScrollPos);
 				this.refilterArticles();
-				
-				
 				return;
+				
 			case ArticleActivityByUrl.CALLBACK_UPDATE_WITH_WEB_QUERY:
 				this.updateCurrentListWithWebQuery();
 				return;

@@ -447,7 +447,7 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 		
 	}
 	
-	public boolean getIsShowingReadOnly() {
+	public boolean getShowUnreadOnly() {
 		return showUnreadOnly;
 	}
 	/**
@@ -455,7 +455,7 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 	 * will auto-update the current list elements
 	 * @param b
 	 */
-	public void setIsShowingReadOnly(boolean b) {
+	public void setShowUnreadOnly(boolean b) {
 		this.showUnreadOnly = b;
 		ListRefreshCallback callbackInterface = (ListRefreshCallback) getActivity();
 		callbackInterface.refreshCurrentList(true);
