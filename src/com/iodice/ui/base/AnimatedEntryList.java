@@ -26,7 +26,7 @@ import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.SwipeOnScro
 
 
 public abstract class AnimatedEntryList 
-extends CabMultiselectList {
+extends MultiselectSwipeList {
 	private int lastPosition = -1;
 	private boolean isScrolling = false;
 	/* controlled by shared preferences */

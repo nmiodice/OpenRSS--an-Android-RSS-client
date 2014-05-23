@@ -9,7 +9,9 @@ import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -183,7 +185,8 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 			ArticleOrm.COLUMN_PARENT_URL,
 			ArticleOrm.COLUMN_AUTHOR,
 			ArticleOrm.COLUMN_DESCRIPTION,
-			ArticleOrm.COLUMN_PUBLISHED_DATE
+			ArticleOrm.COLUMN_PUBLISHED_DATE,
+			ArticleOrm.COLUMN_IS_READ,
 		};
 		
 		to = new int[] { 
@@ -192,7 +195,8 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 		    R.id.rss_base_url,
 		    R.id.rss_author,
 		    R.id.rss_description,
-		    R.id.rss_published_date
+		    R.id.rss_published_date,
+		    R.id.rss_is_read,
 		};
 		
 		cursor = getUpdatedQuery();
@@ -338,6 +342,17 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 		else
 			tmp.setVisibility(View.VISIBLE);
 
+		// finally, if this article is read, modify the background color
+		tmp = (TextView) v.findViewById(R.id.rss_is_read);
+		tmp.setVisibility(View.GONE);
+		int targetColor;
+		Drawable tileBackground = v.findViewById(R.id.tile_drawable).getBackground();
+		if (tmp.getText().equals("0")) {
+			targetColor = getResources().getColor(R.color.tile);
+		} else {
+			targetColor = getResources().getColor(R.color.tile_dark);
+		}
+		tileBackground.setColorFilter(targetColor, PorterDuff.Mode.MULTIPLY);
 		return v;
 	}
 	
@@ -356,9 +371,7 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 		
 		for (int i = 0; i < numSelected; i++) {
 			selectedPos = selectedListItems.get(i);
-			//article = getViewAtPosition(selectedPos);
 			article = adapt.getView(selectedPos, null, null);
-			//
 			txt = (TextView)article.findViewById(R.id.rss_url);
 			selectedArticles.add(txt.getText().toString());
 		}

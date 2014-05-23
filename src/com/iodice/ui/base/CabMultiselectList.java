@@ -1,7 +1,6 @@
 package com.iodice.ui.base;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.app.ListFragment;
 import android.content.Context;
@@ -17,14 +16,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.MultiChoiceModeListener;
-import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import com.iodice.rssreader.R;
-import com.nhaarman.listviewanimations.itemmanipulation.OnDismissCallback;
-import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.SwipeDismissAdapter;
 
 /**
  * This class provides a simple abstraction of a listview that include support for a 
@@ -47,15 +43,13 @@ import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.SwipeDismis
  *
  */
 public abstract class CabMultiselectList 
-extends ListFragment
-implements OnDismissCallback {
+extends ListFragment {
 	private final String TAG = "List_Base";
 
 	protected ArrayList<Integer> selectedListItems = new ArrayList<Integer>();
 	protected ArrayList<Integer> hiddenListItems = new ArrayList<Integer>();
 	protected boolean isInActionMode = false;
 	
-	abstract protected void onItemSwiped(List<Integer> removed);
 	/**
 	 * The action taken out when a single list item is clicked while the
 	 * contextual action bar is not visible
@@ -145,28 +139,9 @@ implements OnDismissCallback {
 				    cursor, 
 				    columns, 
 				    to));
-		setSwipeDismissAdapter();
 	}
 	
-    protected void setSwipeDismissAdapter() {
-    	BaseAdapter mAdapter = (BaseAdapter) this.getListAdapter();
-        SwipeDismissAdapter adapter = new SwipeDismissAdapter(mAdapter, this);
-        adapter.setAbsListView(getListView());
-        getListView().setAdapter(adapter);
-    }
-    
-    /**
-     * Called in response to a list item being dismissed. This call forwards
-     * the dismissed positions to the subclass
-     */
-    public void onDismiss(AbsListView listView, int[] reverseSortedPositions) {
-		ArrayList<Integer> removed = new ArrayList<Integer>();
-		int length = reverseSortedPositions.length;
-		for (int i = 0; i < length; i++)
-			removed.add(reverseSortedPositions[i]);		
-        onItemSwiped(removed);
-    }
-	
+
 	/**
 	 * Select all the list elements, or if all of them are already selected,
 	 * deselect all list elements
@@ -285,6 +260,59 @@ implements OnDismissCallback {
 	}
 	
 	/**
+	 * Necessary logic to run prior to invoking the contextual action bar layout
+	 * @param mode
+	 * @param menu
+	 * @return
+	 */
+	protected boolean onPreCreateActionMode(ActionMode mode, Menu menu) {
+    	int contextualMenuView = cabGetMenuLayoutId();
+    	MenuInflater inflater = mode.getMenuInflater();
+    	inflater.inflate(contextualMenuView, menu);
+
+    	ListView listView = getListView();
+        int vCnt = listView.getCount();
+        View child;
+        CheckBox bx;
+        
+        isInActionMode = true;
+        
+        for (int i = 0; i < vCnt; i++) {
+        	child = listView.getChildAt(i);
+        	if (child == null)
+        		continue;
+        	listView.setSelected(true);
+        	bx = (CheckBox) child.findViewById(R.id.item_checkbox);
+        	bx.setVisibility(View.VISIBLE);
+        	bx.setChecked(false);
+        }
+        
+        return true;
+	}
+	
+	/**
+	 * Teardown logic needed when destroying the CAB
+	 * @param mode
+	 */
+	protected void onPreDestroyActionMode(ActionMode mode) {
+        ListView v = getListView();
+        int vCnt = v.getChildCount();
+        CheckBox bx; 
+
+        // also deselect the checkboxes because they dont correspond to the CAB's notion
+        // of what is selected
+        for (int i = 0; i < vCnt; i++) {
+        	bx = (CheckBox) v.getChildAt(i).findViewById(R.id.item_checkbox);
+        	bx.setChecked(false);
+        	bx.setVisibility(View.GONE);
+        }
+        
+        // clear out selected items
+        selectedListItems.clear();
+        isInActionMode = false;
+	}
+	
+	/**
 	 * @return A MultiChoiceModeListener that provides basic functionality for the list
 	 * while the contextual actionbar is created. This calls into the parent class for
 	 * basic functionality, allowing the user to override specific actions if desired
@@ -295,31 +323,7 @@ implements OnDismissCallback {
 		    @Override
 	        // Inflate the menu for the CAB
 		    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-		    	int contextualMenuView = cabGetMenuLayoutId();
-		    	MenuInflater inflater = mode.getMenuInflater();
-		    	inflater.inflate(contextualMenuView, menu);
-
-		    	ListView listView = getListView();
-		        int vCnt = listView.getCount();
-		        View child;
-		        CheckBox bx;
-		        
-		        SwipeDismissAdapter adapt = (SwipeDismissAdapter)listView.getAdapter();
-		        adapt.untoggleSwipe();
-		        
-		        isInActionMode = true;
-		        
-		        for (int i = 0; i < vCnt; i++) {
-		        	child = listView.getChildAt(i);
-		        	if (child == null)
-		        		continue;
-		        	listView.setSelected(true);
-		        	bx = (CheckBox) child.findViewById(R.id.item_checkbox);
-		        	bx.setVisibility(View.VISIBLE);
-		        	bx.setChecked(false);
-		        }
-		        
-		        return true;
+		    	return onPreCreateActionMode(mode, menu);
 		    }
 		
 		    @Override
@@ -339,24 +343,7 @@ implements OnDismissCallback {
 	        // Here you can make any necessary updates to the activity when
 	        // the CAB is removed. By default, selected items are deselected/unchecked.
 		    public void onDestroyActionMode(ActionMode mode) {
-		        ListView v = getListView();
-		        int vCnt = v.getChildCount();
-		        CheckBox bx; 
-
-		        // also deselect the checkboxes because they dont correspond to the CAB's notion
-		        // of what is selected
-		        for (int i = 0; i < vCnt; i++) {
-		        	bx = (CheckBox) v.getChildAt(i).findViewById(R.id.item_checkbox);
-		        	bx.setChecked(false);
-		        	bx.setVisibility(View.GONE);
-		        }
-		        
-		        // clear out selected items
-		        selectedListItems.clear();
-		        isInActionMode = false;
-		        ListView listView = getListView();
-		        SwipeDismissAdapter adapt = (SwipeDismissAdapter)listView.getAdapter();
-		        adapt.toggleSwipe();
+		    	onPreDestroyActionMode(mode);
 		    }
 		    @Override
 	        // Here you can perform updates to the CAB due to

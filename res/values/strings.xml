@@ -87,8 +87,8 @@
     <string name="rss_author_by">Article by</string>
     <string name="action_mark_all_as_read">Mark as read</string>
     <string name="confirm_mark_as_read">Mark as read?</string>
-    <string name="action_show_read_articles">Show read</string>
-    <string name="action_hide_read_articles">Hide read</string>
+    <string name="action_show_read_articles">Show read &amp; unread</string>
+    <string name="action_hide_read_articles">Show unread only</string>
     <string name="action_share_selected">Share</string>
     <string name="action_refresh">Refresh</string>
     <string name="article_share_subject">Articles sent from my mobile RSS reader</string>

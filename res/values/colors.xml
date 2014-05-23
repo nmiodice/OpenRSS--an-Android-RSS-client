@@ -18,8 +18,10 @@
     <color name="blue_light">#eaf4f8</color>
     
     <!-- design elements -->
+    <color name="activity_base">@color/grey_light</color>
     <color name="tile_drop_shadow">@color/blue_opaque</color>
     <color name="tile">@color/white</color>
+    <color name="tile_dark">@color/activity_base</color>
     <color name="tile_pressed">@color/white_off</color>
     <color name="rss_text_color_accent">@color/black_transparent</color>
     <color name="article_search_background">@color/black_transparent</color>

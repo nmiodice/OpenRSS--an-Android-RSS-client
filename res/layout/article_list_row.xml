@@ -13,7 +13,7 @@
 	<RelativeLayout
         tools:ignore="UselessParent"
         style="@style/rssTile"
-        android:id="@+id/test"
+        android:id="@+id/tile_drawable"
         android:padding="4dp"
         android:paddingBottom="8dp"
     	>
@@ -93,6 +93,12 @@
 		    <!-- Not visible -->
 		    <TextView
 		        android:id="@+id/rss_url"
+		        style="@style/Subheader"
+		        android:layout_below="@id/rss_base_url"
+		        />
+		    <!-- Not visible -->
+		    <TextView
+		        android:id="@+id/rss_is_read"
 		        style="@style/Subheader"
 		        android:layout_below="@id/rss_base_url"
 		        />

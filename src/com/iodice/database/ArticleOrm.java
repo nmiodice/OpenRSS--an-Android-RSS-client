@@ -40,7 +40,7 @@ public class ArticleOrm extends BaseOrm {
     private static final String COLUMN_IS_CACHED_TYPE = "BOOLEAN";
     public static final String COLUMN_IS_CACHED = "isCached";
     
-    private static final String COLUMN_IS_READ = "isRead";
+    public static final String COLUMN_IS_READ = "isRead";
     private static final String COLUMN_IS_READ_TYPE = "BOOLEAN NOT NULL CHECK (" + COLUMN_IS_READ + " IN (0,1))";
     
     public static final String SQL_CREATE_TABLE =

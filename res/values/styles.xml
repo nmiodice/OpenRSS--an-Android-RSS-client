@@ -29,7 +29,7 @@
     <style name="ActivityBase" parent = "AppTheme">
     	<item name="android:layout_width">match_parent</item>
     	<item name="android:layout_height">match_parent</item>
-		<item name="android:background">@color/grey_light</item>
+		<item name="android:background">@color/activity_base</item>
     </style>
     
 	<!-- Article List Parent Activity theme -->
