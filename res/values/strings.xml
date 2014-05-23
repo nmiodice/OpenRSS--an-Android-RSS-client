@@ -102,6 +102,8 @@
     <string name="tile_font_heavy">fonts/RobotoSlab-Regular.ttf</string>
     <string name="tile_font_light">fonts/RobotoSlab-Light.ttf</string>
     <string name="and_x_more">and %1$d more</string>
+    <string name="item_deleted">Deleted RSS feed</string>
+    <string name="tap_to_undo">Tap to undo</string>
     
     <!-- Topics activity -->
     <string name="saved_searches">Saved searches</string>

@@ -35,6 +35,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
 
+import com.iodice.utilities.SwipeToggle;
 import com.nhaarman.listviewanimations.itemmanipulation.OnDismissCallback;
 import com.nhaarman.listviewanimations.util.AdapterViewUtil;
 
@@ -48,7 +49,8 @@ import com.nhaarman.listviewanimations.util.AdapterViewUtil;
  * For performance reasons, do not use this class directly, but use the {@link com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.SwipeDismissAdapter}.
  */
 @SuppressLint("Recycle")
-public class SwipeDismissListViewTouchListener implements SwipeOnTouchListener {
+public class SwipeDismissListViewTouchListener 
+implements SwipeOnTouchListener, SwipeToggle {
 
     private static final int MIN_FLING_VELOCITY_FACTOR = 16;
     // Cached ViewConfiguration and system-wide constant values

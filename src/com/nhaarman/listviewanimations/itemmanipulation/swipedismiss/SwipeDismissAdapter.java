@@ -18,6 +18,7 @@ package com.nhaarman.listviewanimations.itemmanipulation.swipedismiss;
 import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 
+import com.iodice.utilities.SwipeToggle;
 import com.nhaarman.listviewanimations.ArrayAdapter;
 import com.nhaarman.listviewanimations.BaseAdapterDecorator;
 import com.nhaarman.listviewanimations.itemmanipulation.OnDismissCallback;
@@ -29,7 +30,9 @@ import com.nhaarman.listviewanimations.itemmanipulation.OnDismissCallback;
  * extends {@link SwipeOnScrollListener} and
  * pass it in the constructor {@link #SwipeDismissAdapter(android.widget.BaseAdapter, com.nhaarman.listviewanimations.itemmanipulation.OnDismissCallback, SwipeOnScrollListener)}.
  */
-public class SwipeDismissAdapter extends BaseAdapterDecorator {
+public class SwipeDismissAdapter 
+extends BaseAdapterDecorator
+implements SwipeToggle {
 
     protected OnDismissCallback mOnDismissCallback;
     protected SwipeDismissListViewTouchListener mSwipeDismissListViewTouchListener;
@@ -97,10 +100,12 @@ public class SwipeDismissAdapter extends BaseAdapterDecorator {
             mSwipeDismissListViewTouchListener.setTouchChild(childResId);
         }
     }
+    @Override
     /* custom call to toggle swipe on */
     public void toggleSwipe() {
     	mSwipeDismissListViewTouchListener.toggleSwipe();
     }
+    @Override
     /* custom call to toggle swipe off */
     public void untoggleSwipe() {
     	mSwipeDismissListViewTouchListener.untoggleSwipe();

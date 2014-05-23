@@ -9,8 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.ActionMode;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +36,13 @@ public class FeedList extends AnimatedEntryList implements Callback {
 	private static final int CALLBACK_INITIATE_DELETE_TASK = 0;
 	/* used internally to process a swipe event after confirmation */
 	private static final int CALLBACK_PROCESS_ON_SWIPE = 1;
+	
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+		enableSwipeUndo = true;
+		return super.onCreateView(inflater, container, savedInstanceState);
+	}
     
     
 	@Override
@@ -355,13 +364,6 @@ public class FeedList extends AnimatedEntryList implements Callback {
 		}
 	}
 	protected void onItemSwiped(List<Integer> removed) {
-		if (false) {
-		AlertDialog alert = ConfirmationDialog.getDeleteDialog(getActivity(), 
-				this, 
-				FeedList.CALLBACK_PROCESS_ON_SWIPE, 
-				removed);
-		alert.show();
-		} else
-			this.handleCallbackEvent(FeedList.CALLBACK_PROCESS_ON_SWIPE, removed);
+		this.handleCallbackEvent(FeedList.CALLBACK_PROCESS_ON_SWIPE, removed);
 	}
 }

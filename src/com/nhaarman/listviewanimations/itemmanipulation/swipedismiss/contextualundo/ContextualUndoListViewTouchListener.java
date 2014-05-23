@@ -31,6 +31,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 
+import com.iodice.utilities.SwipeToggle;
 import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.DismissableManager;
 import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.SwipeOnTouchListener;
 import com.nhaarman.listviewanimations.util.AdapterViewUtil;
@@ -40,7 +41,8 @@ import com.nhaarman.listviewanimations.util.AdapterViewUtil;
  * this class directly, use ContextualUndoAdapter to wrap your
  * {@link BaseAdapter}s.
  */
-public class ContextualUndoListViewTouchListener implements SwipeOnTouchListener {
+public class ContextualUndoListViewTouchListener 
+implements SwipeOnTouchListener, SwipeToggle {
     // Cached ViewConfiguration and system-wide constant values
     private final int mSlop;
     private final int mMinFlingVelocity;
@@ -65,6 +67,7 @@ public class ContextualUndoListViewTouchListener implements SwipeOnTouchListener
     private boolean mIsParentHorizontalScrollContainer;
     private int mResIdOfTouchChild;
     private boolean mTouchChildTouched;
+    private boolean mSwipeToggle = true;
 
     private DismissableManager mDismissableManager;
 
@@ -73,6 +76,15 @@ public class ContextualUndoListViewTouchListener implements SwipeOnTouchListener
         void onViewSwiped(long dismissViewItemId, int dismissPosition);
 
         void onListScrolled();
+    }
+    
+    /* custom call to toggle swipe on */
+    public void toggleSwipe() {
+    	this.mSwipeToggle = true;
+    }
+    /* custom call to toggle swipe off */
+    public void untoggleSwipe() {
+    	this.mSwipeToggle = false;
     }
 
     public ContextualUndoListViewTouchListener(final AbsListView listView, final Callback callback) {
@@ -123,6 +135,9 @@ public class ContextualUndoListViewTouchListener implements SwipeOnTouchListener
         if (mViewWidth < 2) {
             mViewWidth = mListView.getWidth();
         }
+        
+        if (mSwipeToggle == false)
+        	return false;
 
         boolean result;
         switch (motionEvent.getActionMasked()) {

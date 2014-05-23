@@ -30,6 +30,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.iodice.utilities.SwipeToggle;
 import com.nhaarman.listviewanimations.BaseAdapterDecorator;
 import com.nhaarman.listviewanimations.util.AdapterViewUtil;
 
@@ -44,7 +45,9 @@ import com.nhaarman.listviewanimations.util.AdapterViewUtil;
  * , a delay in milliseconds before deleting the item.<br>
  * * Set your {@link ListView} to this ContextualUndoAdapter, and set this ContextualUndoAdapter to your ListView.<br>
  */
-public class ContextualUndoAdapter extends BaseAdapterDecorator implements ContextualUndoListViewTouchListener.Callback {
+public class ContextualUndoAdapter 
+extends BaseAdapterDecorator 
+implements ContextualUndoListViewTouchListener.Callback, SwipeToggle {
 
     private static final int ANIMATION_DURATION = 150;
     private static final String EXTRA_ACTIVE_REMOVED_ID = "removedId";
@@ -558,4 +561,16 @@ public class ContextualUndoAdapter extends BaseAdapterDecorator implements Conte
             mContextualUndoView.setTag(this);
         }
     }
+
+	@Override
+    /* custom call to toggle swipe on */
+	public void toggleSwipe() {
+		mContextualUndoListViewTouchListener.toggleSwipe();
+	}
+
+    @Override
+    /* custom call to toggle swipe off */
+	public void untoggleSwipe() {
+    	mContextualUndoListViewTouchListener.untoggleSwipe();
+	}
 }
