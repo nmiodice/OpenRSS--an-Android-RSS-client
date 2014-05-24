@@ -40,6 +40,13 @@ public class FeedData {
 	}
 	
 	public void setGroups(ArrayList<String> s) {
+		int numGrps = s.size();
+		String grp;
+		for (int i = 0; i < numGrps; i++) {
+			grp = s.get(i);
+			grp = Text.toFirstLetterUppercase(grp);
+			s.set(i, grp);
+		}
 		if (s != null)
 			this.group = s;
 	}

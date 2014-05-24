@@ -225,7 +225,8 @@ implements ListRefreshCallback {
      * TODO: Finish! Fix! Something, this crap is broken
      * TODO: comment effectively
      */
-    private void addSearchBarAnimation() {
+    @SuppressWarnings("unused")
+	private void addSearchBarAnimation() {
     	if (!showSearchBar)
     		return;
     	FragmentManager fMan = getFragmentManager();
@@ -236,51 +237,7 @@ implements ListRefreshCallback {
 		if (lv == null)
 			return;
 		
-		lv.setOnScrollListener(new OnScrollListener() {
-			private int yPositionAtLastStop = 0;
-			private boolean animatedSinceLastStop = false;
-			@Override
-			public void onScrollStateChanged(AbsListView view, int scrollState) {
-		    	if(scrollState == OnScrollListener.SCROLL_STATE_IDLE && view != null) {
-		    		// a listview has no notion of the total list size, and therefore 
-		    		// no scroll position. Therefore, we use the position of the top child
-		    		View topChild = view.getChildAt(0);
-		    		if (topChild != null)
-		    			yPositionAtLastStop = topChild.getTop();
-		    	}
-		    	animatedSinceLastStop = false;
-			}
-			@Override
-			/**
-			 * Trigger an animation only if the change in scroll value is sufficiently
-			 * large & the animation is necessary. For example, a searchbar will be
-			 * animated up if the scroll is down and it is already visible
-			 */
-			public void onScroll(AbsListView view, int firstVisibleItem,
-					int visibleItemCount, int totalItemCount) {
-				if (animatedSinceLastStop == true || view == null)
-					return;
-
-				// a listview has no notion of the total list size, and therefore 
-	    		// no scroll position. Therefore, we use the position of the top child
-	    		View topChild = view.getChildAt(0);
-	    		if (topChild == null)
-	    			return;
-	    		
-	    		int currScrollY = topChild.getTop();
-				int deltaScroll = currScrollY - yPositionAtLastStop;
-				
-				// this is an arbitrary threshold at which I want the animation to start
-				if (Math.abs(deltaScroll) < 50)
-					return;
-				
-				if (deltaScroll < 0) {
-					Log.i(TAG,  "TRIGGER ANIMATION");
-					animatedSinceLastStop = true;
-				}
-			}
-		});
-		
+		lv.setOnScrollListener(new SearchBarScrollListener());
     }
     
     private void setupSearchBar() {
@@ -338,11 +295,10 @@ implements ListRefreshCallback {
             case R.id.action_article_search:
             	if (!showSearchBar)
             		return false;
-            	addSearchBarAnimation();
+            	//addSearchBarAnimation();
             	View v = findViewById(R.id.article_search_box_container);
             	if (v.getVisibility() == View.GONE) {
             		v.setVisibility(View.VISIBLE);
-            		Log.i(TAG, "search clicked!");
             	}
             	else
             		v.setVisibility(View.GONE);
@@ -483,5 +439,61 @@ implements ListRefreshCallback {
 	@Override
 	public String getSpinnerTitleText() {
 		return null;
+	}
+	
+	
+	private class SearchBarScrollListener implements OnScrollListener {
+		private int yPositionAtLastStop = 0;
+		private boolean animatedSinceLastStop = false;
+		private boolean hasStopped = false;
+		
+		@Override
+		/**
+		 * Places control on how long the lisener is active
+		 */
+		public void onScrollStateChanged(AbsListView view, int scrollState) {
+			if (hasStopped) {
+				return;
+			}
+			
+	    	if(scrollState == OnScrollListener.SCROLL_STATE_IDLE && view != null) {
+	    		// a listview has no notion of the total list size, and therefore 
+	    		// no scroll position. Therefore, we use the position of the top child
+	    		View topChild = view.getChildAt(0);
+	    		if (topChild != null)
+	    			yPositionAtLastStop = topChild.getTop();
+	    	}
+	    	animatedSinceLastStop = false;
+	    	hasStopped = true;
+		}
+		@Override
+		/**
+		 * Trigger an animation only if the change in scroll value is sufficiently
+		 * large & the animation is necessary. For example, a searchbar will be
+		 * animated up if the scroll is down and it is already visible
+		 */
+		public void onScroll(AbsListView view, int firstVisibleItem,
+				int visibleItemCount, int totalItemCount) {
+			if (animatedSinceLastStop == true || view == null)
+				return;
+
+			// a listview has no notion of the total list size, and therefore 
+    		// no scroll position. Therefore, we use the position of the top child
+    		View topChild = view.getChildAt(0);
+    		if (topChild == null)
+    			return;
+    		
+    		int currScrollY = topChild.getTop();
+			int deltaScroll = currScrollY - yPositionAtLastStop;
+			
+			// this is an arbitrary threshold at which I want the animation to start
+			if (Math.abs(deltaScroll) < 50)
+				return;
+			
+			if (deltaScroll < 0) {
+				Log.i(TAG,  "TRIGGER ANIMATION");
+				animatedSinceLastStop = true;
+			}
+		}		
 	}
 }

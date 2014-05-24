@@ -402,7 +402,9 @@ extends ListFragment {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View v = super.getView(position, convertView, parent);
-	    	return onListElementRedraw(position, v, parent);
+			if (getActivity() != null)
+				v = onListElementRedraw(position, v, parent);
+			return v;
 		}
 
 	}

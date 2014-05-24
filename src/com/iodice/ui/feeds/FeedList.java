@@ -255,7 +255,8 @@ public class FeedList extends MultiselectSwipeList implements Callback {
 					FeedOrm.deleteFeedWithLink(link, getActivity());
 				}
 				SelectorRefreshCallback callbackInterface = (SelectorRefreshCallback) getActivity();
-				callbackInterface.refreshCurrentSelectorMaintainSelection();
+				if (callbackInterface != null)
+					callbackInterface.refreshCurrentSelectorMaintainSelection();
 				break;
 				
 			default:

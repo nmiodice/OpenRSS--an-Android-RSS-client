@@ -253,7 +253,9 @@ extends AbstractNavDrawerActivity {
 				throw new UnsupportedOperationException();
 		}
 		
-		// process db request in background thread
+		/**
+		 * Process DB request in background
+		 */
 		protected Intent doInBackground(Void... arg0) {
 			String urlListKey = ArticleActivityByUrl.INTENT_EXTRA_URL_LIST;
 			Intent intent = new Intent(context, ArticleActivityByTopic.class);
