@@ -36,9 +36,12 @@ public abstract class AbstractNavDrawerActivity extends FragmentActivity {
     protected abstract NavDrawerActivityConfiguration getNavDrawerConfiguration();
     protected abstract void onNavItemSelected(int id );
        
-    // some activities may want an 'up' button instead of the navigation drawer. For example,
-    // any low level application component. This method returns true if the drawer icon should
-    // be visible and false if not
+    /**
+     * Determines whether or not the activity returns to a parent or launches the drawer
+     * when the indicator or back button is visible
+     * @return True if this is a top-level activity & the drawer should be visible, false
+     * if otherwise.
+     */
     protected abstract boolean isActionBarDrawerIndicatorVisible();
     
     /**

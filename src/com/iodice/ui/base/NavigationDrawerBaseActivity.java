@@ -120,6 +120,20 @@ extends AbstractNavDrawerActivity {
         return activityConfiguration;
 	}
 	
+	@Override
+	/**
+	 * Determines the appropriate action based on whether or not the back button
+	 * is shown. If so, use the default behavior (return to parent activity, or exit).
+	 * Otherwise, use the provided exit logic, which will allow any activity state
+	 * to persist through the exit
+	 */
+	public void onBackPressed() {
+		if (isActionBarDrawerIndicatorVisible())
+			onNavItemSelected(DRAWER_EXIT);
+		else
+			super.onBackPressed();
+	}
+	
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

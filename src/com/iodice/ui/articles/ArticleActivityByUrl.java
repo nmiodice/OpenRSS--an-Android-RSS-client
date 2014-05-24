@@ -363,6 +363,7 @@ implements ListRefreshCallback {
         			String properDisplay = (isShowingUnreadOnly) ? showReadMsg : hideReadMsg;
         			item.setTitle(properDisplay);
         		}
+            	
             default:
                 return super.onOptionsItemSelected(item);
         }

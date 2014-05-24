@@ -85,7 +85,7 @@ implements SelectorRefreshCallback, SwipeStateChangeCallback {
                 	handleCallbackEvent(FeedActivity.CALLBACK_REFRESH_CATEGORY_SELECTOR, null);
         		}
         		return true;
-        		
+            	
             default:
                 return super.onOptionsItemSelected(item);
         }
