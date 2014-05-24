@@ -20,9 +20,10 @@ import com.iodice.rssreader.R;
 import com.iodice.services.ArticleUpdateService;
 import com.iodice.ui.base.NavigationDrawerWithSpinner;
 import com.iodice.utilities.SelectorRefreshCallback;
+import com.iodice.utilities.SwipeStateChangeCallback;
 
 public class FeedActivity extends NavigationDrawerWithSpinner 
-implements SelectorRefreshCallback {
+implements SelectorRefreshCallback, SwipeStateChangeCallback {
 	
 	private static final String TAG = "Activity_Home";
 	private static final String FEED_LIST = "FEED_LIST";
@@ -271,5 +272,21 @@ implements SelectorRefreshCallback {
 	@Override
 	public String getSpinnerTitleText() {
 		return getText(R.string.categories).toString();
+	}
+
+	@Override
+	/**
+	 * Disable the navigation drawer
+	 */
+	public void onSwipeBegin() {
+		disableDrawer();
+	}
+
+	@Override
+	/**
+	 * Enable the navigation drawer
+	 */
+	public void onSwipeFinish() {
+		enableDrawer();
 	}
 }

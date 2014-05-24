@@ -30,6 +30,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.iodice.utilities.SwipeStateChangeCallback;
 import com.iodice.utilities.SwipeToggle;
 import com.nhaarman.listviewanimations.BaseAdapterDecorator;
 import com.nhaarman.listviewanimations.util.AdapterViewUtil;
@@ -124,6 +125,10 @@ implements ContextualUndoListViewTouchListener.Callback, SwipeToggle {
 
         mDeleteItemCallback = deleteItemCallback;
         mCountDownFormatter = countDownFormatter;
+    }
+    
+    public void setSwipeChangeCallback(SwipeStateChangeCallback callback) {
+    	mContextualUndoListViewTouchListener.setSwipeChangeCallback(callback);
     }
 
     @Override

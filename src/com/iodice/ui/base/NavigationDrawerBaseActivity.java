@@ -120,7 +120,6 @@ extends AbstractNavDrawerActivity {
         return activityConfiguration;
 	}
 	
-	
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

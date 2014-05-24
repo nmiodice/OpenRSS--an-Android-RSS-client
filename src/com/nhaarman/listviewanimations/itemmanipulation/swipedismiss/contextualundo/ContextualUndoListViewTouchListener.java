@@ -21,6 +21,7 @@ package com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.contextual
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
 import android.view.View;
@@ -31,6 +32,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 
+import com.iodice.utilities.SwipeStateChangeCallback;
 import com.iodice.utilities.SwipeToggle;
 import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.DismissableManager;
 import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.SwipeOnTouchListener;
@@ -70,6 +72,8 @@ implements SwipeOnTouchListener, SwipeToggle {
     private boolean mSwipeToggle = true;
 
     private DismissableManager mDismissableManager;
+    private SwipeStateChangeCallback mSwipeStateChangeCallback = null;
+
 
     public interface Callback {
 
@@ -93,6 +97,10 @@ implements SwipeOnTouchListener, SwipeToggle {
     /* used by nhaarman library, do not call */
     public void allowSwipe() {
         mDisallowSwipe = false;
+    }
+    
+    public void setSwipeChangeCallback(SwipeStateChangeCallback callback) {
+    	mSwipeStateChangeCallback = callback;
     }
 
     public ContextualUndoListViewTouchListener(final AbsListView listView, final Callback callback) {
@@ -146,11 +154,25 @@ implements SwipeOnTouchListener, SwipeToggle {
         
         if (mSwipeToggle == false)
         	return false;
+        
+        /* allows for things like the navigation drawer to respond to
+         * swipe requests near the left edge of the screen
+         * 
+         * TODO: Make this cleaner, perhaps more generalized too. The touch
+         * listener here shouldn't need to know about a navigation drawer,
+         * but I can't think of another way to not make the navigation drawer
+         * become active & also initiate a list item swipe, which can cause
+         * accidental list deletions
+         */
+        if (motionEvent.getX() < 50)
+        	return false;
 
         boolean result;
         switch (motionEvent.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 result = handleDownEvent(view, motionEvent);
+                if (mSwipeStateChangeCallback != null)
+                	mSwipeStateChangeCallback.onSwipeBegin();
                 break;
             case MotionEvent.ACTION_MOVE:
                 result = handleMoveEvent(view, motionEvent);
@@ -158,6 +180,9 @@ implements SwipeOnTouchListener, SwipeToggle {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 result = handleUpCancelEvent(view, motionEvent);
+                Log.i("onswipe", "onswipe finish may be called " + mSwipeStateChangeCallback);
+                if (mSwipeStateChangeCallback != null)
+                	mSwipeStateChangeCallback.onSwipeFinish();
                 break;
             default:
                 result = false;

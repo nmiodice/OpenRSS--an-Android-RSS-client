@@ -15,6 +15,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import com.iodice.rssreader.R;
+import com.iodice.utilities.SwipeStateChangeCallback;
 import com.iodice.utilities.SwipeToggle;
 import com.nhaarman.listviewanimations.itemmanipulation.OnDismissCallback;
 import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.SwipeDismissAdapter;
@@ -78,9 +79,17 @@ implements OnDismissCallback, DeleteItemCallback {
      * Sets up a more complex adapter that allows for an undo notification
      */
     private void setContextualUndoWithTimedDeleteAdapter() {
-        ContextualUndoAdapter adapter = new ContextualUndoAdapter(mAdapter, R.layout.undo_row, R.id.undo_row_undobutton, 2000, this);
+        ContextualUndoAdapter adapter = new ContextualUndoAdapter(mAdapter, 
+        		R.layout.undo_row, 
+        		R.id.undo_row_undobutton, 
+        		2000, 
+        		this);
         adapter.setAbsListView(getListView());
         getListView().setAdapter(adapter);
+        
+        /* setup the swipe state change listener */
+        SwipeStateChangeCallback callback = (SwipeStateChangeCallback) getActivity();
+        adapter.setSwipeChangeCallback(callback);
     }
     
     @Override
