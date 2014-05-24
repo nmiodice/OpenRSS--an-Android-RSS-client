@@ -19,6 +19,8 @@ import android.view.ActionMode;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.FilterQueryProvider;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -123,11 +125,35 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 		/* if the system is configured to hide articles after reading them, do it here */
 		boolean hideOnClick = SharedPrefsHelper.getHideArticlesAfterClick(getActivity());
 		if (hideOnClick) {
-			ArrayList<String> linkList = new ArrayList<String>();
-			linkList.add(feedURL);
-			ArticleOrm.setArticleReadState(linkList, true, getActivity());
+			markArticleRead(view, feedURL);
+		}
+	}
+	
+	private void markArticleRead(View articleView, String feedURL) {
+		ArrayList<String> linkList = new ArrayList<String>();
+		linkList.add(feedURL);
+		ArticleOrm.setArticleReadState(linkList, true, getActivity());
+		
+		/* need the animation if unread articles only are showing */ 
+		if (showUnreadOnly) {
+			Animation fadeOut = new AlphaAnimation(1, 0);
+		    fadeOut.setDuration(500);
+		    
+		    fadeOut.setAnimationListener(new Animation.AnimationListener(){
+			    @Override
+			    public void onAnimationStart(Animation arg0) {}           
+			    @Override
+			    public void onAnimationRepeat(Animation arg0) {}           
+			    @Override
+			    public void onAnimationEnd(Animation arg0) {
+					ListRefreshCallback callbackInterface = (ListRefreshCallback) getActivity();
+					callbackInterface.refreshCurrentList(true);
+			    }
+			});
+		    articleView.setAnimation(fadeOut);
+		} else {
 			ListRefreshCallback callbackInterface = (ListRefreshCallback) getActivity();
-			callbackInterface.refreshCurrentList(true);
+			callbackInterface.refreshCurrentList(true);			
 		}
 	}
 
