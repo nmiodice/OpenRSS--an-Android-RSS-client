@@ -7,7 +7,6 @@
         tools:ignore="TypographyDashes">
         https://github.com/nmiodice/OpenRSS--an-Android-RSS-client</string>
     
-    <string name="action_settings">Preferences</string>
     <string name="hello_world">Hello world!</string>
     <string name="empty_string">No content</string>
     <string name="action_reload">Reload</string>

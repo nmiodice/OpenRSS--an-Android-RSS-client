@@ -24,7 +24,7 @@ public class SettingsActivity extends Activity {
      */
     private void setupActionBar() {
     	String appName = this.getString(R.string.app_name);
-    	String pageName = this.getString(R.string.action_settings);
+    	String pageName = this.getString(R.string.drawer_settings);
     	pageName = pageName.toLowerCase(Locale.US); 
     	String abText = appName + " " + pageName;
     	this.getActionBar().setTitle(abText);

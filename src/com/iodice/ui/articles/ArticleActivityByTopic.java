@@ -35,7 +35,17 @@ public class ArticleActivityByTopic extends ArticleActivityByUrl {
 	public boolean isActionBarDrawerIndicatorVisible() {
 		return true;
 	}
-
+	@Override
+	public int[] getViewsToHidewOnDrawerOpen() {
+		return new int[] {
+				R.id.action_refresh,
+				R.id.action_delete_searches,
+				R.id.action_refresh,
+		        R.id.action_settings,
+		        R.id.action_view_read,
+		};	
+	}
+	
 	// displayed in top right of activity, lists categories by name. upon select, filter list to just those categories
 	public void setupCategorySpinner() {
 		PopulateActionBarSpinner asyncTask = new PopulateActionBarSpinner();
@@ -166,7 +176,10 @@ public class ArticleActivityByTopic extends ArticleActivityByUrl {
 	}
 
 	private String getFilterFromSpinnerList(int position) {
-		String filterTerms = this.spinnerListItemPrimaryKeys.get(position);
+		String filterTerms = "";
+		
+		if (position >= 0 && position < spinnerListItemPrimaryKeys.size())
+			filterTerms = spinnerListItemPrimaryKeys.get(position);
 		if (filterTerms == getText(R.string.all)) {
 			filterTerms = "";
 			int size = this.spinnerListItemPrimaryKeys.size();

@@ -115,14 +115,11 @@ public class ArticleOrm extends BaseOrm {
         return values;
     }
     
-    public static Cursor selectWhereParentLinkIs(Context context, 
-    		List<String> links, 
-    		int max, 
-    		boolean getUnreadOnly) {
-	    SQLiteDatabase database = BaseOrm.getReadableDatabase(context);
-	    String sql = "SELECT rowid _id,* FROM " + ArticleOrm.TABLE_NAME + 
-	    				" WHERE " + ArticleOrm.COLUMN_PARENT_URL + " IN(";
-	    int numLinks = links.size();
+    private static String getLinkSqlString(List<String> links) {
+    	String sql = "SELECT rowid _id,* FROM " + ArticleOrm.TABLE_NAME; 
+		int numLinks = links.size();
+	    if (numLinks > 0)
+	    	sql += " WHERE " + ArticleOrm.COLUMN_PARENT_URL + " IN(";
 	    for (int i = 0; i < numLinks; i++) {
 	    	sql += "'";
 	    	sql += links.get(i);
@@ -132,10 +129,26 @@ public class ArticleOrm extends BaseOrm {
 	    		sql += ",";
 	    	else
 	    		sql += ")";
-	    }
+		}
+	    return sql;
+    }
+    
+    public static Cursor selectWhereParentLinkIs(Context context, 
+    		List<String> links, 
+    		int max, 
+    		boolean getUnreadOnly) {
+	    SQLiteDatabase database = BaseOrm.getReadableDatabase(context);
+	    String sql = getLinkSqlString(links);
+		int numLinks = links.size();
+
 	    // get all or get unread only
-	    if (getUnreadOnly)
-	    	sql += " AND " + COLUMN_IS_READ + " = 0";
+	    if (getUnreadOnly) {
+	    	if (numLinks == 0)
+	    		sql += " WHERE";
+	    	else
+	    		sql += " AND";
+	    	sql += " " + COLUMN_IS_READ + " = 0";
+	    }
 
 	    // always order by date
 	    sql += " ORDER BY DATETIME(" + ArticleOrm.COLUMN_PUBLISHED_DATE + ") DESC";	  
@@ -154,19 +167,8 @@ public class ArticleOrm extends BaseOrm {
 													    		int max,
 													    		boolean getUnreadOnly) {
 	    SQLiteDatabase database = BaseOrm.getReadableDatabase(context);
-    	String sql = "SELECT rowid _id,* FROM " + ArticleOrm.TABLE_NAME + 
-				" WHERE " + ArticleOrm.COLUMN_PARENT_URL + " IN(";
-		int numLinks = links.size();
-		for (int i = 0; i < numLinks; i++) {
-			sql += "'";
-			sql += links.get(i);
-			sql += "'";
-			
-			if (i < numLinks -1)
-				sql += ",";
-			else
-				sql += ")";
-		}
+	    String sql = getLinkSqlString(links);
+
 		// depending on the query type (inclusive vs not inclusive), build the relevant
 		// statements
 		int numCols = columnsToFilterOn.size();

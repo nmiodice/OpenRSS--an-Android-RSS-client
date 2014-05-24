@@ -67,7 +67,6 @@ implements SelectorRefreshCallback {
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-    	boolean defaultValue = super.onOptionsItemSelected(item);
         // Handle presses on the action bar items
         switch (item.getItemId()) {
             case R.id.action_add_feed:
@@ -85,8 +84,9 @@ implements SelectorRefreshCallback {
                 	handleCallbackEvent(FeedActivity.CALLBACK_REFRESH_CATEGORY_SELECTOR, null);
         		}
         		return true;
+        		
             default:
-                return defaultValue;
+                return super.onOptionsItemSelected(item);
         }
     }
 

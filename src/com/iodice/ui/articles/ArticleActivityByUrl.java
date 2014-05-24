@@ -136,17 +136,12 @@ implements ListRefreshCallback {
 	
 	@Override
 	public int[] getViewsToHidewOnDrawerOpen() {
-		if (showSearchBar) {
-			return new int[] {
-					R.id.action_article_search,
-					R.id.action_refresh,
-			};
-		} else {
-			return new int[] {
-					R.id.action_refresh,
-					R.id.action_delete_searches,
-			};			
-		}
+		return new int[] {
+				R.id.action_article_search,
+				R.id.action_refresh,
+				R.id.action_settings,
+				R.id.action_view_read,
+		};
 	}
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -325,9 +320,11 @@ implements ListRefreshCallback {
 	private void updateCurrentListWithWebQuery() {
 		FragmentManager fMan = getFragmentManager();
 		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivityByUrl.LIST);
-		if (articleList != null)
-			articleList.setLoadState(true);
-		this.queryWebForNewListData(articleList.getArticleURLList());
+		List<String> urlList = articleList.getArticleURLList();
+		if (articleList == null || urlList.size() == 0)
+			return;
+		articleList.setLoadState(true);
+		queryWebForNewListData(urlList);
 	}
     
     @Override

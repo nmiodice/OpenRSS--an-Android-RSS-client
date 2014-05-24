@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.iodice.application.SettingsActivity;
@@ -119,6 +120,18 @@ extends AbstractNavDrawerActivity {
         return activityConfiguration;
 	}
 	
+	
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        	case R.id.action_settings:
+        		onNavItemSelected(DRAWER_SETTINGS);
+        		return true;
+        	default:
+        		return super.onOptionsItemSelected(item);
+        }
+    }
+    
 	/**
 	 * A visual trick. Here, we set the list item that corresponds to the current
 	 * activity so that it appears that only one navigation drawer extends all 
