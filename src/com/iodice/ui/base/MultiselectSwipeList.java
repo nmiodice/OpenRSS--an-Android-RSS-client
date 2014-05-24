@@ -21,7 +21,7 @@ import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.SwipeDismis
 import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.contextualundo.ContextualUndoAdapter;
 import com.nhaarman.listviewanimations.itemmanipulation.swipedismiss.contextualundo.ContextualUndoAdapter.DeleteItemCallback;
 
-abstract class MultiselectSwipeList 
+public abstract class MultiselectSwipeList 
 extends CabMultiselectList 
 implements OnDismissCallback, DeleteItemCallback {
 	

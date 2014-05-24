@@ -157,7 +157,13 @@ implements SelectorRefreshCallback {
 			// step 1: note the current category
 			final ActionBar actionBar = getActionBar();
 			int selectedListIndex = actionBar.getSelectedNavigationIndex();
-			String selectedListValue = this.spinnerListItemPrimaryKeys.get(selectedListIndex);
+			String selectedListValue = null;
+			
+			/* may be -1 in the case that the selector is no longer active or visible, such
+			 * as when the drawer is open
+			 */
+			if (selectedListIndex >= 0 && selectedListIndex < spinnerListItemPrimaryKeys.size())
+				selectedListValue = spinnerListItemPrimaryKeys.get(selectedListIndex);
 			
 			// step 2: refresh displayed data with proper list items
 			repopulateActiveList();
@@ -206,9 +212,14 @@ implements SelectorRefreshCallback {
 		// Step 2. Reset the fragments adapter and redraw it
 		final ActionBar actionBar = getActionBar();
 		int position = actionBar.getSelectedNavigationIndex();
-		String category = this.spinnerListItemPrimaryKeys.get(position);
+		String category;
+		if (position >= 0 && position < spinnerListItemPrimaryKeys.size())
+			category = this.spinnerListItemPrimaryKeys.get(position);
+		else
+			category = getText(R.string.all).toString();
+		
 		// "all" is not a real category, so account for it
-		if (category == this.getText(R.string.all))
+		if (category == getText(R.string.all))
 			category = "*";
 		
 		listFrag.loadCategory(category);		

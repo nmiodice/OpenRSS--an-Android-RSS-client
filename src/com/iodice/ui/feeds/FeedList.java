@@ -23,14 +23,14 @@ import android.widget.Toast;
 import com.iodice.database.FeedOrm;
 import com.iodice.rssreader.R;
 import com.iodice.ui.articles.ArticleActivityByUrl;
-import com.iodice.ui.base.AnimatedEntryList;
+import com.iodice.ui.base.MultiselectSwipeList;
 import com.iodice.utilities.Callback;
 import com.iodice.utilities.ConfirmationDialog;
 import com.iodice.utilities.SelectorRefreshCallback;
 
 
 @SuppressLint("UseValueOf")
-public class FeedList extends AnimatedEntryList implements Callback {
+public class FeedList extends MultiselectSwipeList implements Callback {
 	
 	private final String TAG = "Feed_List";
 	private static final int CALLBACK_INITIATE_DELETE_TASK = 0;

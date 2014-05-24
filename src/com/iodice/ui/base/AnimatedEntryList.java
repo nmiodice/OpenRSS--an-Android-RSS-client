@@ -44,7 +44,13 @@ extends MultiselectSwipeList {
 		setAnimationEnabled(animate);
 	}
 	
+	/* The nhaarman sources only included an on scroll listener for the
+	 * SwipeDismissAdapter
+	 */
 	private SwipeOnScrollListener getScrollListener() {
+		if (enableSwipeUndo)
+			throw new UnsupportedOperationException();
+	
     	return new SwipeOnScrollListener() {
 		    public void onScrollStateChanged(AbsListView view, int scrollState) {
 		    	super.onScrollStateChanged(view, scrollState);

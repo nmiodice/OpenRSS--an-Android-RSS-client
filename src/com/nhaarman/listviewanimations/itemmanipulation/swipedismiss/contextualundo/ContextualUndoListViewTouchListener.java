@@ -86,6 +86,14 @@ implements SwipeOnTouchListener, SwipeToggle {
     public void untoggleSwipe() {
     	this.mSwipeToggle = false;
     }
+    /* used by nhaarman library, do not call */
+    public void disallowSwipe() {
+        mDisallowSwipe = true;
+    }
+    /* used by nhaarman library, do not call */
+    public void allowSwipe() {
+        mDisallowSwipe = false;
+    }
 
     public ContextualUndoListViewTouchListener(final AbsListView listView, final Callback callback) {
         ViewConfiguration vc = ViewConfiguration.get(listView.getContext());
