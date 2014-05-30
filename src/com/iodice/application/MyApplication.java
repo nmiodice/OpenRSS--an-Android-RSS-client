@@ -156,7 +156,7 @@ implements OnSharedPreferenceChangeListener {
 		sports.add("Sports");
 		food.add("Recipes & Food");
 		
-		rssFeeds.add(new FeedData("Apple", tech, "ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=10/xml"));
+		//rssFeeds.add(new FeedData("Apple", tech, "ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/topsongs/limit=10/xml"));
 		rssFeeds.add(new FeedData("Wired", tech, "http://feeds.wired.com/wired/index"));
 		rssFeeds.add(new FeedData("BBC world", news, "http://feeds.bbci.co.uk/news/world/rss.xml"));
 		rssFeeds.add(new FeedData("CNN", news, "http://rss.cnn.com/rss/cnn_topstories.rss"));
@@ -168,12 +168,12 @@ implements OnSharedPreferenceChangeListener {
 		
 		comboA.addAll(reddit);
 		comboA.addAll(tech);
-		rssFeeds.add(new FeedData("/r/androiddev", comboA, "http://www.reddit.com/r/androiddev/.rss"));
-		rssFeeds.add(new FeedData("/r/programming", comboA, "http://www.reddit.com/r/programming/.rss"));
+		//rssFeeds.add(new FeedData("/r/androiddev", comboA, "http://www.reddit.com/r/androiddev/.rss"));
+		//rssFeeds.add(new FeedData("/r/programming", comboA, "http://www.reddit.com/r/programming/.rss"));
 		rssFeeds.add(new FeedData("/r/android", comboA, "http://www.reddit.com/r/Android/.rss"));
 		rssFeeds.add(new FeedData("/r/engineering", comboA, "http://www.reddit.com/r/engineering/.rss"));
 		rssFeeds.add(new FeedData("/r/math", reddit, "http://www.reddit.com/r/math/.rss"));
-		rssFeeds.add(new FeedData("/r/gradschool", reddit, "http://www.reddit.com/r/GradSchool/.rss"));
+		//rssFeeds.add(new FeedData("/r/gradschool", reddit, "http://www.reddit.com/r/GradSchool/.rss"));
 		rssFeeds.add(new FeedData("Yahoo Skiing", sports, "http://sports.yahoo.com/ski/rss.xml"));
 		rssFeeds.add(new FeedData("Y.Combinator", tech, "https://news.ycombinator.com/rss"));
 		rssFeeds.add(new FeedData("ESPN", sports, "http://sports.espn.go.com/espn/rss/news"));

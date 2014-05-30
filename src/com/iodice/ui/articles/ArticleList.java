@@ -448,21 +448,26 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 		return this.articleURLList;
 	}
 	
+	protected void showUndoMarkUnread(List<String> linkList) {
+		
+	}
+	
 	protected void onItemSwiped(List<Integer> removed) {
 		int numRemoved = removed.size();
 		MySimpleCursorAdapter adapt = (MySimpleCursorAdapter)getListAdapter();
-		
+		ArrayList<String> linkList = new ArrayList<String>();
+
 		for (int i = 0; i < numRemoved; i++) {
 			View v = adapt.getView(removed.get(i), null, null);
 			v.setVisibility(View.GONE);
-			String link = ((TextView)v.findViewById(R.id.rss_url)).getText().toString();
-			
-			ArrayList<String> linkList = new ArrayList<String>();
+			String link = ((TextView)v.findViewById(R.id.rss_url)).getText().toString();			
 			linkList.add(link);
-			ArticleOrm.setArticleReadState(linkList, true, getActivity());
 		}
+		
+		ArticleOrm.setArticleReadState(linkList, true, getActivity());
 		ListRefreshCallback callbackInterface = (ListRefreshCallback) getActivity();
 		callbackInterface.refreshCurrentList(true);
+		showUndoMarkUnread(linkList);
 	}
 
 	@Override
