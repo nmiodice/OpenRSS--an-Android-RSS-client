@@ -305,7 +305,6 @@ implements ListRefreshCallback {
             	return true;
             
             case R.id.action_view_read:
-            	Log.i(TAG, "afasdfasf");
         		FragmentManager fMan = getFragmentManager();
         		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivityByUrl.LIST);
         		/* toggle show unread & update the menu text accordingly */

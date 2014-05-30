@@ -41,6 +41,7 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 	private static final String TAG = "ArticleList";
 	private List<String> articleURLList;
 	private Typeface headline_font = null;
+	private int cabMarkReadIconResourceId = -1;
 	
 	// used primarly to avoid an infinite loop that can be caused if the feed has no
 	// data, tries to re-query the web, and then fails again. Without keeping track
@@ -309,8 +310,6 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 		// important to always call the parent, as it takes care of redrawing the checkboxes accurately
 		// when in action mode
 		View v = super.onListElementRedraw(position, convertView, parent);
-		if (hiddenListItems.contains(position))
-			return v;
 		
 		// the headline font is different. Lazy loading is ideal here because
 		// this instance can be shared. This allows the animation to not get
@@ -382,18 +381,55 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 		return v;
 	}
 	
+	@Override
+	/**
+	 * If this is the first item selected, choose whether to show the
+	 * 'mark read' or 'mark unread' icon
+	 * @param position
+	 */
+	protected void cabOnItemPress(int position) {
+		if (selectedListItems.size() != 1 || cabMenu == null)
+			return;
+		Log.i(TAG,  "Potentially modifying icon");
+		/* use the selected list item because we dont know whether or
+		 * not the item that was just pressed is checked or unchecked
+		 */
+		View v = getViewAtPosition(selectedListItems.get(0));
+		TextView isRead = (TextView)v.findViewById(R.id.rss_is_read);
+		String isReadAsString = isRead.getText().toString();
+		MenuItem readOrUnread = cabMenu.findItem(R.id.action_mark_as_read);
+		Drawable icon;
+
+		
+		/* this is populated via a boolean value, and as such will 
+		 * be either 0 or 1 
+		 */
+		if (isReadAsString.equals("0"))
+			cabMarkReadIconResourceId = R.drawable.ic_action_read;
+		else
+			cabMarkReadIconResourceId = R.drawable.ic_action_unread;
+		icon = getResources().getDrawable(cabMarkReadIconResourceId);
+		readOrUnread.setIcon(icon);
+	}
+	
 	public void setFeeds(List<String> urlList) {
 		if (urlList != null)
 			this.articleURLList = urlList;
 	}
 	
-	public void markSelectedAsRead() {
+	/**
+	 * Change the read/unread status of the selected articles based on
+	 * which icon is showing for the 'mark read' or 'mark unread'
+	 * menu icon
+	 */
+	public void cabChangeSelectedReadStatus() {
 		ArrayList<String> selectedArticles = new ArrayList<String>();
 		int selectedPos;
 		View article;
 		TextView txt;
+		boolean markRead = true;
 		int numSelected = selectedListItems.size();
-		ListAdapter  adapt = getListAdapter();
+		ListAdapter adapt = getListAdapter();
 		
 		for (int i = 0; i < numSelected; i++) {
 			selectedPos = selectedListItems.get(i);
@@ -401,8 +437,10 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 			txt = (TextView)article.findViewById(R.id.rss_url);
 			selectedArticles.add(txt.getText().toString());
 		}
+		if (cabMarkReadIconResourceId == R.drawable.ic_action_unread)
+			markRead = false;
 		
-		ArticleOrm.setArticleReadState(selectedArticles, true, getActivity());
+		ArticleOrm.setArticleReadState(selectedArticles, markRead, getActivity());
 	}
 
 	@Override
@@ -424,12 +462,17 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 		    	return true;
 		    	
 		    case R.id.action_mark_as_read:
-		    	String markHidden = getActivity().getString(R.string.confirm_mark_as_read);
+		    	String markReadOrUnread;
+		    	if (cabMarkReadIconResourceId == R.drawable.ic_action_read)
+		    		markReadOrUnread = getActivity().getString(R.string.confirm_mark_as_read);
+		    	else 
+		    		markReadOrUnread = getActivity().getString(R.string.confirm_mark_as_unread);
+				
 		    	AlertDialog alertDialog = ConfirmationDialog.getCustomDialog(getActivity(), 
     					this,
     					ArticleList.CALLBACK_MARK_SELECTED_AS_READ, 
     					mode,
-    					markHidden);
+    					markReadOrUnread);
 		    	alertDialog.show();
 				
 		    	return true;
@@ -448,8 +491,12 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 		return this.articleURLList;
 	}
 	
+	/**
+	 * Show an undo dialog and optionally mark items as unread
+	 * @param linkList the list of items to optionally mark as read
+	 */
 	protected void showUndoMarkUnread(List<String> linkList) {
-		
+		throw new NullPointerException();
 	}
 	
 	protected void onItemSwiped(List<Integer> removed) {
@@ -475,7 +522,7 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 			throws UnsupportedOperationException {
 		switch (n) {
 			case ArticleList.CALLBACK_MARK_SELECTED_AS_READ:
-		    	markSelectedAsRead();
+		    	cabChangeSelectedReadStatus();
 				ListRefreshCallback callbackInterface = (ListRefreshCallback) getActivity();
 				callbackInterface.refreshCurrentList(true);
 				

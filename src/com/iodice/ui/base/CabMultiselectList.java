@@ -47,8 +47,8 @@ extends ListFragment {
 	private final String TAG = "List_Base";
 
 	protected ArrayList<Integer> selectedListItems = new ArrayList<Integer>();
-	protected ArrayList<Integer> hiddenListItems = new ArrayList<Integer>();
 	protected boolean isInActionMode = false;
+	protected Menu cabMenu = null;
 	
 	/**
 	 * The action taken out when a single list item is clicked while the
@@ -313,6 +313,13 @@ extends ListFragment {
 	}
 	
 	/**
+	 * Called when an item is pressed while the Contextual ActionBar is
+	 * showing
+	 * @param position
+	 */
+	protected void cabOnItemPress(int position) {}
+	
+	/**
 	 * @return A MultiChoiceModeListener that provides basic functionality for the list
 	 * while the contextual actionbar is created. This calls into the parent class for
 	 * basic functionality, allowing the user to override specific actions if desired
@@ -323,6 +330,7 @@ extends ListFragment {
 		    @Override
 	        // Inflate the menu for the CAB
 		    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+		    	cabMenu = menu;
 		    	return onPreCreateActionMode(mode, menu);
 		    }
 		
@@ -338,12 +346,14 @@ extends ListFragment {
 		    public void onItemCheckedStateChanged(ActionMode mode, int position,
 		                                          long id, boolean checked) {
 				selectCheckBox(position);
+				cabOnItemPress(position);
 			}
 		    @Override
 	        // Here you can make any necessary updates to the activity when
 	        // the CAB is removed. By default, selected items are deselected/unchecked.
 		    public void onDestroyActionMode(ActionMode mode) {
 		    	onPreDestroyActionMode(mode);
+		    	cabMenu = null;
 		    }
 		    @Override
 	        // Here you can perform updates to the CAB due to

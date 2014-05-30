@@ -181,26 +181,27 @@ containing a value of this type.
         public static final int ic_action_select_all=0x7f020013;
         public static final int ic_action_share=0x7f020014;
         public static final int ic_action_undo=0x7f020015;
-        public static final int ic_action_web_site=0x7f020016;
-        public static final int ic_drawer=0x7f020017;
-        public static final int ic_launcher=0x7f020018;
-        public static final int info=0x7f020019;
-        public static final int info_dark=0x7f02001a;
-        public static final int info_light=0x7f02001b;
-        public static final int listitem_background=0x7f02001c;
-        public static final int navdrawer_listselector=0x7f02001d;
-        public static final int news=0x7f02001e;
-        public static final int news_dark=0x7f02001f;
-        public static final int news_light=0x7f020020;
-        public static final int settings=0x7f020021;
-        public static final int settings_dark=0x7f020022;
-        public static final int settings_light=0x7f020023;
-        public static final int tile=0x7f020024;
-        public static final int tile_pressed=0x7f020025;
-        public static final int tile_selector=0x7f020026;
-        public static final int topics=0x7f020027;
-        public static final int topics_dark=0x7f020028;
-        public static final int topics_light=0x7f020029;
+        public static final int ic_action_unread=0x7f020016;
+        public static final int ic_action_web_site=0x7f020017;
+        public static final int ic_drawer=0x7f020018;
+        public static final int ic_launcher=0x7f020019;
+        public static final int info=0x7f02001a;
+        public static final int info_dark=0x7f02001b;
+        public static final int info_light=0x7f02001c;
+        public static final int listitem_background=0x7f02001d;
+        public static final int navdrawer_listselector=0x7f02001e;
+        public static final int news=0x7f02001f;
+        public static final int news_dark=0x7f020020;
+        public static final int news_light=0x7f020021;
+        public static final int settings=0x7f020022;
+        public static final int settings_dark=0x7f020023;
+        public static final int settings_light=0x7f020024;
+        public static final int tile=0x7f020025;
+        public static final int tile_pressed=0x7f020026;
+        public static final int tile_selector=0x7f020027;
+        public static final int topics=0x7f020028;
+        public static final int topics_dark=0x7f020029;
+        public static final int topics_light=0x7f02002a;
     }
     public static final class id {
         public static final int action_add_feed=0x7f0c0033;
@@ -304,23 +305,23 @@ containing a value of this type.
         /**  Add new feed 
          */
         public static final int action_add=0x7f0a0028;
-        public static final int action_article_search=0x7f0a0044;
-        public static final int action_article_search_hint=0x7f0a0043;
-        public static final int action_clear_search_term=0x7f0a0045;
+        public static final int action_article_search=0x7f0a0045;
+        public static final int action_article_search_hint=0x7f0a0044;
+        public static final int action_clear_search_term=0x7f0a0046;
         public static final int action_deselect_all=0x7f0a0022;
-        public static final int action_hide_read_articles=0x7f0a003f;
+        public static final int action_hide_read_articles=0x7f0a0040;
         /**  Feed Activity 
          */
         public static final int action_load_selected=0x7f0a0020;
         public static final int action_mark_all_as_read=0x7f0a003c;
-        public static final int action_refresh=0x7f0a0041;
+        public static final int action_refresh=0x7f0a0042;
         public static final int action_reload=0x7f0a0004;
         public static final int action_remove_selected=0x7f0a0023;
         public static final int action_save_group=0x7f0a0024;
-        public static final int action_save_search_term=0x7f0a0046;
+        public static final int action_save_search_term=0x7f0a0047;
         public static final int action_select_all=0x7f0a0021;
-        public static final int action_share_selected=0x7f0a0040;
-        public static final int action_show_read_articles=0x7f0a003e;
+        public static final int action_share_selected=0x7f0a0041;
+        public static final int action_show_read_articles=0x7f0a003f;
         public static final int action_test_re_initialize=0x7f0a0026;
         public static final int add_feed_fail_message=0x7f0a002e;
         public static final int add_feed_grouping_message=0x7f0a0032;
@@ -334,15 +335,16 @@ containing a value of this type.
          */
         public static final int add_new_category=0x7f0a0030;
         public static final int all=0x7f0a0025;
-        public static final int and_x_more=0x7f0a004c;
+        public static final int and_x_more=0x7f0a004d;
         public static final int app_name=0x7f0a0000;
-        public static final int article_share_subject=0x7f0a0042;
+        public static final int article_share_subject=0x7f0a0043;
         public static final int author=0x7f0a0012;
         public static final int button_getrss=0x7f0a0037;
         public static final int cancel=0x7f0a001c;
-        public static final int cannot_delete_all=0x7f0a0050;
+        public static final int cannot_delete_all=0x7f0a0051;
         public static final int categories=0x7f0a0027;
         public static final int confirm_mark_as_read=0x7f0a003d;
+        public static final int confirm_mark_as_unread=0x7f0a003e;
         /**  Connectivity 
          */
         public static final int connection_failed=0x7f0a001e;
@@ -364,7 +366,7 @@ containing a value of this type.
         public static final int git_url=0x7f0a0001;
         public static final int groups=0x7f0a002d;
         public static final int hello_world=0x7f0a0002;
-        public static final int item_deleted=0x7f0a004d;
+        public static final int item_deleted=0x7f0a004e;
         public static final int last_data_pull=0x7f0a0011;
         public static final int loading_content=0x7f0a0038;
         public static final int navmenuitem_icon=0x7f0a0008;
@@ -376,42 +378,42 @@ containing a value of this type.
         public static final int partial_results=0x7f0a003a;
         /**  User preferences 
          */
-        public static final int prefs=0x7f0a0051;
-        public static final int prefs_article_settings=0x7f0a0060;
-        public static final int prefs_articles_to_load=0x7f0a0058;
-        public static final int prefs_articles_to_load_setting_text=0x7f0a0054;
-        public static final int prefs_days_to_keep_articles=0x7f0a005c;
-        public static final int prefs_days_to_keep_articles_text=0x7f0a005e;
-        public static final int prefs_default_articles_to_load=0x7f0a0059;
-        public static final int prefs_default_days_to_keep_articles=0x7f0a005d;
-        public static final int prefs_default_update_frequency=0x7f0a0057;
-        public static final int prefs_enable_animation=0x7f0a005b;
-        public static final int prefs_first_run=0x7f0a0052;
-        public static final int prefs_hide_articles_after_click=0x7f0a0055;
+        public static final int prefs=0x7f0a0052;
+        public static final int prefs_article_settings=0x7f0a0061;
+        public static final int prefs_articles_to_load=0x7f0a0059;
+        public static final int prefs_articles_to_load_setting_text=0x7f0a0055;
+        public static final int prefs_days_to_keep_articles=0x7f0a005d;
+        public static final int prefs_days_to_keep_articles_text=0x7f0a005f;
+        public static final int prefs_default_articles_to_load=0x7f0a005a;
+        public static final int prefs_default_days_to_keep_articles=0x7f0a005e;
+        public static final int prefs_default_update_frequency=0x7f0a0058;
+        public static final int prefs_enable_animation=0x7f0a005c;
+        public static final int prefs_first_run=0x7f0a0053;
+        public static final int prefs_hide_articles_after_click=0x7f0a0056;
         /**  Preference display categories 
          */
-        public static final int prefs_network_settings=0x7f0a005f;
-        public static final int prefs_update_frequency=0x7f0a0056;
-        public static final int prefs_update_frequency_setting_text=0x7f0a005a;
-        public static final int prefs_update_in_background=0x7f0a0053;
+        public static final int prefs_network_settings=0x7f0a0060;
+        public static final int prefs_update_frequency=0x7f0a0057;
+        public static final int prefs_update_frequency_setting_text=0x7f0a005b;
+        public static final int prefs_update_in_background=0x7f0a0054;
         public static final int publishedDate=0x7f0a0015;
         public static final int rss_author_by=0x7f0a003b;
         public static final int rss_button_fetch=0x7f0a0036;
         public static final int rss_feed_header=0x7f0a0035;
         public static final int rss_update_async_task=0x7f0a0017;
-        public static final int saved_search_already_exists=0x7f0a0047;
-        public static final int saved_search_is_empty=0x7f0a0049;
-        public static final int saved_search_success=0x7f0a0048;
+        public static final int saved_search_already_exists=0x7f0a0048;
+        public static final int saved_search_is_empty=0x7f0a004a;
+        public static final int saved_search_success=0x7f0a0049;
         /**  Topics activity 
          */
-        public static final int saved_searches=0x7f0a004f;
+        public static final int saved_searches=0x7f0a0050;
         /**  ID strings & generic identifiers 
          */
         public static final int scroll_position=0x7f0a000f;
         public static final int share=0x7f0a0019;
-        public static final int tap_to_undo=0x7f0a004e;
-        public static final int tile_font_heavy=0x7f0a004a;
-        public static final int tile_font_light=0x7f0a004b;
+        public static final int tap_to_undo=0x7f0a004f;
+        public static final int tile_font_heavy=0x7f0a004b;
+        public static final int tile_font_light=0x7f0a004c;
         public static final int title=0x7f0a0014;
         /**  RSS 
          */
