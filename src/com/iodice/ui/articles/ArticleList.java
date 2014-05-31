@@ -423,7 +423,7 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 	 * menu icon
 	 */
 	public void cabChangeSelectedReadStatus() {
-		ArrayList<String> selectedArticles = new ArrayList<String>();
+		ArrayList<String> linkList = new ArrayList<String>();
 		int selectedPos;
 		View article;
 		TextView txt;
@@ -431,16 +431,28 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 		int numSelected = selectedListItems.size();
 		ListAdapter adapt = getListAdapter();
 		
+		if (numSelected == 0)
+			return;
+		
 		for (int i = 0; i < numSelected; i++) {
 			selectedPos = selectedListItems.get(i);
 			article = adapt.getView(selectedPos, null, null);
 			txt = (TextView)article.findViewById(R.id.rss_url);
-			selectedArticles.add(txt.getText().toString());
+			linkList.add(txt.getText().toString());
 		}
+		
 		if (cabMarkReadIconResourceId == R.drawable.ic_action_unread)
 			markRead = false;
+		ArticleOrm.setArticleReadState(linkList, markRead, getActivity());
 		
-		ArticleOrm.setArticleReadState(selectedArticles, markRead, getActivity());
+		/* this refreshes the list to accuratley reflect the read status of
+		 * all articles
+		 */
+		ListRefreshCallback callbackInterface = (ListRefreshCallback) getActivity();
+		callbackInterface.refreshCurrentList(true);
+		
+		if (markRead)
+			showUndoMarkUnreadPrompt(linkList);
 	}
 
 	@Override
@@ -495,8 +507,8 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 	 * Show an undo dialog and optionally mark items as unread
 	 * @param linkList the list of items to optionally mark as read
 	 */
-	protected void showUndoMarkUnread(List<String> linkList) {
-		throw new NullPointerException();
+	protected void showUndoMarkUnreadPrompt(List<String> linkList) {
+		Log.i(TAG, "Ask if mark unread");
 	}
 	
 	protected void onItemSwiped(List<Integer> removed) {
@@ -514,7 +526,7 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 		ArticleOrm.setArticleReadState(linkList, true, getActivity());
 		ListRefreshCallback callbackInterface = (ListRefreshCallback) getActivity();
 		callbackInterface.refreshCurrentList(true);
-		showUndoMarkUnread(linkList);
+		showUndoMarkUnreadPrompt(linkList);
 	}
 
 	@Override
@@ -523,8 +535,6 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 		switch (n) {
 			case ArticleList.CALLBACK_MARK_SELECTED_AS_READ:
 		    	cabChangeSelectedReadStatus();
-				ListRefreshCallback callbackInterface = (ListRefreshCallback) getActivity();
-				callbackInterface.refreshCurrentList(true);
 				
 				/* obj is not null if the callback was 
 				 * called while in contextual action mode 
