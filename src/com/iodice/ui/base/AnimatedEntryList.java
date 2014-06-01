@@ -91,7 +91,6 @@ extends MultiselectSwipeList {
 		    v.startAnimation(animation);
 		    lastPosition = position;
 		}
-		
     	return v;
     }
     

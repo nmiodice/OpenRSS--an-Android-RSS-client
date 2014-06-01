@@ -223,11 +223,17 @@ public class ArticleOrm extends BaseOrm {
 	    	sql += "1";
 	    else
 	    	sql += "0";
-	    sql += " WHERE " + ArticleOrm.COLUMN_URL + "='";
+	    sql += " WHERE";
     	
+	    for (int i = 0; i < numUrls; i++) {
+	    	if (i != 0)
+	    		sql += " OR";
+	    	sql += " " + ArticleOrm.COLUMN_URL + "= '" + urls.get(i) + "'";
+	    }
+    		//database.execSQL(sql + urls.get(i) + "'");	    
+    	Log.i(TAG, sql);
     	WriteLockManager.beginWriteTransaction(database);
-    	for (int i = 0; i < numUrls; i++)
-    		database.execSQL(sql + urls.get(i) + "'");
+    	database.execSQL(sql);
     	WriteLockManager.setWriteTransactionSuccessfull(database);
     	WriteLockManager.endWriteTransaction(database);
     }

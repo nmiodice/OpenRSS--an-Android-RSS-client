@@ -7,12 +7,14 @@ import java.util.List;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ActionMode;
@@ -51,8 +53,6 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 	private List<String> columnsToFilterOn = Arrays.asList(new String[] {
 			ArticleOrm.COLUMN_TITLE,
 			ArticleOrm.COLUMN_DESCRIPTION,
-			//ArticleOrm.COLUMN_PARENT_URL,
-			//ArticleOrm.COLUMN_URL,
 			});
 	
 	// If true, filtering will be based on 'include if any term matches.' If false,
@@ -331,14 +331,14 @@ public class ArticleList extends AnimatedEntryList implements Callback {
     	tmp = (TextView) v.findViewById(R.id.rss_description);
     	String desc = tmp.getText().toString();
         if (!desc.equals("")) {
+        	tmp.setVisibility(View.VISIBLE);
         	int maxLen = getResources().getInteger(R.integer.article_description_max_length);
         	if (desc.length() > maxLen) {
         		desc = Text.limitTextCharacters(desc, maxLen);
         		desc += "...";
         	}
         	tmp.setText(desc);
-        }
-        else
+        } else
         	tmp.setVisibility(View.GONE);
         
     	tmp = (TextView) v.findViewById(R.id.rss_title);
@@ -423,36 +423,13 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 	 * menu icon
 	 */
 	public void cabChangeSelectedReadStatus() {
-		ArrayList<String> linkList = new ArrayList<String>();
-		int selectedPos;
-		View article;
-		TextView txt;
-		boolean markRead = true;
-		int numSelected = selectedListItems.size();
-		ListAdapter adapt = getListAdapter();
-		
-		if (numSelected == 0)
-			return;
-		
-		for (int i = 0; i < numSelected; i++) {
-			selectedPos = selectedListItems.get(i);
-			article = adapt.getView(selectedPos, null, null);
-			txt = (TextView)article.findViewById(R.id.rss_url);
-			linkList.add(txt.getText().toString());
-		}
-		
-		if (cabMarkReadIconResourceId == R.drawable.ic_action_unread)
-			markRead = false;
-		ArticleOrm.setArticleReadState(linkList, markRead, getActivity());
-		
-		/* this refreshes the list to accuratley reflect the read status of
-		 * all articles
+		MultiArticleMarkUnreadTask asyncTask = new MultiArticleMarkUnreadTask();
+		/* set the selected items here because the async task cannot accuratley
+		 * obtain a list of items in the case that items become unselected
+		 * before the task makes a copy of them
 		 */
-		ListRefreshCallback callbackInterface = (ListRefreshCallback) getActivity();
-		callbackInterface.refreshCurrentList(true);
-		
-		if (markRead)
-			showUndoMarkUnreadPrompt(linkList);
+		asyncTask.setSelectedItems(selectedListItems);
+		asyncTask.execute();
 	}
 
 	@Override
@@ -561,4 +538,87 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 		ListRefreshCallback callbackInterface = (ListRefreshCallback) getActivity();
 		callbackInterface.refreshCurrentList(true);
 	}
+	
+	
+	private class MultiArticleMarkUnreadTask extends 
+	AsyncTask<Void, Void, Void> {
+		
+		ArrayList<String> toChangeReadStatus = new ArrayList<String>();
+		List<Integer> selectedItems = null;
+		Context context = null;
+		boolean markRead;
+		
+		public void setSelectedItems(ArrayList<Integer> items) {
+			/* obtain a copy, otherwise if the source list changes, the task
+			 * doesnt always operate on the correct list elements
+			 */
+			this.selectedItems = new ArrayList<Integer>(items);
+		}
+		
+		/**
+		 * Gets a list of URLs for which the read state should be modified
+		 * and also determines if the read state should become 'read' or
+		 * 'unread.' Getting views from the adapter requires recreating the view
+		 * (in this case) so ensure this occurs outside of the UI thread. 
+		 */
+		private void populateChangeList() {
+			int selectedPos;
+			View article;
+			TextView txt;
+			
+			/* call setSelectedItems prior to invoking the async task */
+			if (selectedItems == null)
+				throw new NullPointerException();
+			
+			ListAdapter adapt = getListAdapter();
+			int numSelected = selectedItems.size();
+			
+			for (int i = 0; i < numSelected; i++) {
+				selectedPos = selectedItems.get(i);
+				Log.i(TAG, "POS = " + selectedPos);
+				if (adapt == null)
+					return;
+				article = adapt.getView(selectedPos, null, null);
+				txt = (TextView)article.findViewById(R.id.rss_url);
+				toChangeReadStatus.add(txt.getText().toString());
+			}
+			if (cabMarkReadIconResourceId == R.drawable.ic_action_unread)
+				markRead = false;
+			else
+				markRead = true;
+		}
+
+		/**
+		 * Setup a context
+		 */
+		protected void onPreExecute() {
+			context = getActivity();
+		}
+		
+		@Override
+		/**
+		 * Establishes a list of URLs to work on, and then updates the 
+		 * database accordingly
+		 */
+		protected Void doInBackground(Void... params) {
+			populateChangeList();
+			if (context != null)
+				ArticleOrm.setArticleReadState(toChangeReadStatus, markRead, context);
+			return null;
+		}
+		
+		/**
+		 * Updates the list view, if necessary
+		 */
+		protected void onPostExecute(Void params) {
+			if (context == null)
+				return;
+			ListRefreshCallback callbackInterface = (ListRefreshCallback) context;
+			if (callbackInterface != null)
+				callbackInterface.refreshCurrentList(true);
+		}
+	}
+	
 }
+
+
