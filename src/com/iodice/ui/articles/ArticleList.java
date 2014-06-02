@@ -18,6 +18,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ActionMode;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -556,15 +557,22 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 		}
 		
 		/**
-		 * Gets a list of URLs for which the read state should be modified
-		 * and also determines if the read state should become 'read' or
-		 * 'unread.' Getting views from the adapter requires recreating the view
+		 * Gets a list of URLs for which the read state should be modified.
+		 * Getting views from the adapter requires recreating the view
 		 * (in this case) so ensure this occurs outside of the UI thread. 
 		 */
 		private void populateChangeList() {
+			
 			int selectedPos;
+			LayoutInflater inflater;
 			View article;
 			TextView txt;
+
+			if (context == null)
+				return;
+			
+			inflater = LayoutInflater.from(context);
+			article = inflater.inflate(getListItemLayoutID(), null);
 			
 			/* call setSelectedItems prior to invoking the async task */
 			if (selectedItems == null)
@@ -578,16 +586,24 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 				Log.i(TAG, "POS = " + selectedPos);
 				if (adapt == null)
 					return;
-				article = adapt.getView(selectedPos, null, null);
+				article = adapt.getView(selectedPos, article, null);
 				txt = (TextView)article.findViewById(R.id.rss_url);
 				toChangeReadStatus.add(txt.getText().toString());
+				Log.i(TAG, "pos " + i + " = " + txt.getText().toString());
 			}
+		}
+		
+		/**
+		 * Checks the resource ID to determine whether or not the action
+		 * is to mark articles as 'read' or 'unread'
+		 */
+		private void setMarkRead() {
 			if (cabMarkReadIconResourceId == R.drawable.ic_action_unread)
 				markRead = false;
 			else
 				markRead = true;
 		}
-
+		
 		/**
 		 * Setup a context
 		 */
@@ -602,6 +618,7 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 		 */
 		protected Void doInBackground(Void... params) {
 			populateChangeList();
+			setMarkRead();
 			if (context != null)
 				ArticleOrm.setArticleReadState(toChangeReadStatus, markRead, context);
 			return null;
