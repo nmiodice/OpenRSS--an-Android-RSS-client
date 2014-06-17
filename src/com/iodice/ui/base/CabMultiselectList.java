@@ -328,40 +328,51 @@ extends ListFragment {
 		return new MultiChoiceModeListener() {
 			
 		    @Override
-	        // Inflate the menu for the CAB
+	        /**
+	         * Inflate the menu for the CAB
+	         */
 		    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
 		    	cabMenu = menu;
 		    	return onPreCreateActionMode(mode, menu);
 		    }
 		
 		    @Override
-	        // Respond to clicks on the actions in the CAB
+	        /**
+	         * Respond to clicks on the actions in the CAB
+	         */
 		    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
 		    	return cabOnMenuItemClicked(mode, item);
 		    }
 			
 			@Override
-	        // Here you can do something when items are selected/de-selected,
-	        // such as update the title in the CAB
+	        /**
+	         * Here you can do something when items are selected/de-selected,
+	         * such as update the title in the CAB
+	         */
 		    public void onItemCheckedStateChanged(ActionMode mode, int position,
 		                                          long id, boolean checked) {
 				selectCheckBox(position);
 				cabOnItemPress(position);
 			}
-		    @Override
-	        // Here you can make any necessary updates to the activity when
-	        // the CAB is removed. By default, selected items are deselected/unchecked.
+		    
+			@Override
+	        /**
+	         * Here you can make any necessary updates to the activity when
+	         * the CAB is removed. By default, selected items are deselected/unchecked.
+	         */
 		    public void onDestroyActionMode(ActionMode mode) {
 		    	onPreDestroyActionMode(mode);
 		    	cabMenu = null;
 		    }
+		    
 		    @Override
-	        // Here you can perform updates to the CAB due to
-	        // an invalidate() request
+	        /**
+	         * Here you can perform updates to the CAB due to
+	         * an invalidate() request
+	         */
 		    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
 		    	return false;
 		    }
-		
 		};
 	}
 	
