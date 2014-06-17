@@ -100,11 +100,11 @@ public class FeedList extends MultiselectSwipeList implements Callback {
 	            return true;
 	            
 	        case R.id.action_select_all:
-	        	selectAll();
+	        	cabSelectAll();
 	        	return true;
 	        	
 	        case R.id.action_deselect_all:
-	        	deselectAll();
+	        	cabDeselectAll();
 	        	return true;
 	        	
 	        case R.id.action_remove_selected:

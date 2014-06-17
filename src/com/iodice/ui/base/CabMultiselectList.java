@@ -146,28 +146,29 @@ extends ListFragment {
 	 * Select all the list elements, or if all of them are already selected,
 	 * deselect all list elements
 	 */
-    public void selectAll() {
+    public void cabSelectAll() {
         ListView lv = getListView();
         int vCnt = lv.getCount();
         
         if (this.selectedListItems.size() == vCnt) {
-        	deselectAll();
+        	cabDeselectAll();
         	return;
         }
+        
         // clear this out because it will be reset in the
         // onItemCheckedStateChanged callback
         selectedListItems.clear();
         for (int i = 0; i < vCnt; i++) {
         	lv.setItemChecked(i,  true);
         }
-
+        
         redrawListView();
     }
     
     /**
      * Deselect all list elements
      */
-    public void deselectAll() {
+    public void cabDeselectAll() {
         ListView lv = getListView();
         int vCnt = lv.getCount();
         
@@ -195,7 +196,7 @@ extends ListFragment {
      * @param position Absolute position in the list, not the position out of all
      * visible list items
      */
-    public void selectCheckBox(int position) {
+    public void cabSelectCheckBox(int position) {
         CheckBox bx = null; 
 
         View viewAtPos = this.getViewAtPosition(position);
@@ -364,7 +365,7 @@ extends ListFragment {
 	         */
 		    public void onItemCheckedStateChanged(ActionMode mode, int position,
 		                                          long id, boolean checked) {
-				selectCheckBox(position);
+				cabSelectCheckBox(position);
 				cabOnItemPress(position);
 			}
 		    

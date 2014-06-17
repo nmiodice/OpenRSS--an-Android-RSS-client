@@ -439,11 +439,11 @@ public class ArticleList extends AnimatedEntryList implements Callback {
 		switch (item.getItemId()) {
 		
 		    case R.id.action_select_all:
-		    	selectAll();
+		    	cabSelectAll();
 		    	return true;
 		    	
 		    case R.id.action_deselect_all:
-		    	deselectAll();
+		    	cabDeselectAll();
 		    	return true;
 		    	
 		    case R.id.action_share_selected:
