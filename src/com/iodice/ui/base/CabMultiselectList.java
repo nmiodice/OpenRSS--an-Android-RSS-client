@@ -147,17 +147,20 @@ extends ListFragment {
 	 * deselect all list elements
 	 */
     public void selectAll() {
-        ListView v = getListView();
-        int vCnt = v.getCount();
+        ListView lv = getListView();
+        int vCnt = lv.getCount();
         
         if (this.selectedListItems.size() == vCnt) {
         	deselectAll();
         	return;
         }
-        // clear first in order to avoid repeating items in the list
-        this.selectedListItems.clear();
-        for (int i = 0; i < vCnt; i++)
-        	this.selectedListItems.add(i);
+        // clear this out because it will be reset in the
+        // onItemCheckedStateChanged callback
+        selectedListItems.clear();
+        for (int i = 0; i < vCnt; i++) {
+        	lv.setItemChecked(i,  true);
+        }
+
         redrawListView();
     }
     
@@ -165,6 +168,13 @@ extends ListFragment {
      * Deselect all list elements
      */
     public void deselectAll() {
+        ListView lv = getListView();
+        int vCnt = lv.getCount();
+        
+        for (int i = 0; i < vCnt; i++) {
+        	lv.setItemChecked(i,  false);
+        }
+        
         selectedListItems.clear();
         redrawListView();
     }
@@ -186,17 +196,20 @@ extends ListFragment {
      * visible list items
      */
     public void selectCheckBox(int position) {
-        CheckBox bx; 
+        CheckBox bx = null; 
 
         View viewAtPos = this.getViewAtPosition(position);
-        bx = (CheckBox)viewAtPos.findViewById(R.id.item_checkbox);
+        if (viewAtPos != null)
+        	bx = (CheckBox)viewAtPos.findViewById(R.id.item_checkbox);
         
         if (selectedListItems.contains(position) == false) {
         	selectedListItems.add(position);
-            bx.setChecked(true);
+        	if (bx != null)
+        		bx.setChecked(true);
         } else {
         	selectedListItems.remove(Integer.valueOf(position));
-        	bx.setChecked(false);
+        	if (bx != null)
+        		bx.setChecked(false);
         }
     }
 
