@@ -31,6 +31,7 @@ import com.iodice.services.ArticleUpdateService;
 import com.iodice.ui.base.CabMultiselectList.MySimpleCursorAdapter;
 import com.iodice.ui.base.NavigationDrawerWithSpinner;
 import com.iodice.utilities.ListRefreshCallback;
+import com.iodice.utilities.Sys;
 
 public class ArticleActivityByUrl 
 extends NavigationDrawerWithSpinner 
@@ -46,7 +47,7 @@ implements ListRefreshCallback {
 	protected boolean filterListInclusive = false;
 	/* used to trigger list updates when the search bar text changes */
     protected TextWatcher searchBarListener = null;
-    protected boolean showSearchBar = true;
+    protected boolean searchBarEnabled = true;
     
     public static final String INTENT_EXTRA_URL_LIST = "url list";
     public static final String INTENT_EXTRA__FEED_NAME_LIST = "feed name list";
@@ -197,7 +198,7 @@ implements ListRefreshCallback {
      * query on the current list of articles
      */
     protected void addSearchBarListener() {
-    	if (!showSearchBar)
+    	if (!searchBarEnabled)
     		return;
     	
     	EditText txtBox = (EditText)findViewById(R.id.article_search_box_text);
@@ -227,7 +228,7 @@ implements ListRefreshCallback {
      */
     @SuppressWarnings("unused")
 	private void addSearchBarAnimation() {
-    	if (!showSearchBar)
+    	if (!searchBarEnabled)
     		return;
     	FragmentManager fMan = getFragmentManager();
 		ArticleList articleList = (ArticleList) fMan.findFragmentByTag(ArticleActivityByUrl.LIST);
@@ -241,19 +242,19 @@ implements ListRefreshCallback {
     }
     
     private void setupSearchBar() {
-    	if (showSearchBar)
+    	if (searchBarEnabled)
     		addSearchBarListener();
     }
     
     public void clearSearchText(View v) {
-    	if (!showSearchBar)
+    	if (!searchBarEnabled)
     		return;
         EditText t = (EditText)findViewById(R.id.article_search_box_text);
         t.setText("");
     }
     
     public void saveSearchText(View v) {
-    	if (!showSearchBar)
+    	if (!searchBarEnabled)
     		return;
         EditText t = (EditText)findViewById(R.id.article_search_box_text);
         String tText = t.getText().toString();
@@ -293,15 +294,19 @@ implements ListRefreshCallback {
                 return true;
                 
             case R.id.action_article_search:
-            	if (!showSearchBar)
+            	if (!searchBarEnabled)
             		return false;
             	//addSearchBarAnimation();
-            	View v = findViewById(R.id.article_search_box_container);
-            	if (v.getVisibility() == View.GONE) {
-            		v.setVisibility(View.VISIBLE);
+            	View srchContainer = findViewById(R.id.article_search_box_container);
+            	if (srchContainer.getVisibility() == View.GONE) {
+            		srchContainer.setVisibility(View.VISIBLE);
+            		View srchBox = srchContainer.findViewById(R.id.article_search_box_text);
+            		srchBox.requestFocus();
+            		Sys.enableKeyboard(this);
+            	} else {
+            		srchContainer.setVisibility(View.GONE);
+            		Sys.disableKeyboard(this);
             	}
-            	else
-            		v.setVisibility(View.GONE);
             	return true;
             
             case R.id.action_view_read:
@@ -382,7 +387,7 @@ implements ListRefreshCallback {
 	 * is already set as a listener to the search bar text
 	 */
 	protected void refilterArticles() {
-		if (showSearchBar) {
+		if (searchBarEnabled) {
 	    	EditText searchText = (EditText)findViewById(R.id.article_search_box_text);
 	    	if (searchText != null) {
 	    		searchText.setText(searchText.getText().toString());

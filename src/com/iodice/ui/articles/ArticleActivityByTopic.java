@@ -28,7 +28,7 @@ public class ArticleActivityByTopic extends ArticleActivityByUrl {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		this.filterListInclusive = true;
-		this.showSearchBar = false;
+		this.searchBarEnabled = false;
 		super.onCreate(savedInstanceState);
 	}
 	
