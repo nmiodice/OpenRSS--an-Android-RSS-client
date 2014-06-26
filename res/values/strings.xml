@@ -133,5 +133,11 @@
 	<string name="prefs_network_settings">Network</string>
     <string name="prefs_article_settings">Articles</string>
     
+    <!-- License filepaths -->
+    <string name="license_jsoup">licenses/Jsoup.txt</string>
+    <string name="license_android_swipe_list_view">licenses/android-swipelistview.txt</string>
+    <string name="license_rome_jdom">licenses/AndroidRome_and_jDOM.txt</string>
+    <string name="license_roboto_slab">licenses/RobotoSlab.txt</string>
+    
     
 </resources>

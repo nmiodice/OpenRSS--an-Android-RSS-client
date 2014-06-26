@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.iodice.application.SettingsActivity;
 import com.iodice.database.FeedOrm;
 import com.iodice.rssreader.R;
+import com.iodice.ui.about.AboutActivity;
 import com.iodice.ui.articles.ArticleActivityByTopic;
 import com.iodice.ui.articles.ArticleActivityByUrl;
 import com.iodice.ui.base.abstractdrawer.AbstractNavDrawerActivity;
@@ -203,10 +204,12 @@ extends AbstractNavDrawerActivity {
 				
 			case DRAWER_SETTINGS:
 				intent = new Intent(this, SettingsActivity.class);
+				intent.putExtra(SELECTED_DRAWER_POSITION_KEY, id);
 				break;
 				
 			case DRAWER_ABOUT:
-				return;
+				intent = new Intent(this, AboutActivity.class);
+				break;
 				
 			case DRAWER_GITHUB:
 				String feedURL = getString(R.string.git_url);

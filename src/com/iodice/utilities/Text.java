@@ -1,5 +1,8 @@
 package com.iodice.utilities;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -8,6 +11,8 @@ import java.util.Locale;
 
 import org.jsoup.Jsoup;
 
+import android.content.Context;
+import android.content.res.AssetManager;
 import android.database.DatabaseUtils;
 
 public class Text {
@@ -99,6 +104,37 @@ public class Text {
 	
 	public static String sqlStringToDisplayString(String sqlDateString) {
 		return "";
+	}
+	
+	public static String readRawTextResource(int fileNameResourceID, Context context) {
+		ByteArrayOutputStream byteArrayOutputStream;
+		InputStream inputStream;
+		AssetManager am;
+		String filename;
+	    int i;
+
+		assert(context != null);
+		
+		am = context.getAssets();
+	    byteArrayOutputStream = new ByteArrayOutputStream();
+	    
+	    try {
+	    	filename = context.getString(fileNameResourceID);
+	    	inputStream = am.open(filename);
+	        i = inputStream.read();
+	        
+	        while (i != -1) {
+	            byteArrayOutputStream.write(i);
+	            i = inputStream.read();
+	        }
+	        
+	        inputStream.close();
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	        throw new NullPointerException();
+	    }
+
+	    return byteArrayOutputStream.toString();
 	}
 	
 }
