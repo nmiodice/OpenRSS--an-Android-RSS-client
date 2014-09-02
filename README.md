@@ -9,9 +9,6 @@ Getting involved
 
 *   Want to be a tester or developer? Follow the link to the google group in the "Contact" section of this document
 
-*   If you are interested in developing for OpenRSS, please also review the documens for critical modules under the `<project directry>/developers` directory
-
-
 Contact
 --
 *   To contact the project owner, email him at nmiodice@gmail.com  
